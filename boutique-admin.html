@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KCN — Admin (Commandes & Stock)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--brand:#0066cc;--line:#e5e7eb;--ink:#0f172a;--card:#fff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Montserrat,Arial,sans-serif;background:#f7f9fc;color:var(--ink)}
+  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+  h1{color:var(--brand);margin-bottom:12px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .tabbtn{background:#fff;color:#0066cc;border:2px solid #0066cc;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .tabbtn.active{background:#0066cc;color:#fff}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  button,.btn{background:#0066cc;color:#fff;border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .btn.alt{background:#fff;color:#0066cc;border:2px solid #0066cc}
+  .list{display:grid;gap:12px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .lines{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+  .tag{display:inline-block;background:#eaf3ff;color:#0b4573;border:1px solid #cfe1ff;border-radius:999px;padding:3px 8px;font-size:.85rem;margin-right:6px}
+  .muted{color:#475569}
+  .thumb{max-width:160px;max-height:120px;border-radius:8px;border:1px solid var(--line)}
+  input,select{padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+  .empty{color:#64748b}
+
+  /* Badges stock (statuts professionnels) */
+  .kcn-tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.78rem;border:1px solid #e5e7eb;background:#f8fafc}
+  .kcn-tag.red{background:#ffe4e6;border-color:#fecdd3;color:#9f1239}       /* Rupture de stock */
+  .kcn-tag.orange{background:#fff7ed;border-color:#fed7aa;color:#9a3412}   /* Limité / Critique */
+  .kcn-tag.green{background:#ecfdf5;border-color:#bbf7d0;color:#065f46}    /* En stock */
+
+  .panel{display:none}
+  .panel.active{display:block}
+
+  dialog{border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Admin KCN — Commandes & Stock (localStorage)</h1>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button class="tabbtn active" data-tab="orders">Commandes</button>
+    <button class="tabbtn" data-tab="stock">Stock</button>
+  </div>
+
+  <!-- ===== Panel Commandes ===== -->
+  <section id="panel-orders" class="panel active" aria-labelledby="tab-orders">
+    <div class="tools">
+      <button id="refresh">Actualiser</button>
+      <button id="export" class="btn alt">Exporter CSV</button>
+      <button id="applySales" class="btn">Appliquer ventes récentes → stock</button>
+      <button id="clear" class="btn alt">Vider toutes les commandes</button>
+    </div>
+    <div id="count" class="muted"></div>
+    <div id="list" class="list"></div>
+  </section>
+
+  <!-- ===== Panel Stock ===== -->
+  <section id="panel-stock" class="panel" aria-labelledby="tab-stock">
+    <div class="tools">
+      <button id="kcnStockShowAll" class="btn alt">Afficher/Actualiser</button>
+      <button id="kcnStockSave" class="btn">Enregistrer</button>
+      <button id="kcnStockExport" class="btn alt">Exporter JSON</button>
+      <button id="kcnStockImportBtn" class="btn alt">Importer catalogue</button>
+      <button id="kcnStockReset" class="btn alt">Réinitialiser</button>
+    </div>
+
+    <div class="muted" style="margin:6px 0 10px 0">
+      <strong>Légende statuts :</strong>
+      <span class="kcn-tag green">En stock</span>
+      <span class="kcn-tag orange">Stock limité</span>
+      <span class="kcn-tag orange">Stock critique</span>
+      <span class="kcn-tag red">Rupture de stock</span>
+      <br>
+      <small>Paramétrez vos seuils (par défaut <b>5</b> pour « critique »).</small>
+    </div>
+
+    <div class="muted" style="margin:6px 0 10px 0">
+      Seuils :
+      <label><b>Critique</b> ≤
+        <input id="kcnThLow" type="number" min="1" value="5" style="width:60px;padding:4px 6px;border:1px solid #e5e7eb;border-radius:8px">
+      </label> ·
+      <label><b>Limité</b> ≤
+        <input id="kcnThMid" type="number" min="2" value="10" style="width:60px;padding:4px 6px;border:1px solid #e5e7eb;border-radius:8px">
+      </label>
+      <span class="muted">— 0 = Rupture</span>
+    </div>
+
+    <div style="overflow:auto;border:1px solid #e5e7eb;border-radius:12px;background:#fff">
+      <table id="kcnStockTable" style="width:100%;border-collapse:collapse">
+        <thead style="background:#f8fafc">
+          <tr>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">ID produit</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Nom</th>
+            <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb;white-space:nowrap">Stock</th>
+            <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb">Statut</th>
+            <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="kcnStockBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Dialog d'import -->
+    <dialog id="kcnStockImportDialog">
+      <h3 style="margin:0 0 10px 0;color:#0b4573">Importer un catalogue</h3>
+      <p class="muted">Format JSON : <code>[{"id":"bonnet-p","name":"Bonnet (normal)","stock":12}, ...]</code></p>
+      <textarea id="kcnStockImportText" rows="10" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:10px"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button id="kcnStockImportCancel" class="btn alt">Annuler</button>
+        <button id="kcnStockImportApply" class="btn">Importer</button>
+      </div>
+    </dialog>
+  </section>
+</div>
+
+<script>
+  /* ===================== NAV TABS ===================== */
+  document.querySelectorAll('.tabbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+      if(btn.dataset.tab==='orders'){ loadOrders(true); }   // true => appliquer ventes
+      if(btn.dataset.tab==='stock'){ KCNStock.open(); }
+    });
+  });
+
+  /* ===================== UTIL ===================== */
+  function fmt(v,cur){ return (isNaN(v)?'—':new Intl.NumberFormat('fr-FR').format(v)+(cur==='HTG'?' HTG':'')); }
+  function view(htg,currency){ return currency==='USD' ? NaN : htg; }
+
+  /* ===================== PANEL COMMANDES ===================== */
+  const list = document.getElementById('list');
+  const count= document.getElementById('count');
+
+  document.getElementById('refresh').onclick = ()=> loadOrders(true);
+  document.getElementById('applySales').onclick = ()=> applyNewSalesToStock();
+
+  document.getElementById('clear').onclick = ()=>{
+    if(confirm('Supprimer TOUTES les commandes ?')){
+      localStorage.removeItem('kcn_orders'); loadOrders();
+    }
+  };
+
+  document.getElementById('export').onclick = ()=>{
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    if(!orders.length){ alert('Rien à exporter.'); return; }
+    const rows = [['id','createdAt','currency','grandHTG','status','deliveryStatus','stockApplied','lines']];
+    orders.forEach(o=>{
+      rows.push([o.id,o.createdAt,o.currency,o.grandHTG,o.status||'',o.deliveryStatus||'', o.stockApplied? 'yes':'no', o.lines.map(l=>`${l.name}x${l.qty}`).join(' | ')]);
+    });
+    const csv = rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='kcn_orders.csv'; a.click(); URL.revokeObjectURL(url);
+  };
+
+  document.addEventListener('change', (e)=>{
+    if(e.target.matches('select[data-id]')){
+      const id = e.target.getAttribute('data-id');
+      const k  = e.target.getAttribute('data-k');
+      const val= e.target.value;
+      const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+      const i = orders.findIndex(o=>o.id===id);
+      if(i>=0){ orders[i][k]=val; localStorage.setItem('kcn_orders', JSON.stringify(orders)); }
+    }
+  });
+
+  document.addEventListener('click', (e)=>{
+    if(e.target.matches('button[data-del]')){
+      const id = e.target.getAttribute('data-del');
+      if(confirm('Supprimer cette commande ?')){
+        const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]').filter(o=>o.id!==id);
+        localStorage.setItem('kcn_orders', JSON.stringify(orders));
+        loadOrders();
+      }
+    }
+  });
+
+  function loadOrders(applySales=false){
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    count.textContent = orders.length ? orders.length+' commande(s)' : 'Aucune commande';
+    list.innerHTML = '';
+    if(!orders.length){
+      list.innerHTML = '<div class="empty">Aucune commande pour le moment.</div>';
+    } else {
+      orders.slice().reverse().forEach(o=>{
+        const card = document.createElement('div');
+        card.className='card';
+        const date = new Date(o.createdAt);
+        card.innerHTML = `
+          <div class="row">
+            <div>
+              <div><strong>${o.id}</strong></div>
+              <div class="muted">${date.toLocaleString()}</div>
+            </div>
+            <div>
+              <span class="tag">${o.status||'pending'}</span>
+              <span class="tag">${o.deliveryStatus||'retrait'}</span>
+              ${o.stockApplied ? '<span class="tag">stock appliqué</span>' : '<span class="tag">stock non appliqué</span>'}
+            </div>
+          </div>
+          <div class="lines">
+            ${o.lines.map(l=>`<div class="row"><span>${l.name} × ${l.qty}</span><strong>${fmt(view(l.lineHTG,o.currency),o.currency)}</strong></div>`).join('')}
+            <hr style="border:none;border-top:1px dashed #e5e7eb;margin:8px 0">
+            <div class="row"><span>Remise</span><strong>${o.discountHTG? '– '+fmt(view(o.discountHTG,o.currency),o.currency) : '—'}</strong></div>
+            <div class="row"><span>Frais paiement</span><strong>${fmt(view(o.feeHTG,o.currency),o.currency)}</strong></div>
+            <div class="row"><span>Livraison</span><strong>${fmt(view(o.deliveryHTG,o.currency),o.currency)}</strong></div>
+            <div class="row"><span><strong>Total</strong></span><strong>${fmt(view(o.grandHTG,o.currency),o.currency)}</strong></div>
+          </div>
+          <div class="actions">
+            <label>Statut:
+              <select data-id="${o.id}" data-k="status">
+                ${['pending','paid','cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            <label>Livraison:
+              <select data-id="${o.id}" data-k="deliveryStatus">
+                ${['retrait','à livrer','livrée'].map(s=>`<option ${o.deliveryStatus===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            ${o.proof ? `<a class="btn" href="${o.proof.data}" download="${o.id}-preuve">${o.proof.type?.includes('pdf')?'Télécharger PDF':'Télécharger image'}</a>` : '<span class="muted">Aucune preuve</span>'}
+            <button class="btn alt" data-del="${o.id}">Supprimer</button>
+          </div>
+          ${o.proof && o.proof.type?.startsWith('image/') ? `<div style="margin-top:8px"><img class="thumb" src="${o.proof.data}" alt="preuve"></div>`:''}
+        `;
+        list.appendChild(card);
+      });
+    }
+    if(applySales) applyNewSalesToStock(); // décrémentation auto
+  }
+
+  /* ===== Décrémenter le stock depuis les commandes non appliquées ===== */
+  function normalizeLineName(name){
+    // retire la partie " – Couleur: xxx" si présente
+    return String(name||'').split(' – Couleur')[0].trim();
+  }
+  function getCatalog(){
+    if (Array.isArray(window.INVENTORY) && window.INVENTORY.length){
+      return window.INVENTORY.map(p=>({id:p.id, name:p.name, stock: p.stock|0}));
+    }
+    try{
+      const c = JSON.parse(localStorage.getItem('kcn_catalog')||'[]');
+      return Array.isArray(c)?c:[];
+    }catch{return []}
+  }
+  function getStockMap(){
+    try{ return JSON.parse(localStorage.getItem('kcn_stock')||'{}'); }catch{ return {}; }
+  }
+  function setStockMap(map){ localStorage.setItem('kcn_stock', JSON.stringify(map)); }
+
+  function applyNewSalesToStock(){
+    let orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    if(!orders.length) return;
+
+    const catalog = getCatalog();
+    if(!catalog.length){
+      alert("Catalogue introuvable. Importez un catalogue dans l'onglet Stock.");
+      return;
+    }
+    const byName = {};
+    catalog.forEach(it=>{ byName[it.name] = it; });
+
+    const stock = getStockMap();
+
+    let changed = false;
+    orders.forEach(o=>{
+      if(o.stockApplied) return;
+
+      (o.lines||[]).forEach(l=>{
+        const base = normalizeLineName(l.name);
+        const item = byName[base];
+        if(!item) return; // article non trouvé dans le catalogue
+        const id = item.id;
+        const cur = Number.isFinite(stock[id]) ? stock[id] : (Number.isFinite(item.stock)? item.stock : 0);
+        const qty = Math.max(0, parseInt(l.qty||'0',10)||0);
+        const next = Math.max(0, cur - qty);
+        if(next !== cur){ stock[id] = next; changed = true; }
+      });
+
+      o.stockApplied = true; // éviter double déduction
+      changed = true;
+    });
+
+    if(changed){
+      setStockMap(stock);
+      localStorage.setItem('kcn_orders', JSON.stringify(orders));
+      if(document.querySelector('#panel-stock.panel.active')){ KCNStock.refresh(); }
+    }
+
+    [
+  {"id":"bonnet-g","name":"Bonnet (gros)","stock":12},
+  {"id":"bonnet-p","name":"Bonnet (petit)","stock":24},
+  {"id":"bonnet-de-bain","name":"Bonnet de bain (imprimé silicone)","stock":18},
+
+  {"id":"lunettes-p","name":"Lunettes (petites)","stock":20},
+  {"id":"lunettes-g","name":"Lunettes (grosses)","stock":16},
+
+  {"id":"brassards","name":"Brassards","stock":30},
+  {"id":"masque-tuba","name":"Masque-Tuba","stock":10},
+
+  {"id":"pack-debut","name":"Pack Débutant","stock":8},
+  {"id":"pack-junior","name":"Pack Junior","stock":9},
+  {"id":"pack-competition","name":"Pack Compétition","stock":5}
+
+  
+]
+
+  }
+
+  /* ===================== PANEL STOCK ===================== */
+  (function(){
+    const TKEY = 'kcn_stock_thresholds';
+    const SKEY = 'kcn_stock';
+    const CKEY = 'kcn_catalog';
+
+    const elBody  = document.getElementById('kcnStockBody');
+    const elShow  = document.getElementById('kcnStockShowAll');
+    const elSave  = document.getElementById('kcnStockSave');
+    const elExport= document.getElementById('kcnStockExport');
+    const elReset = document.getElementById('kcnStockReset');
+    const elImpBtn= document.getElementById('kcnStockImportBtn');
+    const elDlg   = document.getElementById('kcnStockImportDialog');
+    const elImpTxt= document.getElementById('kcnStockImportText');
+    const elImpCancel = document.getElementById('kcnStockImportCancel');
+    const elImpApply  = document.getElementById('kcnStockImportApply');
+
+    const thLow = document.getElementById('kcnThLow'); // Critique (≤ low)
+    const thMid = document.getElementById('kcnThMid'); // Limité (≤ mid)
+
+    function loadThresholds(){
+      try{
+        const t = JSON.parse(localStorage.getItem(TKEY) || '{}');
+        if(Number.isFinite(t.low)) thLow.value = t.low;
+        if(Number.isFinite(t.mid)) thMid.value = t.mid;
+      }catch{}
+    }
+    function saveThresholds(){
+      const low = Math.max(1, parseInt(thLow.value||'5',10)||5);
+      const mid = Math.max(low+1, parseInt(thMid.value||'10',10)||10);
+      localStorage.setItem(TKEY, JSON.stringify({low, mid}));
+    }
+    function getThresholds(){
+      try{ return JSON.parse(localStorage.getItem(TKEY) || '{"low":5,"mid":10}'); }
+      catch{ return {low:5, mid:10}; }
+    }
+
+    function getCatalog(){
+      if (Array.isArray(window.INVENTORY) && window.INVENTORY.length){
+        return window.INVENTORY.map(p=>({id:p.id, name:p.name, stock: p.stock|0}));
+      }
+      try{
+        const c = JSON.parse(localStorage.getItem(CKEY)||'[]');
+        return Array.isArray(c)?c:[];
+      }catch{return []}
+    }
+    function setCatalog(catalog){
+      localStorage.setItem(CKEY, JSON.stringify(catalog));
+    }
+
+    function getStockMap(){
+      try{ return JSON.parse(localStorage.getItem(SKEY)||'{}'); }catch{ return {}; }
+    }
+    function setStockMap(map){
+      localStorage.setItem(SKEY, JSON.stringify(map));
+    }
+
+    function statusTag(qty){
+      const {low, mid} = getThresholds();
+      if(qty<=0) return '<span class="kcn-tag red">Rupture de stock</span>';
+      if(qty<=low) return `<span class="kcn-tag orange">Stock critique</span>`;
+      if(qty<=mid) return '<span class="kcn-tag orange">Stock limité</span>';
+      return '<span class="kcn-tag green">En stock</span>';
+    }
+
+    function render(){
+      const catalog = getCatalog();
+      if(!catalog.length){
+        elBody.innerHTML = `<tr><td colspan="5" style="padding:12px" class="muted">
+          Aucun catalogue détecté. Cliquez <b>Importer catalogue</b> et collez un JSON (id, name, stock).
+        </td></tr>`;
+        return;
+      }
+      const map = getStockMap();
+      elBody.innerHTML = catalog.map(item=>{
+        const q = (map[item.id] ?? item.stock) | 0;
+        return `<tr>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb"><code>${item.id}</code></td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.name||''}</td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center">
+            <input type="number" min="0" value="${q}" data-kcn-q="${item.id}" style="width:90px;padding:6px 8px;border:1px solid #e5e7eb;border-radius:10px">
+          </td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center" data-kcn-status="${item.id}">
+            ${statusTag(qtySafe(q))}
+          </td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center">
+            <button class="btn alt" data-kcn-plus="${item.id}">+1</button>
+            <button class="btn alt" data-kcn-minus="${item.id}">-1</button>
+            <button class="btn alt" data-kcn-zero="${item.id}">0</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function qtySafe(n){ return Math.max(0, parseInt(n||'0',10)||0); }
+
+    function attachEvents(){
+      elBody.addEventListener('input', (e)=>{
+        const id = e.target.getAttribute('data-kcn-q');
+        if(!id) return;
+        const v = qtySafe(e.target.value);
+        const statusCell = elBody.querySelector(`[data-kcn-status="${id}"]`);
+        if(statusCell) statusCell.innerHTML = statusTag(v);
+      });
+      elBody.addEventListener('click', (e)=>{
+        const plus = e.target.getAttribute('data-kcn-plus');
+        const minus= e.target.getAttribute('data-kcn-minus');
+        const zero = e.target.getAttribute('data-kcn-zero');
+        const id = plus || minus || zero;
+        if(!id) return;
+        const input = elBody.querySelector(`input[data-kcn-q="${id}"]`);
+        if(!input) return;
+        let v = qtySafe(input.value);
+        if(plus){ v = v+1; }
+        if(minus){ v = Math.max(0, v-1); }
+        if(zero){ v = 0; }
+        input.value = v;
+        const statusCell = elBody.querySelector(`[data-kcn-status="${id}"]`);
+        if(statusCell) statusCell.innerHTML = statusTag(v);
+      });
+
+      elSave.addEventListener('click', ()=>{
+        const inputs = elBody.querySelectorAll('input[data-kcn-q]');
+        const map = getStockMap();
+        inputs.forEach(i=>{
+          const id = i.getAttribute('data-kcn-q');
+          const v  = qtySafe(i.value);
+          map[id] = v;
+        });
+        setStockMap(map);
+        saveThresholds();
+        alert('Stock enregistré ✓');
+      });
+
+      elShow.addEventListener('click', ()=> render());
+
+      elExport.addEventListener('click', ()=>{
+        const data = { thresholds:getThresholds(), stock:getStockMap(), catalog:getCatalog() };
+        const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'kcn_stock_export.json';
+        a.click(); URL.revokeObjectURL(url);
+      });
+
+      elReset.addEventListener('click', ()=>{
+        if(!confirm('Réinitialiser le stock local ?')) return;
+        localStorage.removeItem(SKEY);
+        render();
+      });
+
+      elImpBtn.addEventListener('click', ()=> elDlg.showModal());
+      elImpCancel.addEventListener('click', ()=> elDlg.close());
+      elImpApply.addEventListener('click', ()=>{
+        try{
+          const arr = JSON.parse(elImpTxt.value||'[]');
+          if(!Array.isArray(arr)) throw new Error('Format invalide');
+          setCatalog(arr.map(x=>({id:String(x.id), name:String(x.name||''), stock:qtySafe(x.stock)})));
+          elDlg.close(); elImpTxt.value = '';
+          render();
+        }catch(err){ alert('JSON invalide.'); }
+      });
+
+      thLow.addEventListener('change', saveThresholds);
+      thMid.addEventListener('change', saveThresholds);
+    }
+
+    window.KCNStock = {
+      open(){ loadThresholds(); render(); },
+      refresh(){ render(); }
+    };
+
+    loadThresholds();
+    attachEvents();
+  })();
+
+  // Démarrage : charger commandes et appliquer ventes
+  loadOrders(true);
+</script>
+
+</body>
+</html>

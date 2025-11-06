@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="fr" itemscope itemtype="https://schema.org/Person">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Membre – Ruby KING | KOLTIZ Club de Natation</title>
+  <meta name="description" content="Profil de Ruby KING — Fondatrice, Formatrice, Entraîneure de Natation & Sauveteur au KOLTIZ Club de Natation." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc;--accent:#00bcd4;--ink:#1f2937;--muted:#6b7280;--bg:#f4f7fb;
+      --card:#ffffff;--radius:14px;--ring:0 0 0 3px rgba(0,102,204,.15);
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+
+    a{color:var(--brand);text-decoration:none}
+    a:hover{opacity:.9}
+    img{max-width:100%;display:block}
+
+    .container{max-width:1100px;margin:40px auto;padding:0 24px}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stack{display:grid;gap:clamp(12px,2vw,18px)}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#d7f3f8,#b3e5fc);padding:28px;border-radius:var(--radius);position:relative;overflow:hidden}
+    .hero::after{content:"";position:absolute;inset:auto -20% -40% -20%;height:220px;background:radial-gradient(60% 60% at 50% 0,rgba(255,255,255,.5),transparent);pointer-events:none}
+    .hero-inner{display:grid;gap:12px;align-items:center;justify-items:center;text-align:center}
+    .avatar{width:180px;height:180px;border-radius:50%;object-fit:cover;border:5px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+    .title{margin:6px 0 0;color:#0b0b0b}
+    .role{margin:0;color:var(--muted);font-weight:600}
+
+    /* NAV TABS */
+    .tabs{margin-top:16px;background:#0288d1;border-radius:12px}
+    .tabs ul{list-style:none;margin:0;padding:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .tabs a{color:#fff;font-weight:600;padding:10px 14px;border-radius:10px}
+    .tabs a:hover{background:rgba(255,255,255,.18)}
+    .tabs.sticky{position:sticky;top:0;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.06)}
+
+    /* SECTIONS */
+    section{margin:26px 0}
+    section h2{font-size:1.25rem;margin:0 0 10px;color:#0b0b0b;border-left:5px solid #0288d1;padding-left:10px}
+
+    .content{padding:22px}
+    .grid{display:grid;gap:18px}
+    @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+
+    /* ASIDE CARDS */
+    .info{display:grid;gap:12px}
+    .pill{display:inline-block;background:#eef6ff;color:#0b63b6;border-radius:999px;padding:6px 10px;font-size:.85rem;margin:2px 6px 0 0}
+
+    /* TIMELINE */
+    .timeline{border-left:3px solid #0288d1;margin-left:12px;padding-left:18px}
+    .timeline-item{margin:18px 0}
+    .timeline-item h3{margin:0 0 6px;font-size:1.05rem}
+    .badge{display:inline-block;background:#0288d1;color:#fff;border-radius:8px;padding:4px 8px;font-size:.8rem;margin-left:6px}
+
+    /* FOOTER */
+    footer{margin:28px 0;color:#777;text-align:center}
+
+    /* PRINT */
+    @media print{
+      .tabs{display:none}
+      .container{margin:0;padding:0}
+      .card{box-shadow:none;border:0}
+      body{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO -->
+    <header class="card hero" role="banner">
+      <div class="hero-inner" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+        <img class="avatar" src="./assets/images/imaj7.jpeg" alt="Photo de Ruby KING" />
+        <meta itemprop="url" content="./images/imaj7.jpeg" />
+        <h1 class="title" itemprop="name">Ruby KING</h1>
+        <h2 class="role" itemprop="jobTitle">Fondatrice – vice-Présidente –Formatrice – Entraîneure de Natation – Sauveteur</h2>
+      </div>
+    </header>
+
+    <!-- NAV TABS -->
+    <nav class="tabs sticky" aria-label="Navigation profil">
+      <ul>
+        <li><a href="#presentation">Présentation</a></li>
+        <li><a href="#experience">Expérience</a></li>
+      </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="grid">
+      <!-- Colonne texte -->
+      <article class="card content" id="presentation">
+        <h2>Présentation</h2>
+        <p>
+          Ruby KING est la fondatrice du <b>KOLTIZ Club de Natation</b> et aussi la vice-Présidente, où sa passion pour l'éducation aquatique l’incite à créer un environnement inclusif pour tous.
+          Son objectif est d’offrir aux jeunes, ainsi qu'aux personnes à mobilité réduite, un espace où ils peuvent non seulement apprendre à nager, mais aussi développer des compétences essentielles pour leur bien-être.
+        </p>
+        <p>
+          Avec une équipe d’entraîneurs certifiés, Ruby veille à ce que chaque personne, quelles que soient ses capacités, progresse en toute sécurité et prenne plaisir à nager.
+        </p>
+      </article>
+
+      <!-- Colonne infos latérales (sans contacts coachs) -->
+      <aside class="card content info" aria-label="Informations complémentaires">
+        <div>
+          <h2 style="border-left-color:#00bcd4">Domaines</h2>
+          <span class="pill">Sécurité aquatique</span>
+           <span class="pill">personne a mobilité Réduite</span>
+          <span class="pill">Pédagogie enfants & adultes</span>
+          <span class="pill">Inclusion</span>
+          <span class="pill">Organisation</span>
+        </div>
+        <div>
+          <h2 style="border-left-color:#00bcd4">Disponibilité</h2>
+          <p>Coaching enfants & adultes · Ateliers sécurité · Conférences sensibilisation</p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- EXPÉRIENCE -->
+    <section id="experience" class="card content" aria-labelledby="exp-title">
+      <h2 id="exp-title">Expérience</h2>
+
+      <div class="timeline" itemprop="hasOccupation" itemscope itemtype="https://schema.org/Occupation">
+        <div class="timeline-item">
+          <h3>2024 — Directrice Technique <span class="badge">Fédération Haïtienne des Sports Aquatiques</span></h3>
+          <p>
+            De 2018 à 2024, Ruby King a été Directrice Technique à la Fédération Haïtienne des Sports Aquatiques,
+            supervisant la gestion technique des compétitions nationales et internationales.
+          </p>
+          <p>
+            Elle a également coordonné des projets en partenariat avec l'Ambassade de France en Haïti (PISCCA, 2019),
+            visant à développer les infrastructures aquatiques et à offrir des formations techniques aux entraîneurs et athlètes.
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <h3>2015 — Entraîneure et Formatrice</h3>
+          <p>
+            De 2015 à 2020, Ruby King a formé des nageurs de tous niveaux, des débutants aux athlètes avancés,
+            en mettant l'accent sur la sécurité aquatique et les bonnes pratiques.
+          </p>
+          <p>
+            Elle a eu l’opportunité de collaborer avec les employés de l’UNOPS et de l’UNESCO, ainsi qu’avec leurs familles, dans le cadre de programmes de sensibilisation et de renforcement des compétences en natation, mais aussi avec des institutions locales comme la BLTS. Cette expérience a contribué à développer des aptitudes utiles en milieu aquatique, tout en favorisant la cohésion et l’inclusion au sein des communautés concernées.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 KOLTIZ Club de Natation – Tous droits réservés
+    </footer>
+  </div>
+</body>
+</html>

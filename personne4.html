@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="fr" itemscope itemtype="https://schema.org/Person">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Membre – Aldofrande Wilson | Entraîneur de natation | KCN</title>
+  <meta name="description" content="Profil d'Aldofrande Wilson — Entraîneur de natation au KOLTIZ Club de Natation." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc;--accent:#00bcd4;--ink:#1f2937;--muted:#6b7280;--bg:#f4f7fb;
+      --card:#ffffff;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+    a{color:var(--brand);text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .container{max-width:1100px;margin:40px auto;padding:0 24px}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stack{display:grid;gap:clamp(12px,2vw,18px)}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#d7f3f8,#b3e5fc);padding:28px;border-radius:var(--radius);position:relative;overflow:hidden}
+    .hero::after{content:"";position:absolute;inset:auto -20% -40% -20%;height:220px;background:radial-gradient(60% 60% at 50% 0,rgba(255,255,255,.5),transparent)}
+    .hero-inner{display:grid;gap:12px;align-items:center;justify-items:center;text-align:center}
+    .avatar{width:180px;height:180px;border-radius:50%;object-fit:cover;border:5px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+    .title{margin:6px 0 0;color:#0b0b0b}
+    .role{margin:0;color:var(--muted);font-weight:600}
+
+    /* NAV */
+    .tabs{margin-top:16px;background:#0288d1;border-radius:12px}
+    .tabs ul{list-style:none;margin:0;padding:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .tabs a{color:#fff;font-weight:600;padding:10px 14px;border-radius:10px}
+    .tabs a:hover{background:rgba(255,255,255,.18)}
+    .tabs.sticky{position:sticky;top:0;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.06)}
+
+    /* CONTENT */
+    section{margin:26px 0}
+    section h2{font-size:1.25rem;margin:0 0 10px;color:#0b0b0b;border-left:5px solid #0288d1;padding-left:10px}
+    .content{padding:22px}
+
+    /* TIMELINE */
+    .timeline{border-left:3px solid #0288d1;margin-left:12px;padding-left:18px}
+    .timeline-item{margin:18px 0}
+    .timeline-item h3{margin:0 0 6px;font-size:1.05rem}
+    .badge{display:inline-block;background:#0288d1;color:#fff;border-radius:8px;padding:4px 8px;font-size:.8rem;margin-left:6px}
+
+    footer{margin:28px 0;color:#777;text-align:center}
+
+    @media print{
+      .tabs{display:none}
+      .container{margin:0;padding:0}
+      .card{box-shadow:none;border:0}
+      body{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO -->
+    <header class="card hero" role="banner">
+      <div class="hero-inner" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+        <img class="avatar" src="./assets/images/wilson/(13).png" alt="Photo d'Aldofrande Wilson" />
+        <meta itemprop="url" content="./images/wilson/(13).jpg" />
+        <h1 class="title" itemprop="name">Aldofrande Wilson</h1>
+        <h2 class="role" itemprop="jobTitle">Entraîneur de natation</h2>
+      </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="tabs sticky" aria-label="Navigation profil">
+      <ul>
+        <li><a href="#presentation">Présentation</a></li>
+        <li><a href="#experience">Expérience</a></li>
+      </ul>
+    </nav>
+
+    <!-- PRÉSENTATION -->
+    <section id="presentation" class="card content" aria-labelledby="pres-title">
+      <h2 id="pres-title">Présentation</h2>
+      <p>
+        <strong>Aldofrande Wilson</strong> est entraîneur au <b>KOLTIZ Club de Natation</b>,
+        où il partage depuis plusieurs années sa passion pour l’eau et son amour de l’enseignement.
+        Pour lui, l’eau est bien plus qu’un simple élément : c’est un espace de liberté, de plaisir
+        et de dépassement qui est devenu son univers privilégié.
+      </p>
+      <p>
+        Chaque séance est pour lui une opportunité de transmettre cette passion. Il accorde une grande
+        importance à l’accompagnement personnalisé, en offrant la même attention et le même respect
+        aux enfants comme aux adultes. Ce qui le motive le plus, c’est de voir ses élèves progresser,
+        prendre confiance et recevoir la reconnaissance des parents.
+      </p>
+      <p>
+        Toujours animé d’une grande motivation, Aldofrande croit profondément en la valeur du travail
+        d’équipe et en la force de la discipline aquatique. Fier de son rôle d’entraîneur, il s’engage
+        à faire de chaque cours une expérience enrichissante, où l’eau devient un terrain d’apprentissage,
+        de joie et de réussite.
+      </p>
+    </section>
+
+    <!-- EXPÉRIENCE -->
+    <section id="experience" class="card content" aria-labelledby="exp-title">
+      <h2 id="exp-title">Expérience</h2>
+      <div class="timeline" itemprop="hasOccupation" itemscope itemtype="https://schema.org/Occupation">
+        <div class="timeline-item">
+          <h3>Entraîneur de natation <span class="badge">KCN</span></h3>
+          <p>
+            Accompagnement des enfants et adultes dans l’apprentissage de la natation, avec un focus sur
+            le progrès individuel et l’épanouissement personnel. Promotion de la discipline et du respect
+            dans chaque séance.
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <h3>Formation & Développement</h3>
+          <p>
+            Développement de compétences techniques et pédagogiques, apprentissage continu pour mieux
+            encadrer les élèves, et expériences diverses liées à la gestion et l’organisation des séances
+            de natation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 KOLTIZ Club de Natation – Tous droits réservés
+    </footer>
+  </div>
+</body>
+</html>

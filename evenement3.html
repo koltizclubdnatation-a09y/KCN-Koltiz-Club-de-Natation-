@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KCN – Atelier Leadership & Coaching Sportif (11–13 avril 2025)</title>
+  <meta name="description" content="Atelier & formation en leadership et coaching sportif animé par Mme King Ruby. Trois jours d’apprentissage, de pratique et de partage avec le staff KCN.">
+  <meta name="theme-color" content="#0066cc" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="KCN – Atelier Leadership & Coaching Sportif (11–13 avril 2025)" />
+  <meta property="og:description" content="Trois jours d’atelier et de formation animés par Mme King Ruby : leadership, communication, coaching sportif et pratiques terrain." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="./assets/images/og-cover.jpg" />
+  <meta property="og:url" content="https://exemple.com/evenement-leadership-11-13-avril-2025" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
+      --ink:#0f172a; --muted:#475569; --page:#f7f9fc; --card:#ffffff; --line:#e5e7eb;
+      --radius:16px; --shadow:0 20px 50px rgba(2,6,23,.12);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+    img{display:block;max-width:100%;height:auto}
+    a{color:var(--brand);text-decoration:none}
+    a:focus-visible,button:focus-visible{outline:3px solid #111; outline-offset:2px}
+
+    /* HEADER compact */
+    header{background:linear-gradient(90deg,var(--brand),var(--accent)); color:#fff; box-shadow:0 6px 20px rgba(0,0,0,.1)}
+    .nav{max-width:1160px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+    .brand img{width:52px;height:52px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+    .nav a{color:#fff;text-decoration:none;font-weight:700;padding:8px 10px;border-radius:10px}
+    .nav a:hover{background:rgba(255,255,255,.18)}
+
+    /* HERO */
+    .hero{position:relative;min-height:56vh;display:grid;place-items:center;overflow:hidden;padding:40px 16px}
+    .hero::before{content:"";position:absolute;inset:0;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;filter:saturate(1.04) contrast(1.05)}
+    .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,26,60,.35),rgba(0,0,0,.45))}
+    .hero-inner{position:relative;z-index:1;text-align:center;padding:28px;border-radius:var(--radius);backdrop-filter:saturate(1.1) blur(3px);background:rgba(255,255,255,.88);box-shadow:var(--shadow);max-width:900px}
+    .hero h1{margin:.2em 0 .2em;font-size:clamp(28px,4vw,44px);line-height:1.12;background:linear-gradient(90deg,var(--brand),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{margin:8px 0 0;color:#1f2937}
+    .meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    .chip{border:1px solid rgba(0,102,204,.25);background:rgba(0,102,204,.06);color:#0b4573;border-radius:999px;padding:7px 12px;font-weight:700}
+
+    /* LAYOUT */
+    .wrap{max-width:1160px;margin:40px auto 70px;padding:0 16px}
+    .grid{display:grid;gap:20px}
+    @media(min-width:980px){.grid{grid-template-columns:1.15fr .85fr}}
+    .card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:20px}
+    .card h2{margin:0 0 8px;color:#0b4573}
+    .muted{color:#64748b}
+    .list{padding-left:18px;margin:0;display:grid;gap:8px}
+
+    /* TIMELINE (programme) */
+    .timeline{display:grid;gap:14px;margin-top:8px}
+    .step{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+    .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--brand),var(--accent));margin-top:7px;box-shadow:0 0 0 4px rgba(0,102,204,.15)}
+    .step h4{margin:0;color:#0b4573}
+    .step p{margin:4px 0 0}
+
+    /* INTERVENANTE */
+    .profile{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center}
+    .avatar{width:84px;height:84px;border-radius:16px;background:linear-gradient(90deg,var(--brand),var(--accent));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,.08)}
+
+    /* GALLERY */
+    .gallery{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .tile{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);cursor:zoom-in}
+    .tile img{width:100%;height:260px;object-fit:cover;display:block;transition:transform .35s ease}
+    .tile:hover img{transform:scale(1.04)}
+    .cap{position:absolute;left:10px;bottom:10px;background:rgba(15,23,42,.6);color:#fff;font-weight:700;padding:6px 10px;border-radius:999px;font-size:.85rem}
+
+    /* CTA buttons */
+    .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;border:2px solid transparent;font-weight:800;cursor:pointer;transition:.18s;box-shadow:0 10px 28px rgba(255,152,0,.22)}
+    .btn.primary{background:linear-gradient(90deg,var(--sun),#ffc107);color:#fff}
+    .btn.primary:hover{transform:translateY(-2px)}
+    .btn.ghost{background:#ffffff;color:var(--brand);border-color:var(--brand)}
+
+    /* Lightbox */
+    .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:80;padding:16px}
+    .lb.open{display:grid}
+    .lb img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 4px 24px rgba(255,255,255,.4)}
+    .lb .x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:0;color:#fff;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
+    .lb .x:hover{background:rgba(255,255,255,.24)}
+
+    /* FOOTER */
+    footer{background: linear-gradient(90deg, #00b4db, #0093e9); color:#fff; padding:20px 0; border-top:3px solid rgba(255,255,255,0.3)}
+    .footer-inner{max-width:1100px; margin:auto; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
+    .footer-top{display:flex; align-items:center; flex-direction:column; gap:8px}
+    .footer-logo{width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .copyright{font-size:.9rem; color:#f1f9ff; margin:0}
+    .footer-social-block{display:flex; flex-direction:column; align-items:center; gap:6px}
+    .follow-text{font-weight:600; font-size:.95rem; color:#ffe082}
+    .footer-social{display:flex; justify-content:center; gap:14px}
+    .footer-social img{width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; transition:transform .3s, box-shadow .3s}
+    .footer-social img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4)}
+    .footer-legal{display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:6px}
+    .footer-legal a{color:#fff; text-decoration:none; font-size:.9rem}
+    .footer-legal a:hover{color:#004c91; text-decoration:underline}
+    @media (min-width:768px){
+      .footer-inner{flex-direction:row; justify-content:space-between; text-align:left}
+      .footer-top{flex-direction:row; gap:14px}
+      .footer-social-block{flex-direction:row; gap:10px}
+      .footer-legal{margin-top:0}
+    }
+  </style>
+</head>
+<body>
+
+    <!-- HERO -->
+  <section class="hero" aria-label="Bannière de l'événement">
+    <div class="hero-inner">
+      <h1>Atelier & Formation – Leadership & Coaching Sportif</h1>
+      <p><strong>11 → 13 avril 2025</strong> – Trois jours de contenus, de pratique et d’échanges pour renforcer nos compétences de terrain.</p>
+      <div class="meta" aria-hidden="true">
+        <span class="chip">Intervenante : Mme Ruby KING</span>
+        <span class="chip">KCN • Delmas 75</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="grid">
+      <!-- Colonne : Programme -->
+      <article class="card">
+        <h2>Programme en 3 jours</h2>
+        <p class="muted">Axes clés : posture de leader, communication, pédagogie sportive, sécurité & gestion de groupe.</p>
+
+        <div class="timeline" role="list" aria-label="Programme détaillé">
+          <div class="step" role="listitem">
+            <span class="dot" aria-hidden="true"></span>
+            <div>
+              <h4>Jour 1 — Leadership & Culture d’équipe (11 avril)</h4>
+              <p>Vision & valeurs KCN, rôle du coach-leader, communication assertive, scénarios de cas pratiques.</p>
+            </div>
+          </div>
+          <div class="step" role="listitem">
+            <span class="dot" aria-hidden="true"></span>
+            <div>
+              <h4>Jour 2 — Coaching Sportif & Sécurité (12 avril)</h4>
+              <p>Principes de planification, corrections techniques, sécurité en bassin, gestion des niveaux hétérogènes.</p>
+            </div>
+          </div>
+          <div class="step" role="listitem">
+            <span class="dot" aria-hidden="true"></span>
+            <div>
+              <h4>Jour 3 — Mise en pratique & Feedback (13 avril)</h4>
+              <p>Ateliers terrain, observation croisée, débriefing, plan d’action individuel pour chaque coach/animateur.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta">
+          <a class="btn primary" href="./inscription1eretapes.html">S’inscrire au club</a>
+          <a class="btn ghost" href="./reservation.html">Réserver un essai</a>
+        </div>
+      </article>
+
+      <!-- Colonne : Intervenante & Remerciements -->
+      <aside class="card">
+        <h2>Intervenante & Remerciements</h2>
+
+        <div class="profile" style="margin-bottom:14px">
+          <div class="avatar" aria-hidden="true">KR</div>
+          <div>
+            <strong>Madame Ruby KING</strong><br>
+            <span class="muted">Formatrice – Leadership & Coaching Sportif</span>
+            <p class="muted" style="margin:6px 0 0">Interventions centrées sur le leadership appliqué, la communication, la pédagogie active et la sécurité des pratiquants.</p>
+          </div>
+        </div>
+
+        <h3 style="margin:10px 0 6px;color:#0b4573">Nos remerciements 💙</h3>
+        <ul class="list">
+          <li><strong>Responsable Technique : Asdad FENELUS</strong> — coordination pratique & supervision technique.</li>
+          <li><strong>Madame Estephanie ANTOINE</strong> — appui logistique & organisation.</li>
+          <li><strong>Responsable du Developpement et Communication & Animation: <br>Jude Hernst DELICE</strong> — support opérationnel & mobilisation.</li>
+          <li><em>Et tous les membres du staff</em> qui ont rendu possible cet atelier, sur et hors du bassin.</li>
+        </ul>
+      </aside>
+    </div>
+
+    <!-- Galerie photos (à compléter) -->
+    <section class="card" style="margin-top:20px">
+      <h2>Galerie de l’atelier</h2>
+      <p class="muted">Quelques photos de la formation : sessions, pratique, équipe et participants.</p>
+      <div class="gallery" id="gal">
+        <!-- Remplace les src par tes vraies images -->
+        <figure class="tile">
+          <img src="./folder7/aktivite-kcn/2.jpeg" alt="Photo de groupe avec le staff" loading="lazy">
+          <figcaption class="cap">Moment inoubliable</figcaption>
+        </figure>
+        <figure class="tile">
+          <img src="./folder7/aktivite-kcn/3.jpeg" alt="Mise en pratique en bassin jour " loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+          
+        </figure>
+        <figure class="tile">
+          <img src="./folder7/aktivite-kcn/4.jpeg" alt="Mise en pratique en bassin jour" loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+        </figure>
+        <figure class="tile">
+          <img src="./folder7/aktivite-kcn/5.jpeg" alt="Mise en pratique en bassin jour" loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+        </figure>
+        <figure class="tile">
+          <img src="./folder7/aktivite-kcn/7.jpeg" alt="Mise en pratique en bassin jour" loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+        </figure>
+        <figure class="tile">
+          <img src="./folder1/imaj001.jpeg" alt="Mise en pratique en bassin jour" loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+        </figure> 
+         <figure class="tile">
+          <img src="./folder1/imaj002.jpeg" alt="Mise en pratique en bassin jour" loading="lazy">
+          <figcaption class="cap">Mise en pratique en bassin jour</figcaption>
+        </figure> 
+      </div>
+    </section>
+
+   
+
+  <!-- Lightbox -->
+  <div class="lb" id="lb" aria-hidden="true" role="dialog">
+    <button class="x" id="lbX" aria-label="Fermer">✕</button>
+    <img id="lbImg" src="" alt="">
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+
+      <div class="footer-social-block">
+        <span class="follow-text">Suivez-nous :</span>
+        <div class="footer-social" aria-label="Réseaux sociaux KCN">
+          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
+            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
+          </a>
+          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener" aria-label="Instagram KCN">
+            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
+          </a>
+          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener" aria-label="WhatsApp KCN">
+            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
+          </a>
+        </div>
+      </div>
+
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    /* Lightbox */
+    (function(){
+      const lb = document.getElementById('lb');
+      const img = document.getElementById('lbImg');
+      const close = document.getElementById('lbX');
+      document.querySelectorAll('#gal .tile img').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          img.src = el.currentSrc || el.src;
+          img.alt = el.alt || '';
+          lb.classList.add('open');
+          lb.setAttribute('aria-hidden','false');
+        });
+      });
+      const closeLb = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); img.src=''; };
+      close.addEventListener('click', closeLb);
+      lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLb(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+    })();
+  </script>
+</body>
+</html>

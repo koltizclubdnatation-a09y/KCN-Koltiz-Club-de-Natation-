@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KCN – Plan de Formation des Cours</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Montserrat',sans-serif;background:#f9f9f9;color:#222;line-height:1.6}
+
+    /* HERO */
+    .hero-cours{
+      background:url('./folder3/imaj8.png') center/cover no-repeat;
+      min-height:55vh;display:flex;justify-content:center;align-items:center;
+      padding:40px 20px;text-align:center
+    }
+    .hero-text{
+      background:rgba(255,255,255,.92);padding:30px 24px;border-radius:16px;
+      max-width:700px;box-shadow:0 4px 18px rgba(0,0,0,.1)
+    }
+    .hero-cours h2{color:#0066cc;font-size:2em;margin-bottom:12px}
+    .hero-cours p{color:#333;font-size:1.05em}
+
+    /* CONTENT */
+    .cours-content{max-width:1200px;margin:60px auto;padding:0 16px}
+    h2,h3{color:#0066cc;margin:24px 0 12px}
+    p,li{margin-bottom:12px}
+
+    /* SLIDER */
+    .slider{position:relative;border-radius:12px;overflow:hidden;margin:40px 0;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+    .slides{position:relative;aspect-ratio:16/9}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+    .slide.active{opacity:1;z-index:2}
+    .slide img{width:100%;height:100%;object-fit:cover}
+    .slide-text{
+      position:absolute;bottom:20px;left:20px;background:rgba(0,0,0,.55);
+      color:#fff;padding:16px 20px;border-radius:8px;max-width:85%;
+      font-size:1em;opacity:0;transform:translateY(20px);
+      transition:opacity .8s ease,transform .8s ease
+    }
+    .slide.active .slide-text{opacity:1;transform:translateY(0)}
+    .slide-text h4{margin-bottom:6px;color:#ffcc00;font-size:1.15em}
+
+    .slider-controls{
+      position:absolute;top:50%;left:0;right:0;
+      display:flex;justify-content:space-between;padding:0 10px;
+      transform:translateY(-50%);z-index:3
+    }
+    .ctrl{
+      background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;
+      width:42px;height:42px;display:grid;place-items:center;
+      font-size:1.2rem;cursor:pointer;transition:.25s
+    }
+    .ctrl:hover{background:rgba(0,0,0,.8);transform:scale(1.05)}
+
+    /* BUTTONS */
+    .btn{
+      background:#0066cc;color:#fff;padding:12px 22px;border-radius:12px;
+      text-decoration:none;font-weight:600;display:inline-block;margin:12px 8px;
+      box-shadow:0 4px 12px rgba(0,0,0,.1);transition:transform .3s,box-shadow .3s
+    }
+    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.15)}
+
+    /* FOOTER (unique, fusion des doublons) */
+    footer{
+      margin-top:60px;background:linear-gradient(90deg,#00b4db,#0093e9);
+      color:#fff;text-align:center;padding:24px 0;font-family:'Montserrat',sans-serif;
+      border-top:3px solid rgba(255,255,255,.3)
+    }
+    .footer-inner{max-width:1100px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 16px}
+    .footer-top{display:flex;align-items:center;flex-direction:column;gap:8px}
+    .footer-logo{width:70px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .copyright{font-size:.9rem;color:#f1f9ff;margin:4px 0}
+    .footer-social-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .follow-text{font-weight:600;font-size:.95rem;color:#ffe082}
+    .footer-social{display:flex;justify-content:center;gap:14px}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;transition:transform .3s,box-shadow .3s}
+    .footer-social img:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(255,255,255,.4)}
+    .footer-legal{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .footer-legal a{color:#fff;text-decoration:none;font-size:.9rem;transition:color .3s}
+    .footer-legal a:hover{color:#004c91;text-decoration:underline}
+
+    @media(max-width:768px){
+      .hero-cours h2{font-size:1.6em}
+      .hero-cours p{font-size:1em}
+      .slide-text{font-size:.9em;padding:10px 14px}
+      .slides{aspect-ratio:4/3}
+    }
+    @media(min-width:768px){
+      .footer-inner{flex-direction:row;justify-content:space-between;text-align:left}
+      .footer-top{flex-direction:row;gap:14px}
+      .footer-social-block{flex-direction:row;gap:10px}
+      .footer-legal{margin-top:0}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero-cours" aria-label="Bannière Plan de Formation KCN">
+    <div class="hero-text">
+      <h2>Plan de Formation des Cours – KOLTIZ Club de Natation</h2>
+      <p>Découvrez nos objectifs, niveaux, méthodes et avantages pour tous nos membres.</p>
+    </div>
+  </section>
+
+  <!-- CONTENU -->
+  <section class="cours-content">
+    <h2>Objectifs Généraux</h2>
+    <p>Développer les compétences en natation pour tous les niveaux (débutants, intermédiaires, avancés).<br>
+    Préparer les membres aux compétitions internes et externes, en favorisant la progression individuelle.<br>
+    Offrir une progression continue selon le rythme de chaque membre.</p>
+
+    <h3>Niveaux de Formation</h3>
+    <p><b>Niveau Débutant :</b> Apprentissage des bases de la natation et sécurité dans l’eau.</p>
+    <p><b>Niveau Intermédiaire :</b> Perfectionnement des techniques, endurance et vitesse.</p>
+    <p><b>Niveau Avancé :</b> Préparation compétitive, stratégie et performance.</p>
+
+    <!-- SLIDER -->
+    <div class="slider" id="slider" aria-label="Galerie photo formation KCN">
+      <div class="slides">
+        <div class="slide active">
+          <img src="./folder3/imaj4.jpeg" alt="Cours débutant KCN">
+          <div class="slide-text"><h4>Niveau Débutant</h4>Apprentissage des bases et sécurité dans l'eau.</div>
+        </div>
+        <div class="slide">
+          <img src="./folder3/imaj7.jpeg" alt="Programme avancé KCN">
+          <div class="slide-text"><h4>Durée des Programmes</h4>De 3 à 12 mois selon les objectifs individuels.</div>
+        </div>
+        <div class="slide">
+          <img src="./folder3/imaj9.jpeg" alt="Encadrement personnalisé KCN">
+          <div class="slide-text"><h4>Encadrement Personnalisé</h4>Suivi individualisé avec entraîneurs expérimentés.</div>
+        </div>
+        <div class="slide">
+          <img src="./folder3/imaj5.jpeg" alt="Ateliers et séminaires KCN">
+          <div class="slide-text"><h4>Ateliers et Séminaires</h4>Nutrition, préparation mentale, premiers secours.</div>
+        </div>
+      </div>
+      <div class="slider-controls" aria-hidden="false">
+        <button class="ctrl" id="prev" aria-label="Image précédente">&#10094;</button>
+        <button class="ctrl" id="next" aria-label="Image suivante">&#10095;</button>
+      </div>
+    </div>
+
+    <h3>Critères de Progression</h3>
+    <ul>
+      <li>Évaluations régulières (mensuelles ou trimestrielles).</li>
+      <li>Objectifs individuels de performance pour chaque membre.</li>
+    </ul>
+
+    <h3>Flexibilité et Adaptabilité</h3>
+    <p>Séances adaptées aux besoins particuliers, y compris les personnes à mobilité réduite.</p>
+
+    <h3>Suivi Après Compétition</h3>
+    <p>Retour d’expérience après chaque compétition pour ajuster les entraînements.</p>
+
+    <h3>Pourquoi Choisir le KCN ?</h3>
+    <p>Chaque membre progresse à son rythme, encadré par des entraîneurs qualifiés et bienveillants.</p>
+
+    <div style="text-align:center;margin-top:24px">
+      <a href="./inscription1eretapes.html" class="btn">Je m'inscris</a>
+      <a href="./reservation.html" class="btn">Réserver un essai gratuit</a>
+       <a href="./Apropos.html" class="btn">Retour</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+      <div class="footer-social-block">
+        <span class="follow-text">Suivez-nous :</span>
+        <div class="footer-social" aria-label="Réseaux sociaux KCN">
+          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" aria-label="Facebook KCN">
+            <img src="./folder0/facebook.png" alt="Facebook KCN">
+          </a>
+          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" aria-label="Instagram KCN">
+            <img src="./folder0/instagram.png" alt="Instagram KCN">
+          </a>
+          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" aria-label="WhatsApp KCN">
+            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN">
+          </a>
+        </div>
+      </div>
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- SLIDER JS -->
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let i = 0;
+    const show = n => slides.forEach((s,idx)=>s.classList.toggle('active', idx===n));
+    document.getElementById('next').addEventListener('click', ()=>{ i=(i+1)%slides.length; show(i); });
+    document.getElementById('prev').addEventListener('click', ()=>{ i=(i-1+slides.length)%slides.length; show(i); });
+    setInterval(()=>{ i=(i+1)%slides.length; show(i); }, 6000);
+  </script>
+</body>
+</html>

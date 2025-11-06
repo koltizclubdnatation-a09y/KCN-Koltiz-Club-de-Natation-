@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex,nofollow">
+  <title>KCN — Admin Reçus (Sécurisé)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --brand:#0b63c7; --accent:#00bcd4; --ink:#0f172a; --muted:#475569; --page:#f4f7fb;
+      --line:#e6eef6; --card:#ffffff; --ok:#16a34a; --wait:#b45309; --danger:#b91c1c;
+      --grad: linear-gradient(135deg, #0b63c7 0%, #00bcd4 100%);
+      --soft: 0 18px 48px rgba(2,6,23,.10);
+      --rad: 16px;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{font-size:16px}
+    body{margin:0;font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    h1{font-size:clamp(1.1rem,1rem + 1.2vw,1.6rem);line-height:1.2}
+    .mini{font-size:.95rem;color:var(--muted)}
+
+    .wrap{max-width:1200px;margin:32px auto;padding:0 16px}
+    .hero{background:var(--grad);color:#fff;border-radius:20px;box-shadow:var(--soft);padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--soft);padding:16px}
+    .row{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width:720px){.row.two{grid-template-columns:2fr 1fr}}
+
+    input,button{font-family:inherit}
+    input[type="password"],input[type="search"]{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    input[type="search"]{min-width:260px}
+    .btn{background:linear-gradient(90deg,#ff9800,#ffc107);color:#111;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.2);transition:transform .06s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.ghost{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
+    .btn.danger{background:#fff;color:var(--danger);border:2px solid var(--danger)}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse;min-width:720px;background:#fff}
+    th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
+    thead th{position:sticky;top:0;background:#f8fbff;color:#0b4573;z-index:1}
+    .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;border:1px solid var(--line);background:#fff}
+    .ok{color:var(--ok);border-color:#86efac;background:#f0fdf4}
+    .wait{color:var(--wait);border-color:#fde68a;background:#fffbeb}
+
+    .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
+    .modal{position:fixed;inset:0;display:grid;place-items:center;z-index:61;opacity:0;pointer-events:none;transition:opacity .18s}
+    .show{opacity:1;pointer-events:auto}
+    .mcard{width:min(94%,860px);max-height:min(90vh,90dvh);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--soft);padding:16px;position:relative}
+
+    @media (max-width:520px){
+      .btn{padding:9px 12px}
+      .hero{padding:14px 16px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="hero" role="banner">
+      <h1>Admin — Reçus d’inscription KCN</h1>
+      <div class="mini" aria-hidden="true">Accès restreint</div>
+    </div>
+
+    <!-- Connexion -->
+    <div class="card" id="loginBox">
+      <div class="row two">
+        <div>
+          <label for="adminCode" class="mini">Code Admin</label>
+          <input id="adminCode" type="password" placeholder="Entrer le code Admin" autocomplete="current-password" />
+        </div>
+        <div style="align-self:end">
+          <button class="btn" id="adminLogin" type="button">Se connecter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="card" id="tableBox" style="display:none">
+      <div class="bar">
+        <input id="q" type="search" placeholder="Rechercher (nom, email, méthode…)" aria-label="Recherche">
+        <button class="btn" id="refresh" type="button">Rafraîchir</button>
+        <button class="btn ghost" id="exportCsv" type="button">Exporter CSV</button>
+        <button class="btn ghost" id="logout" type="button" style="margin-left:auto">Se déconnecter</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Nom</th><th>Méthode</th><th>Devise</th><th>Total</th><th>Statut</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p id="empty" class="mini" style="margin-top:10px;display:none">
+        Aucun reçu pour le moment. (Vérifie que le formulaire et l’admin sont sur le même domaine.)
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Bloquer accès depuis un autre domaine (option)
+    if (location.hostname && !/^(localhost|127\.0\.0\.1|koltizclub\.com)$/i.test(location.hostname)) {
+      location.replace('./index.html');
+    }
+
+    // ================== CONFIG ==================
+    const STORAGE_KEY = 'kcn_rcp_v1_x9q3';
+    // SHA-256 du code : "KCN#Ruby-2026!"
+    const ADMIN_CODE_SHA256 = "dc8ce42283e3923daab700a3f788c73c1e38d38e7e1b054cb0e68cd41d65a509";
+    // ============================================
+
+    const $ = s => document.querySelector(s);
+    const loginBox = $('#loginBox');
+    const tableBox = $('#tableBox');
+    const rows = $('#rows');
+    const empty = $('#empty');
+    const q = $('#q');
+
+    const nf = new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2});
+    const money = (val,cur)=> (cur==='USD'?'$ ':'')+nf.format(val)+(cur==='HTG'?' HTG':'');
+    const pick = (a,b)=> a==null?b:a;
+
+    function load(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{return [];} }
+    function save(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+    function render(){
+      const all = load();
+      const term = (q.value||'').toLowerCase();
+      rows.innerHTML='';
+      const list = all.filter(r=>{
+        if(!term) return true;
+        return [r.no,r.name,r.email,r.method,r.status].join(' ').toLowerCase().includes(term);
+      });
+      if(!list.length){ empty.style.display='block'; return; }
+      empty.style.display='none';
+      list.forEach(r=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td>${r.date||''}</td>
+          <td>${r.name||'—'}</td>
+          <td>${(r.method||'-').toUpperCase()}</td>
+          <td>${r.currency||'HTG'}</td>
+          <td>${money(pick(r.tot,r.totHTG)||0,r.currency||'HTG')}</td>
+          <td>${(r.status||'EN ATTENTE').toUpperCase()==='PAYÉ'
+                ?'<span class="pill ok">PAYÉ</span>'
+                :'<span class="pill wait">'+(r.status||'EN ATTENTE')+'</span>'}</td>
+          <td><button class="btn ghost" data-id="${r.id}" type="button">Supprimer</button></td>`;
+        rows.appendChild(tr);
+      });
+    }
+
+    rows.addEventListener('click',e=>{
+      const id=e.target.getAttribute('data-id');
+      if(!id) return;
+      if(confirm('Supprimer ce reçu ?')){
+        const list=load().filter(x=>x.id!==id);
+        save(list);
+        render();
+      }
+    });
+
+    $('#refresh').addEventListener('click',render);
+    q.addEventListener('input',render);
+
+    const adminCodeInput = $('#adminCode');
+    $('#adminLogin').addEventListener('click',login);
+    adminCodeInput.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+    $('#logout').addEventListener('click',()=>{tableBox.style.display='none';loginBox.style.display='block';adminCodeInput.value='';});
+
+    async function sha256Hex(text){
+      const enc=new TextEncoder().encode(text);
+      const buf=await crypto.subtle.digest('SHA-256',enc);
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function login(){
+      const code=(adminCodeInput.value||'').trim();
+      if(!code) return alert('Entrer le code.');
+      const h=await sha256Hex(code);
+      if(h===ADMIN_CODE_SHA256){
+        loginBox.style.display='none';
+        tableBox.style.display='block';
+        render();
+        q.focus();
+      }else alert('Code invalide.');
+    }
+
+    window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY)render();});
+  </script>
+</body>
+</html>

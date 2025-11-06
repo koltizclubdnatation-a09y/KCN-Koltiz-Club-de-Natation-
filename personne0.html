@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="fr" itemscope itemtype="https://schema.org/Person">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Membre – Valéry GERNIER | Président | KOLTIZ Club de Natation</title>
+  <meta name="description" content="Profil de Valéry GERNIER — Co-fondateur et Président du KOLTIZ Club de Natation." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc;--accent:#00bcd4;--ink:#1f2937;--muted:#6b7280;--bg:#f4f7fb;
+      --card:#ffffff;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+
+    a{color:var(--brand);text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .container{max-width:1100px;margin:40px auto;padding:0 24px}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stack{display:grid;gap:clamp(12px,2vw,18px)}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#d7f3f8,#b3e5fc);padding:28px;border-radius:var(--radius);position:relative;overflow:hidden}
+    .hero-inner{display:grid;gap:12px;align-items:center;justify-items:center;text-align:center}
+    .avatar{width:180px;height:180px;border-radius:50%;object-fit:cover;border:5px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+    .title{margin:6px 0 0;color:#0b0b0b}
+    .role{margin:0;color:var(--muted);font-weight:600}
+
+    /* NAV */
+    .tabs{margin-top:16px;background:#0288d1;border-radius:12px}
+    .tabs ul{list-style:none;margin:0;padding:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .tabs a{color:#fff;font-weight:600;padding:10px 14px;border-radius:10px}
+    .tabs a:hover{background:rgba(255,255,255,.18)}
+
+    /* CONTENT */
+    section{margin:26px 0}
+    section h2{font-size:1.25rem;margin:0 0 10px;color:#0b0b0b;border-left:5px solid #0288d1;padding-left:10px}
+    .content{padding:22px}
+
+    /* TIMELINE */
+    .timeline{border-left:3px solid #0288d1;margin-left:12px;padding-left:18px}
+    .timeline-item{margin:18px 0}
+    .timeline-item h3{margin:0 0 6px;font-size:1.05rem}
+    .badge{display:inline-block;background:#0288d1;color:#fff;border-radius:8px;padding:4px 8px;font-size:.8rem;margin-left:6px}
+
+    footer{margin:28px 0;color:#777;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO -->
+    <header class="card hero" role="banner">
+      <div class="hero-inner">
+        <img class="avatar" src="./assets/images/valery/imaj134.png" alt="Photo de Valéry GERNIER" />
+        <h1 class="title">Valéry GERNIER</h1>
+        <h2 class="role">Co-fondateur – Président</h2>
+      </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="tabs" aria-label="Navigation profil">
+      <ul>
+        <li><a href="#presentation">Présentation</a></li>
+        <li><a href="#experience">Expérience</a></li>
+      </ul>
+    </nav>
+
+    <!-- PRÉSENTATION -->
+    <section id="presentation" class="card content">
+      <h2>Présentation</h2>
+      <p>
+        <strong>Valéry GERNIER</strong>, Président et Co-fondateur du <b>KOLTIZ Club de Natation</b>, est un passionné de sport.
+        Ancien footballeur, il a trouvé sa véritable vocation dans la natation, convaincu que tout le monde devrait avoir
+        l’opportunité d'apprendre à nager, surtout dans un pays comme Haïti.
+      </p>
+      <p>
+        Sous sa présidence, le KOLTIZ Club de Natation s'efforce de rendre la natation accessible à tous,
+        en mettant l’accent sur la sécurité aquatique et le développement personnel. Son leadership se distingue
+        par sa vision inclusive et son engagement à promouvoir la natation comme un outil de bien-être et de
+        transformation pour chacun.
+      </p>
+    </section>
+
+    <!-- EXPÉRIENCE -->
+    <section id="experience" class="card content">
+      <h2>Expérience</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h3>Depuis 2023 — Président du KCN <span class="badge">Direction</span></h3>
+          <p>
+            Il supervise la gestion stratégique et opérationnelle du club, en veillant au bon développement des activités
+            aquatiques et sportives. Son objectif : positionner le KCN comme une référence nationale et internationale
+            en matière de formation aquatique.
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <h3>Parcours sportif</h3>
+          <p>
+            Ancien footballeur passionné, Valéry a su transposer les valeurs du sport collectif dans la natation :
+            discipline, esprit d’équipe et persévérance, afin de bâtir un club fort et inclusif.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 KOLTIZ Club de Natation – Tous droits réservés
+    </footer>
+  </div>
+</body>
+</html>

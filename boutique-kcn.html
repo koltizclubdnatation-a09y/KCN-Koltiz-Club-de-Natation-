@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KCN — Boutique matériel & packs</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --brand:#0066cc;--accent:#00bcd4;--sun:#ff9800;
+    --ink:#0f172a;--muted:#475569;--line:#e5e7eb;
+    --card:#ffffff;--page:#f7f9fc;--radius:16px;
+    --shadow:0 18px 48px rgba(2,6,23,.12);
+    --ok:#16a34a; --warn:#f59e0b; --low:#fb923c; --out:#ef4444;
+    --okbg:rgba(22,163,74,.08); --warnbg:rgba(245,158,11,.10);
+    --lowbg:rgba(251,146,60,.12); --outbg:rgba(239,68,68,.10)
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6}
+  a{color:var(--brand);text-decoration:none}
+  img{max-width:100%;height:auto;display:block}
+
+  .wrap{max-width:1200px;margin:28px auto 60px;padding:0 16px}
+  header.hero{position:relative;border-radius:20px;overflow:hidden;background:
+    linear-gradient(180deg,rgba(0,102,204,.16),rgba(0,188,212,.12)),
+    url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
+    min-height:220px;display:grid;place-items:center;margin-bottom:18px}
+  .hero .card{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);padding:22px;border-radius:18px;box-shadow:var(--shadow);text-align:center;border:1px solid rgba(255,255,255,.65);width:min(92%,860px)}
+  .hero h1{color:var(--brand);font-size:1.9rem;margin-bottom:6px}
+  .hero p{color:#111827}
+
+  .toolbar{display:grid;gap:12px;grid-template-columns:1fr;align-items:end;margin:16px 0}
+  @media(min-width:840px){.toolbar{grid-template-columns:2fr 1fr 1fr 1fr}}
+  label{font-weight:700;color:#0b4573;display:block;margin:4px 0}
+  input[type="text"],select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+
+  .layout{display:grid;gap:22px;grid-template-columns:1fr}
+  @media(min-width:980px){.layout{grid-template-columns:1fr 340px}}
+
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .product-card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .product-card .bd{padding:12px 14px}
+  .product-card h3{color:#0b4573;margin-bottom:6px;font-size:1.05rem}
+  .price{font-weight:800;color:#111827}
+  .tag{display:inline-block;background:rgba(0,102,204,.08);border:1px solid rgba(0,102,204,.18);color:#0b4573;border-radius:999px;padding:4px 8px;font-size:.8rem;margin-right:6px}
+  .btn{background:linear-gradient(90deg,var(--sun),#ffc107);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)}
+  .btn.alt{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+
+  .thumb{height:180px;object-fit:cover}
+  .inline-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .qty{display:flex;gap:6px;align-items:center}
+  .qty input{width:56px;padding:6px 8px;border-radius:10px;border:1px solid var(--line)}
+
+  /* Stock badges */
+  .stock{display:inline-block;border-radius:999px;padding:4px 10px;font-size:.78rem;border:1px solid}
+  .stock.ok{color:var(--ok);background:var(--okbg);border-color:rgba(22,163,74,.3)}
+  .stock.warn{color:var(--warn);background:var(--warnbg);border-color:rgba(245,158,11,.35)}
+  .stock.low{color:var(--low);background:var(--lowbg);border-color:rgba(251,146,60,.35)}
+  .stock.out{color:var(--out);background:var(--outbg);border-color:rgba(239,68,68,.35)}
+
+  .side{position:sticky;top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
+  .row.total{border-top:1px dashed var(--line);padding-top:10px;margin-top:8px;font-weight:800}
+  .muted{color:#64748b}
+  .mini{font-size:.86rem;color:#475569}
+  .actions{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+
+  .footer-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+  .promo{margin:10px 0 18px;background:linear-gradient(90deg,rgba(255,152,0,.12),rgba(0,102,204,.08));border:1px dashed var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .promo strong{color:#0b4573}
+
+  .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(2,6,23,.7);z-index:998}
+  .modal.open{display:grid;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);max-width:900px;width:min(96vw,900px);padding:16px}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+  .sheet-head h3{margin:0;color:#0b4573}
+  .close{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
+  .product-content{display:grid;gap:16px;grid-template-columns:1fr}
+  @media(min-width:860px){.product-content{grid-template-columns:1.2fr .8fr}}
+  .viewer{border:1px solid var(--line);border-radius:12px;padding:8px}
+  .viewer img{width:100%;height:360px;object-fit:cover;border-radius:10px}
+  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .thumbs img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer}
+  .thumbs img[aria-current="true"]{border-color:var(--brand)}
+  .pd-actions{display:grid;gap:10px}
+  .pd-price{font-size:1.3rem;font-weight:800}
+  .pd-qty{display:flex;align-items:center;gap:10px}
+
+  .kcn-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(2,6,23,.7);z-index:999}
+  .kcn-modal.open{display:grid;animation:kcnFade .2s ease}
+  @keyframes kcnFade{from{opacity:0}to{opacity:1}}
+  .kcn-sheet{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);max-width:720px;width:min(96vw,720px);padding:18px}
+  .kcn-head{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #e5e7eb;padding-bottom:10px;margin-bottom:12px}
+  .kcn-head h3{margin:0;color:#0b4573}
+  .kcn-close{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;cursor:pointer}
+  .kcn-row{display:grid;gap:10px;margin:10px 0}
+  .kcn-tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .kcn-tab{border:1px solid #e5e7eb;background:#f8fafc;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .kcn-tab.active{border-color:#0066cc;background:#eaf3ff}
+  .kcn-pane{display:none}
+  .kcn-pane.active{display:block}
+  .kcn-box{border:1px dashed #e5e7eb;border-radius:12px;padding:12px;background:#fbfdff}
+  .kcn-cols{display:grid;gap:12px;grid-template-columns:1fr}
+  @media(min-width:720px){.kcn-cols{grid-template-columns:1fr 1fr}}
+  .kcn-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+  .kcn-btn{background:linear-gradient(90deg,#ff9800,#ffc107);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)}
+  .kcn-btn.alt{background:#fff;color:#0066cc;border:2px solid #0066cc;box-shadow:none}
+  .kcn-mini{font-size:.9rem;color:#475569}
+  .kcn-copy{border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;background:#fff;cursor:pointer}
+  .kcn-ok{color:#16a34a;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="card">
+      <h1>Magasin KCN — Matériel & Packs</h1>
+      <p>Choisissez votre équipement. Ajoutez au panier, puis réglez par virement / MonCash / NatCash / Espèces (0 frais plateforme). Reçu provisoire inclus.</p>
+    </div>
+  </header>
+
+  <div class="promo" role="status" aria-live="polite">
+    <span>🎉</span> <strong>Promo week-end : −10% sur les packs</strong> (automatique) — limité dans le temps.
+  </div>
+
+  <!-- Toolbar -->
+  <section class="toolbar" aria-label="Filtres boutique">
+    <div>
+      <label for="q">Recherche</label>
+      <input id="q" type="text" placeholder="bonnet, lunettes, brassards, tenue enfant garcon, tenue enfant fille, tenue de bain pour homme, tenue de bain, tenue de femme, palme de nanation, tuba, bouchon d'oreille, pince nez, pull buoy, corde bande resistance, planche, grand anneau, ballon piscine, masque tuba,…">
+    </div>
+    <div>
+      <label for="cat">Catégorie</label>
+      <select id="cat">
+        <option value="">Toutes</option>
+        <option value="bonnets">Bonnets</option>
+        <option value="lunettes">Lunettes</option>
+        <option value="brassards">Brassards</option>
+        <option value="packs">Packs</option>
+        <option value="tenue enfant garcon">tenue enfant garcon</option>
+        <option value="tenue enfant fille">tenue enfant fille</option>  
+        <option value="tenue de bain pour homme">tenue de bain pour homme</option>
+        <option value="tenue de bain">tenue de bain</option>
+        <option value="tenue de femme">tenue de femme</option>
+        <option value="palme de nanation">palme de nanation</option>
+        <option value="tuba">tuba</option>
+        <option value="bouchon d'oreille">bouchon d'oreille</option>
+        <option value="pince nez">pince nez</option>
+        <option value="pull buoy">pull buoy</option>
+        <option value="corde bande resistance">corde bande resistance</option>
+        <option value="planche">planche</option>
+        <option value="grand anneau">grand anneau</option>
+        <option value="ballon piscine">ballon piscine</option>
+        <option value="masque tuba">masque tuba</option>
+      </select>
+    </div>
+    <div>
+      <label for="currency">Devise</label>
+      <select id="currency">
+        <option value="HTG" selected>HTG</option>
+        <option value="USD">USD</option>
+      </select>
+    </div>
+    <div id="rateWrap" style="display:none">
+      <label for="rate">Taux USD ↔ HTG</label>
+      <input id="rate" type="text" inputmode="decimal" placeholder="ex: 130">
+    </div>
+  </section>
+
+  <section class="layout">
+    <!-- Products -->
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+
+    <!-- Cart -->
+    <aside class="side" aria-label="Panier">
+      <h3 style="color:#0b4573;margin-bottom:6px">Votre panier</h3>
+      <div id="cartList" class="mini">Aucun article pour l’instant.</div>
+      <div class="row"><span class="muted">Sous-total</span><strong id="sub">0 HTG</strong></div>
+      <div class="row"><span class="muted">Remise</span><strong id="disc">—</strong></div>
+      <div class="row total"><span>Total estimé</span><strong id="tot">0 HTG</strong></div>
+
+      <div class="actions">
+        <div class="mini">Mode de paiement</div>
+        <label class="mini"><input type="radio" name="shopPay" value="bank" data-fee-pct="0" data-fee-fixed="0" checked> Virement bancaire (0%)</label>
+        <label class="mini"><input type="radio" name="shopPay" value="moncash" data-fee-pct="0.02" data-fee-fixed="0"> MonCash (+2%)</label>
+        <label class="mini"><input type="radio" name="shopPay" value="natcash" data-fee-pct="0.02" data-fee-fixed="0"> NatCash (+2%)</label>
+        <label class="mini"><input type="radio" name="shopPay" value="cash" data-fee-pct="0" data-fee-fixed="0"> Espèces (0%)</label>
+
+        <!-- Livraison locale -->
+        <div class="row">
+          <label class="mini" style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" id="deliverOpt"> Livraison locale (zones proches) +500 HTG
+          </label>
+          <strong id="delivery">0 HTG</strong>
+        </div>
+
+        <div class="row"><span class="muted">Frais paiement</span><strong id="fee">0 HTG</strong></div>
+        <div class="row total"><span>Total avec frais</span><strong id="gt">0 HTG</strong></div>
+
+        <button class="btn" id="checkout">Procéder au paiement</button>
+        <button class="btn alt" id="clearCart">Vider le panier</button>
+        <p class="mini">Le magasin est <strong>indépendant</strong> de l’inscription. Promo, devise, frais et livraison s’appliquent ici.</p>
+      </div>
+    </aside>
+  </section>
+
+  <div class="footer-cta footer-cta--shop">
+    <a class="btn alt" href="./descriptioncours.html">← Voir les cours</a>
+    <a class="btn" href="./contactez-nous.html">Contacter KCN</a>
+  </div>
+</div>
+
+<!-- ===== Modal Détail Produit ===== -->
+<div class="modal" id="pdModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head">
+      <h3 id="pdTitle">Détail produit</h3>
+      <button class="close" id="pdClose">Fermer ✕</button>
+    </div>
+    <div class="product-content">
+      <div class="viewer">
+        <img id="pdMain" src="" alt="">
+        <div class="thumbs" id="pdThumbs"></div>
+      </div>
+      <div class="pd-actions">
+        <div class="pd-price" id="pdPrice">—</div>
+        <div id="pdTags"></div>
+
+        <!-- Choix de couleur -->
+        <div id="pdColors"></div>
+
+        <!-- ETAT STOCK ICI -->
+        <div id="pdStock" class="mini"></div>
+
+        <div class="pd-qty">
+          <label for="pdQty"><strong>Quantité</strong></label>
+          <input id="pdQty" type="number" value="1" min="1" style="width:72px;padding:6px 8px;border:1px solid var(--line);border-radius:10px">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="pdAdd">Ajouter au panier</button>
+          <button class="btn alt" id="pdBack">Fermer</button>
+        </div>
+        <div class="mini" id="pdDesc"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Modal Paiement ===== (inchangé) ===== -->
+<div class="kcn-modal" id="payModal" aria-hidden="true">
+  <div class="kcn-sheet" role="dialog" aria-modal="true" aria-labelledby="kcnPayTitle">
+    <div class="kcn-head">
+      <h3 id="kcnPayTitle">Instructions de paiement (0 frais plateforme)</h3>
+      <button class="kcn-close" id="kcnClose">Fermer ✕</button>
+    </div>
+
+    <div class="kcn-row">
+      <div class="kcn-mini"><strong>N° commande :</strong> <span id="kcnOrderId"></span></div>
+      <div class="kcn-mini"><strong>Total à régler :</strong> <span id="kcnOrderTotal"></span></div>
+    </div>
+
+    <div class="kcn-tabs" role="tablist">
+      <button class="kcn-tab active" data-tab="bank" role="tab" aria-selected="true">Virement bancaire</button>
+      <button class="kcn-tab" data-tab="moncash" role="tab">MonCash</button>
+      <button class="kcn-tab" data-tab="natcash" role="tab">NatCash</button>
+      <button class="kcn-tab" data-tab="cash" role="tab">Espèces</button>
+    </div>
+
+    <div class="kcn-row">
+      <div class="kcn-pane active" id="pane-bank" role="tabpanel">
+        <div class="kcn-box">
+          <div><strong>Banque :</strong> UNIBANK</div>
+          <div><strong>Intitulé :</strong> KOLTIZ</div>
+          <div><strong>Compte :</strong> 601-1621-1795621 (HTG)</div>
+          <div><strong>Compte :</strong> 601-1622-1795619 (USD)</div>
+          <div class="kcn-actions">
+            <button class="kcn-copy" data-copy="UNIBANK - KOLTIZ - 601-1621-1795621 / 601-1622-1795619">Copier</button>
+            <span class="kcn-mini">Libellé à mettre : <b id="kcnLabel1"></b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kcn-pane" id="pane-moncash" role="tabpanel">
+        <div class="kcn-box">
+          <div><strong>MonCash :</strong> +509 36 98 52 21</div>
+          <div><strong>Nom :</strong> KOLTIZ Club</div>
+          <div class="kcn-actions">
+            <button class="kcn-copy" data-copy="+50936985221">Copier numéro</button>
+            <a class="kcn-btn alt" id="kcnWhatsApp" target="_blank">WhatsApp (pré-rempli)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="kcn-pane" id="pane-natcash" role="tabpanel">
+        <div class="kcn-box">
+          <div><strong>NatCash :</strong> +509 36 95 69 39</div>
+          <div><strong>Nom :</strong> KOLTIZ Club</div>
+          <div class="kcn-actions">
+            <button class="kcn-copy" data-copy="+50936956939">Copier numéro</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kcn-pane" id="pane-cash" role="tabpanel">
+        <div class="kcn-box">
+          <div><strong>Paiement en espèces</strong></div>
+          <div class="kcn-mini">
+            Réglez le montant <b>au comptoir KCN</b> (ou <b>à la livraison</b> si cochée).
+            Munissez-vous du <b>n° de commande</b> ci-dessous.
+          </div>
+          <div class="kcn-actions">
+            N° à annoncer : <b id="kcnLabel2"></b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kcn-cols">
+      <div>
+        <h4 style="margin:6px 0;color:#0b4573">Récapitulatif panier</h4>
+        <div class="kcn-box" id="kcnSummary"></div>
+      </div>
+      <div>
+        <h4 style="margin:6px 0;color:#0b4573">Preuve de paiement</h4>
+        <div class="kcn-box" id="kcnProofWrap">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="file" id="kcnProof" accept="image/*,application/pdf">
+            <button class="kcn-btn alt" id="kcnSaveProof">Enregistrer preuve</button>
+            <span id="kcnProofOk" class="kcn-ok" style="display:none">Enregistrée ✓</span>
+          </div>
+          <p class="kcn-mini" style="margin-top:8px">Après paiement, téléverse la capture/attestation. Un reçu définitif sera émis après vérification.</p>
+        </div>
+
+        <div class="kcn-actions">
+          <button class="kcn-btn" id="kcnReceipt">Télécharger le reçu (provisoire)</button>
+          <button class="kcn-btn alt" id="kcnClose2">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ===================== Données Produits (AVEC STOCK) ===================== */
+  const INVENTORY = [
+    // Bonnets — GROS
+    {
+      id:'bonnet-g', cat:'bonnets',
+      name:'Bonnet (gros)', priceHTG:3500, stock:0,
+      imgs:['./boutique-kcn/bonnet3/23.png','./boutique-kcn/bonnet3/24.png','./boutique-kcn/bonnet3/25.png','./boutique-kcn/bonnet3/26.png'],
+      desc:"Bonnet de bain en silicone grande taille Bonnets de bain protecteurs Formation Bonnet de bain personnalisé pour cheveux longs & tresses & dreadlock",
+      tags:['adulte','cheveux volumineux'],
+      colors:['bleu','violet','noir','rose','blanc'],
+    },
+
+     // Bonnet — ENFANT
+    {
+      id:'bonnet-enfant', cat:'bonnets',
+      name:'Bonnet Enfant unisexe', priceHTG:2025, stock:5,
+      imgs:['./boutique-kcn/bonnet-enfant/9.png','./boutique-kcn/bonnet-enfant/2.png','./boutique-kcn/bonnet-enfant/3.png','./boutique-kcn/bonnet-enfant/4.png','./boutique-kcn/bonnet-enfant/5.png','./boutique-kcn/bonnet-enfant/6.png','./boutique-kcn/bonnet-enfant/7.png','./boutique-kcn/bonnet-enfant/8.png','./boutique-kcn/bonnet-enfant/1.png'],
+      desc:"Casquettes de natation en gros pour filles, femmes avec de longues tresses sur les cheveux.",
+      tags:['confort','enfant'],
+      colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale']
+    },
+    {
+      id:'bonnets-enfant', cat:'bonnets',
+      name:'Bonnet pour enfant', priceHTG:3052, stock:5,
+      imgs:['./boutique-kcn/enfant2/1.png','./boutique-kcn/enfant2/2.png','./boutique-kcn/enfant2/3.png','./boutique-kcn/enfant2/4.png','./boutique-kcn/enfant2/5.png',],
+      desc:"Bonnet de natation en gros pour filles et garcon .",
+      tags:['fille','garcon'],
+      colors:['bleu-turquoise','rose/sirene','rose/licorne','bleu-ciel'],
+    },
+         // Bonnet — Adult
+    {
+      id:'bonnet-adulte', cat:'bonnets',
+      name:'Bonnet pour adulte', priceHTG:2025, stock:5,
+      imgs:['./boutique-kcn/adulte-bonnet/1.png','./boutique-kcn/adulte-bonnet/2.png','./boutique-kcn/adulte-bonnet/3.png','./boutique-kcn/adulte-bonnet/4.png','./boutique-kcn/adulte-bonnet/5.png','./boutique-kcn/adulte-bonnet/6.png','./boutique-kcn/adulte-bonnet/7.png','./boutique-kcn/adulte-bonnet/8.png','./boutique-kcn/adulte-bonnet/9.png'],
+      desc:"Casquettes de natation en gros pour filles, femmes avec de longues tresses sur les cheveux.",
+      tags:['confort','fille','femme'],
+      colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale']
+    },
+    // Bonnet de bain (autre réf.)
+    {
+      id:'bonnet-de-bain', cat:'bonnets',
+      name:'Bonnet de bain', priceHTG:3500, stock:2,
+      imgs:['./boutique-kcn/bonnet-de-bain2/1.png','./boutique-kcn/bonnet-de-bain2/2.png','./boutique-kcn/bonnet-de-bain2/3.png','./boutique-kcn/bonnet-de-bain2/4.png','./boutique-kcn/bonnet-de-bain2/5.png','./boutique-kcn/bonnet-de-bain2/6.png','./boutique-kcn/bonnet-de-bain2/7.png'],
+      desc:"Casquette de natation en silicone adulte unisexe, adaptée cheveux longs, protection auditive.",
+      tags:['Sports et divertissements','Sports nautiques'],
+      colors:['rouge','bleu','blanc','rose','turquoise','noir','gris']
+    },
+    
+
+    // Lunettes
+    {
+      id:'lunettes-e', cat:'lunettes',
+      name:'Lunettes (Enfant)', priceHTG:2000, stock:20,
+      imgs:['./boutique-kcn/lunettes-enfant/1.png','./boutique-kcn/lunettes-enfant/2.png','./boutique-kcn/lunettes-enfant/3.png','./boutique-kcn/lunettes-enfant/4.png','./boutique-kcn/lunettes-enfant/5.png','./boutique-kcn/lunettes-enfant/7.png'],
+      desc:'Lunettes unisexe (Garçons et Filles) Âge 3-14, Lunettes anti-brouillard Lunettes de natation pour enfants',
+      tags:['débutant','enfant','confort'],
+      colors:['bleu','bleu-ciel','multi-color','noir']
+    },
+    {
+      id:'lunettes-g', cat:'lunettes',
+      name:'Lunettes (avec bouchon oreille)', priceHTG:2700, stock:9,
+      imgs:['./boutique-kcn/lunettes-pro/1.png','./boutique-kcn/lunettes-pro/2.png','./boutique-kcn/lunettes-pro/3.png','./boutique-kcn/lunettes-pro/4.png','./boutique-kcn/lunettes-pro/5.png','./boutique-kcn/lunettes-pro/6.png'],
+      desc:'Lunettes de natation pour adultes en silicone avec une grande monture, lentilles PC anti-buée et lunettes de natation pour hommes',
+      tags:['confort','homme'],
+
+    },
+    {
+      id:'lunettes-de-natation', cat:'lunettes',
+      name:'Lunettes de natation', priceHTG:3500, stock:2,
+      imgs:['./boutique-kcn/lunettes-suv/1.png','./boutique-kcn/lunettes-suv/2.png','./boutique-kcn/lunettes-suv/3.png','./boutique-kcn/lunettes-suv/4.png','./boutique-kcn/lunettes-suv/5.png','./boutique-kcn/lunettes-suv/6.png'],
+      desc:"Protection UV professionnelle Lunettes de natation confort réglables pour adultes Hommes Femmes Anti-Fog Lunettes de plongée pour la natation.",
+      tags:['adultes ','unisexes'],
+      colors:['bleu','noir'],
+    },
+    // Brassards
+    {
+      id:'brassards', cat:'brassards',
+      name:'Brassards', priceHTG:3000, stock:12,
+      imgs:['./boutique-kcn/brassard/br1.png','./boutique-kcn/brassard/br2.png','./boutique-kcn/brassard/br3.png','./boutique-kcn/brassard/br4.png','./boutique-kcn/brassard/br5.png','./boutique-kcn/brassard/br6.png'],
+      desc:'Brassards gonflables Anneaux Flotteurs Ailes d’eau Bandes de bras Tubes de natation Brassards pour enfants Tout-petits et adultes',
+      tags:['sécurité','enfant'],
+    
+    },
+
+    // Frite ou spagettie (en gros et séparé)
+
+     {
+      id:'frite/spagettie', cat:'frite/spagettie',
+      name:'Frite/Spagettie', priceHTG:5000, stock:4,
+      imgs:['./boutique-kcn/Frite/16.png','./boutique-kcn/Frite/14.png','./boutique-kcn/Frite/fr1.webp','./boutique-kcn/Frite/fr2.jpeg','./boutique-kcn/Frite/fr4.jpg','./boutique-kcn/Frite/pl3.jpg'],
+      desc:'Frite ou spagettie en mousse amusantes flexibles pour enfants et adultes flotteur de piscine',
+      tags:['flexibles','économie'],
+      pack:['bonnet-p','lunettes-g','brassards']
+    },
+
+
+    // Gilet de sauvetage gonflables
+      {
+      id:'gilet', cat:'gilet',
+      name:'Gilet de sauvetage gonflable', priceHTG:4500, stock:5,
+      imgs:['./boutique-kcn/gilet/1.png','./boutique-kcn/gilet/2.png','./boutique-kcn/gilet/3.png','./boutique-kcn/gilet/4.png','./boutique-kcn/gilet/5.png','./boutique-kcn/gilet/6.png'],
+      desc:"Gilet de sauvetage pour enfants, gilet gonflable pour enfants.",
+      tags:['gilet de sauvetage','sécurité'],
+      colors:['bleu-small ','bleu-medium ','bleu-large ','rose-small ','orange-small','orange-medium ','orange-large','jaune-small ','jaune-medium ','jaune-large',],
+    },
+
+    // Masque + Tuba
+    {
+      id:'masque-tuba', cat:'masque-tuba',
+      name:'Masque-Tuba', priceHTG:2025+2025, stock:1,
+      imgs:['./boutique-kcn/masque-tuba/17.png','./boutique-kcn/masque-tuba/19.png','./boutique-kcn/masque-tuba/20.png','./boutique-kcn/masque-tuba/21.png','./boutique-kcn/masque-tuba/22.png'],
+      desc:'Les meilleurs accessoires de plongée unisexe pour lunettes de plongée en silicone, ensemble de tuba, équipement de natation à guichet unique',
+      tags:['unisexe','plongée'],
+      pack:['masque-tuba']
+    },
+    // Planche de natation
+    {
+      id:'planche', cat:'planche',
+      name:'Planche de natation', priceHTG:5000, stock:6,
+      imgs:['./boutique-kcn/planche/01.png','./boutique-kcn/planche/1.png','./boutique-kcn/planche/2.png','./boutique-kcn/planche/3.png','./boutique-kcn/planche/4.png','./boutique-kcn/planche/5.png','./boutique-kcn/planche/6.png'],
+      desc:'Équipement d’entraînement de planche de natation pour enfants et adultes en mousse EVA',
+      tags:['3 graine','lot 2'],
+      pack:['bonnet-p','lunettes-p','brassards']
+    },
+   
+    // Ensembles de clips pour le nez et bouchons d’oreilles 
+    {
+      id:'pince-nez&bouchon-oreilles', cat:'pince-nez&bouchon-oreilles',
+      name:'Pince-nez & bouchon-oreilles', priceHTG:3500, stock:2,
+      imgs:['./boutique-kcn/bouchon-pince-nez/2.png','./boutique-kcn/bouchon-pince-nez/1.png','./boutique-kcn/bouchon-pince-nez/3.png','./boutique-kcn/bouchon-pince-nez/4.png','./boutique-kcn/bouchon-pince-nez/5.png','./boutique-kcn/bouchon-pince-nez/6.png'],
+      desc:"Pinces nasales en silicone souple et bouchons d’oreilles, Protecteur nasal de natation imperméable pour adultes et enfants pour les sports nautiques.",
+      tags:['Ensembles de clips pour le nez et bouchons d’oreilles',],
+      colors:['bleu','rose','noir',],
+    }
+     
+  ];
+
+  
+
+
+  /* ===================== Config & État ===================== */
+  const COURSE_ITEMS = [
+    {id:'reg', name:"Frais d'inscription", priceHTG:1500},
+    {id:'month', name:'Mois 1', priceHTG:6500}
+  ];
+  const PROMO = { active:true, rate:0.10, appliesTo:'packs' };
+  const DELIVERY_HTG = 500;
+
+  const state = { q:'', cat:'', currency:'HTG', rate:null, cart:{}, delivery:false };
+  state.options = {}; // ex: { 'bonnet-g': { color:'rouge' } }
+
+  // Charger panier
+  try{ state.cart = JSON.parse(localStorage.getItem('kcn_cart')||'{}'); }catch{ state.cart = {}; }
+
+  // ===== STOCK PERSISTANT (admin local) =====
+  // on peut modifier stock au fil des ventes
+  const STOCK_KEY = 'kcn_stock';
+  let STOCK_OVERRIDES = {};
+  try{ STOCK_OVERRIDES = JSON.parse(localStorage.getItem(STOCK_KEY)||'{}'); }catch{ STOCK_OVERRIDES = {}; }
+
+  // applique overrides
+  function getStock(id){
+    const base = (INVENTORY.find(p=>p.id===id)?.stock ?? 0);
+    const delta = STOCK_OVERRIDES[id] ?? base;
+    return Number.isFinite(delta) ? delta : base;
+  }
+  function setStock(id, qty){
+    STOCK_OVERRIDES[id] = Math.max(0, qty|0);
+    localStorage.setItem(STOCK_KEY, JSON.stringify(STOCK_OVERRIDES));
+  }
+
+  /* ===================== Helpers ===================== */
+  const fmt = (v,cur) => (cur==='USD'?'$ ':'')+
+    new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(v)+
+    (cur==='HTG'?' HTG':'');
+
+  function viewPrice(htg){
+    if(state.currency==='USD'){
+      const r = parseFloat((elRate.value||'').replace(',','.'));
+      if(r>0) return htg/r; else return NaN;
+    }
+    return htg;
+  }
+
+  // Stock label + classe
+  function stockLabelAndClass(stock){
+    if(stock<=0) return {label:'Stock épuisé', cls:'out'};
+    if(stock<=2) return {label:'Stock presque épuisé', cls:'warn'};
+    if(stock<=5) return {label:`Disponible — reste ${stock}`, cls:'low'};
+    return {label:'', cls:'ok'};
+  }
+
+  /* ===================== Rendu Produits ===================== */
+  const elQ = document.getElementById('q');
+  const elCat = document.getElementById('cat');
+  const elCur = document.getElementById('currency');
+  const elRateWrap = document.getElementById('rateWrap');
+  const elRate = document.getElementById('rate');
+  const grid = document.getElementById('grid');
+  const cartList = document.getElementById('cartList');
+  const sub = document.getElementById('sub');
+  const disc = document.getElementById('disc');
+  const tot = document.getElementById('tot');
+  const fee = document.getElementById('fee');
+  const gt  = document.getElementById('gt');
+  const delivery = document.getElementById('delivery');
+  const deliverOpt = document.getElementById('deliverOpt');
+
+  function renderProducts(){
+    const q = state.q.trim().toLowerCase();
+    const cat = state.cat;
+
+    grid.innerHTML='';
+    const pool = INVENTORY.filter(p=>{
+      const okCat = !cat || p.cat===cat;
+      const okQ = !q || p.name.toLowerCase().includes(q) || (p.tags||[]).some(t=>t.toLowerCase().includes(q));
+      return okCat && okQ;
+    });
+
+    if(pool.length===0){
+      grid.innerHTML = '<p class="mini">Aucun article ne correspond à votre recherche.</p>';
+      return;
+    }
+
+    pool.forEach(p=>{
+      const price = viewPrice(p.priceHTG);
+      const priceTxt = isNaN(price)?'—':fmt(price,state.currency);
+      const card = document.createElement('article');
+      card.className='product-card';
+      const firstImg = (p.imgs && p.imgs[0]) ? p.imgs[0] : '';
+      const currentStock = getStock(p.id);
+      const {label, cls} = stockLabelAndClass(currentStock);
+      const stockBadge = label ? `<span class="stock ${cls}">${label}</span>` : '';
+
+      const disabled = currentStock<=0 ? 'disabled' : '';
+
+      card.innerHTML = `
+        <img src="${firstImg}" alt="${p.name}" class="thumb" loading="lazy">
+        <div class="bd">
+          <h3>${p.name}</h3>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;gap:8px;flex-wrap:wrap">
+            <div>${(p.tags||[]).slice(0,2).map(t=>`<span class='tag'>${t}</span>`).join('')}</div>
+            <div class="price">${priceTxt}</div>
+          </div>
+          <div style="margin:6px 0">${stockBadge}</div>
+          <div class="inline-actions">
+            <div class="qty"><small class="muted">Qté</small> <input type="number" min="1" value="1" data-qty-for="${p.id}"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn alt" data-view="${p.id}">Voir</button>
+              <button class="btn" data-add="${p.id}" ${disabled} title="${currentStock<=0?'Indisponible':''}">Ajouter</button>
+            </div>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  /* ===================== Calcul Panier ===================== */
+  function computeCartBase(){
+    let totalHTG = 0, discountHTG = 0;
+    Object.entries(state.cart).forEach(([id,qty])=>{
+      const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
+      if(!item) return;
+      const line = item.priceHTG * qty; totalHTG += line;
+      if(PROMO.active && item.cat===PROMO.appliesTo){ discountHTG += line * PROMO.rate; }
+    });
+    return { totalHTG, discountHTG, netHTG: totalHTG - discountHTG };
+  }
+
+  function getSelectedPay(){
+    const r = document.querySelector('input[name="shopPay"]:checked');
+    if(!r) return {pct:0,fix:0};
+    return {pct: parseFloat(r.dataset.feePct||'0'), fix: parseFloat(r.dataset.feeFixed||'0')};
+  }
+
+  function updateFeesAndGrandTotal(){
+    const { netHTG } = computeCartBase();
+    const pay = getSelectedPay();
+    const feeHTG = (netHTG * (pay.pct||0)) + (pay.fix||0);
+    const deliveryHTG = state.delivery ? DELIVERY_HTG : 0;
+    const gtHTG  = netHTG + feeHTG + deliveryHTG;
+
+    const vFee = viewPrice(feeHTG);
+    const vGT  = viewPrice(gtHTG);
+    const vDel = viewPrice(deliveryHTG);
+
+    fee.textContent = isNaN(vFee)?'—':fmt(vFee, state.currency);
+    gt.textContent  = isNaN(vGT)?'—':fmt(vGT, state.currency);
+    delivery.textContent = isNaN(vDel)?'—':fmt(vDel, state.currency);
+  }
+
+  function computeCart(){
+    const { totalHTG, discountHTG, netHTG } = computeCartBase();
+    const vSub = viewPrice(totalHTG);
+    const vDisc = viewPrice(discountHTG);
+    const vTot = viewPrice(netHTG);
+    sub.textContent = isNaN(vSub)?'—':fmt(vSub,state.currency);
+    disc.textContent = (PROMO.active && !isNaN(vDisc) && vDisc>0) ? ('– '+fmt(vDisc,state.currency)) : '—';
+    tot.textContent = isNaN(vTot)?'—':fmt(vTot,state.currency);
+    updateFeesAndGrandTotal();
+  }
+
+  function renderCart(){
+    const ids = Object.keys(state.cart);
+    if(ids.length===0){ cartList.textContent='Aucun article pour l’instant.'; computeCart(); return; }
+    const ul = document.createElement('div');
+    ids.forEach(id=>{
+      const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
+      if(!item) return; const qty = state.cart[id];
+      const priceEach = viewPrice(item.priceHTG);
+      const opt = state.options[id];
+      const label = opt?.color ? `${item.name} – Couleur: ${opt.color}` : item.name;
+      const line = document.createElement('div');
+      line.className='row';
+      line.innerHTML = `<span>${label} × ${qty}</span><strong>${isNaN(priceEach)?'—':fmt(priceEach*qty,state.currency)}</strong>`;
+      ul.appendChild(line);
+    });
+    cartList.innerHTML=''; cartList.appendChild(ul);
+    computeCart();
+  }
+
+  function saveCart(){ localStorage.setItem('kcn_cart', JSON.stringify(state.cart)); }
+
+  /* ===================== Écouteurs ===================== */
+  elQ.addEventListener('input', e=>{ state.q=e.target.value; renderProducts(); });
+  elCat.addEventListener('change', e=>{ state.cat=e.target.value; renderProducts(); });
+  elCur.addEventListener('change', e=>{
+    state.currency=e.target.value; elRateWrap.style.display = state.currency==='USD' ? 'block' : 'none';
+    renderProducts(); renderCart();
+  });
+  elRate.addEventListener('input', ()=>{ renderProducts(); renderCart(); });
+
+  document.addEventListener('change', (e)=>{
+    if(e.target.name==='shopPay'){ updateFeesAndGrandTotal(); }
+  });
+  deliverOpt.addEventListener('change', ()=>{
+    state.delivery = deliverOpt.checked;
+    updateFeesAndGrandTotal();
+  });
+
+  // Délégation sur la grille
+  grid.addEventListener('click', (e)=>{
+    const addId = e.target.getAttribute('data-add');
+    const viewId = e.target.getAttribute('data-view');
+
+    if(addId){
+      const stockLeft = getStock(addId);
+      if(stockLeft<=0){ alert("Stock épuisé pour cet article."); return; }
+
+      const qtyInput = grid.querySelector(`input[data-qty-for="${addId}"]`);
+      let qty = Math.max(1, parseInt(qtyInput?.value||'1',10)||1);
+
+      // Pa depase stock
+      if(qty > stockLeft){
+        qty = stockLeft;
+        if(qtyInput) qtyInput.value = stockLeft;
+        alert(`Stock disponib: ${stockLeft}. Quantité ajustée.`);
+      }
+
+      state.cart[addId] = Math.min((state.cart[addId]||0) + qty, stockLeft);
+      saveCart(); renderCart(); renderProducts(); // re-render pou mete bouton si stock rive 0
+    }
+
+    if(viewId){
+      openProductModal(viewId);
+    }
+  });
+
+  document.getElementById('clearCart').addEventListener('click', ()=>{
+    state.cart={}; state.options={}; saveCart(); renderCart(); renderProducts();
+  });
+
+  /* ===================== Modal Produit (galerie) ===================== */
+  const pdModal = document.getElementById('pdModal');
+  const pdClose = document.getElementById('pdClose');
+  const pdBack  = document.getElementById('pdBack');
+  const pdMain  = document.getElementById('pdMain');
+  const pdTitle = document.getElementById('pdTitle');
+  const pdPrice = document.getElementById('pdPrice');
+  const pdTags  = document.getElementById('pdTags');
+  const pdDesc  = document.getElementById('pdDesc');
+  const pdThumbs= document.getElementById('pdThumbs');
+  const pdQty   = document.getElementById('pdQty');
+  const pdAdd   = document.getElementById('pdAdd');
+  const pdColors = document.getElementById('pdColors');
+  const pdStock = document.getElementById('pdStock');
+
+  let currentPdId = null;
+
+  function colorChooserHTML(colors){
+    if(!colors || !colors.length) return '';
+    return `
+      <div>
+        <div style="font-weight:700;color:#0b4573;margin:4px 0">Couleur</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pdColorWrap">
+          ${colors.map((c,i)=>`
+            <label class="mini" style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 10px;border-radius:10px;cursor:pointer">
+              <input type="radio" name="pdColor" value="${c}" ${i===0?'checked':''}>
+              <span>${c}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  function getSelectedColor(){
+    const r = document.querySelector('input[name="pdColor"]:checked');
+    return r ? r.value : null;
+  }
+
+  function openProductModal(id){
+    const p = INVENTORY.find(x=>x.id===id);
+    if(!p) return;
+    currentPdId = id;
+    pdTitle.textContent = p.name;
+    pdDesc.textContent = p.desc || '';
+    const v = viewPrice(p.priceHTG);
+    pdPrice.textContent = isNaN(v)?'—':fmt(v,state.currency);
+
+    const images = p.imgs && p.imgs.length ? p.imgs : [''];
+    pdMain.src = images[0]||'';
+    pdMain.alt = p.name;
+    pdThumbs.innerHTML = images.map((src,i)=>`<img src="${src}" alt="vignette ${i+1}" ${i===0?'aria-current="true"':''}>`).join('');
+    pdTags.innerHTML = (p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ');
+
+    // Couleurs
+    pdColors.innerHTML = colorChooserHTML(p.colors);
+
+    // Stock info
+    const s = getStock(p.id);
+    const {label, cls} = stockLabelAndClass(s);
+    pdStock.innerHTML = label ? `<span class="stock ${cls}">${label}</span>` : '';
+    pdAdd.disabled = s<=0;
+    pdQty.max = Math.max(1, s);
+    pdQty.value = (s>0?1:0);
+
+    pdModal.classList.add('open');
+    pdModal.setAttribute('aria-hidden','false');
+  }
+
+  pdThumbs.addEventListener('click', (e)=>{
+    const img = e.target.closest('img');
+    if(!img) return;
+    pdThumbs.querySelectorAll('img').forEach(i=>i.removeAttribute('aria-current'));
+    img.setAttribute('aria-current','true');
+    pdMain.src = img.src;
+  });
+
+  function closePdModal(){
+    pdModal.classList.remove('open');
+    pdModal.setAttribute('aria-hidden','true');
+    currentPdId = null;
+    pdColors.innerHTML = '';
+    pdStock.innerHTML = '';
+  }
+  pdClose.addEventListener('click', closePdModal);
+  pdBack.addEventListener('click', closePdModal);
+  pdModal.addEventListener('click', (e)=>{ if(e.target===pdModal) closePdModal(); });
+
+  pdAdd.addEventListener('click', ()=>{
+    if(!currentPdId) return;
+    let qty = Math.max(1, parseInt(pdQty.value||'1',10)||1);
+    const s = getStock(currentPdId);
+    if(s<=0){ alert('Stock épuisé.'); return; }
+    if(qty > s){
+      qty = s; pdQty.value = s;
+      alert(`Stock disponib: ${s}. Quantité ajustée.`);
+    }
+    const color = getSelectedColor();
+    if(color) state.options[currentPdId] = { color };
+    state.cart[currentPdId] = Math.min((state.cart[currentPdId]||0) + qty, s);
+    saveCart(); renderCart(); renderProducts(); closePdModal();
+  });
+
+  /* ===================== Modal Paiement (checkout) ===================== */
+  const payModal = document.getElementById('payModal');
+  const kcnClose = document.getElementById('kcnClose');
+  const kcnClose2 = document.getElementById('kcnClose2');
+  const kcnOrderId = document.getElementById('kcnOrderId');
+  const kcnOrderTotal = document.getElementById('kcnOrderTotal');
+  const kcnSummary = document.getElementById('kcnSummary');
+  const kcnLabel1 = document.getElementById('kcnLabel1');
+  const kcnLabel2 = document.getElementById('kcnLabel2');
+  const kcnWhatsApp = document.getElementById('kcnWhatsApp');
+  const kcnProof = document.getElementById('kcnProof');
+  const kcnSaveProof = document.getElementById('kcnSaveProof');
+
+  document.querySelectorAll('.kcn-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.kcn-tab').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.kcn-pane').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      const id = btn.getAttribute('data-tab');
+      document.getElementById('pane-'+id).classList.add('active');
+      const proofWrap = document.getElementById('kcnProofWrap');
+      if (proofWrap) proofWrap.style.display = (id === 'cash') ? 'none' : 'block';
+    });
+  });
+
+  document.addEventListener('click', (e)=>{
+    const t = e.target.closest('.kcn-copy');
+    if(!t) return;
+    const txt = t.getAttribute('data-copy') || '';
+    navigator.clipboard.writeText(txt).then(()=>{ t.textContent='Copié ✓'; setTimeout(()=>t.textContent='Copier',1200); });
+  });
+
+  function getSelectedPay(){ const r = document.querySelector('input[name="shopPay"]:checked'); if(!r) return {pct:0,fix:0}; return {pct: parseFloat(r.dataset.feePct||'0'), fix: parseFloat(r.dataset.feeFixed||'0')}; }
+
+  document.getElementById('checkout').addEventListener('click', ()=>{
+    if (!Object.keys(state.cart||{}).length) { alert('Votre panier est vide.'); return; }
+
+    // active onglet selon mode choisi
+    const payRadio = document.querySelector('input[name="shopPay"]:checked');
+    const payMethod = payRadio ? payRadio.value : 'bank';
+    const payMethodLabel = payRadio?.parentElement?.textContent.trim() || payMethod;
+
+    document.querySelectorAll('.kcn-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.kcn-pane').forEach(p=>p.classList.remove('active'));
+    document.querySelector(`.kcn-tab[data-tab="${payMethod}"]`)?.classList.add('active');
+    document.getElementById('pane-'+payMethod)?.classList.add('active');
+
+    const proofWrap = document.getElementById('kcnProofWrap');
+    if (proofWrap) { proofWrap.style.display = (payMethod === 'cash') ? 'none' : 'block'; }
+
+    const d = new Date();
+    const id = `KCN-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*9000+1000)}`;
+    kcnOrderId.textContent = id;
+    kcnLabel1.textContent = id;
+    kcnLabel2.textContent = id;
+
+    // Calcul prix
+    let totalHTG = 0, discountHTG = 0;
+    const ALL_ITEMS = [...INVENTORY, ...COURSE_ITEMS];
+    const lines = [];
+    Object.entries(state.cart).forEach(([pid,qty])=>{
+      const item = ALL_ITEMS.find(x=>x.id===pid);
+      if(!item) return;
+      // Sekirite: pa depase stock ki rete
+      const s = getStock(pid);
+      const finalQty = Math.min(qty, s);
+      if(finalQty<=0) return;
+      const lineHTG = item.priceHTG * finalQty;
+      totalHTG += lineHTG;
+      if (PROMO.active && item.cat==='packs') discountHTG += lineHTG * PROMO.rate;
+
+      const opt = state.options[pid];
+      const nameWithColor = opt?.color ? `${item.name} – Couleur: ${opt.color}` : item.name;
+
+      lines.push({id:pid, name:nameWithColor, qty:finalQty, priceHTG:item.priceHTG, lineHTG});
+    });
+    const netHTG = totalHTG - discountHTG;
+
+    const payCfg = getSelectedPay();
+    const feeHTG = netHTG * (payCfg.pct||0) + (payCfg.fix||0);
+    const deliveryHTG = state.delivery ? DELIVERY_HTG : 0;
+    const grandHTG = netHTG + feeHTG + deliveryHTG;
+
+    const vDisc = viewPrice(discountHTG);
+    const vFee  = viewPrice(feeHTG);
+    const vDel  = viewPrice(deliveryHTG);
+    const vNet  = viewPrice(netHTG);
+    const vGrand= viewPrice(grandHTG);
+
+    kcnOrderTotal.textContent = isNaN(vGrand)?'—':fmt(vGrand, state.currency);
+
+    // Récap
+    kcnSummary.innerHTML = `
+      ${lines.map(l=>{
+        const v = viewPrice(l.lineHTG);
+        return `<div style="display:flex;justify-content:space-between;padding:4px 0">
+          <span>${l.name} × ${l.qty}</span>
+          <strong>${isNaN(v)?'—':fmt(v,state.currency)}</strong>
+        </div>`;
+      }).join('')}
+      <hr style="border:none;border-top:1px dashed #e5e7eb;margin:8px 0">
+      <div style="display:flex;justify-content:space-between">
+        <span>Remise packs</span>
+        <strong>${discountHTG>0 ? '– '+fmt(vDisc,state.currency) : '—'}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span>Total net</span>
+        <strong>${isNaN(vNet)?'—':fmt(vNet,state.currency)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span>Frais paiement</span>
+        <strong>${isNaN(vFee)?'—':fmt(vFee,state.currency)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span>Livraison locale</span>
+        <strong>${isNaN(vDel)?'—':fmt(vDel,state.currency)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:800">
+        <span>Total à régler</span>
+        <strong>${isNaN(vGrand)?'—':fmt(vGrand,state.currency)}</strong>
+      </div>
+    `;
+
+    const msg = encodeURIComponent(`Bonjour KCN, paiement commande ${id} pour un montant de ${kcnOrderTotal.textContent}. Je vous envoie la preuve ci-après.`);
+    const kcnWhatsApp = document.getElementById('kcnWhatsApp');
+    if (kcnWhatsApp) kcnWhatsApp.href = `https://wa.me/50936985221?text=${msg}`;
+
+    // Sauvegarder commande
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    orders.push({
+      id, createdAt: d.toISOString(),
+      currency: state.currency,
+      netHTG, feeHTG, deliveryHTG, grandHTG, discountHTG,
+      lines,
+      proof:null,
+      status:'pending',
+      deliveryStatus: (state.delivery ? 'à livrer' : 'retrait'),
+      payMethod,
+      payMethodLabel
+    });
+    localStorage.setItem('kcn_orders', JSON.stringify(orders));
+
+    // ---- MAJ STOCK: soustraire kantite achte yo ----
+    lines.forEach(l=>{
+      const remain = getStock(l.id) - l.qty;
+      setStock(l.id, remain);
+    });
+
+    // netwaye panie a
+    state.cart = {};
+    state.options = {};
+    saveCart();
+
+    // mete ajou vizyèl
+    renderCart();
+    renderProducts();
+
+    // memorize pou reçu
+    window.KCN_PAY_METHOD = payMethod;
+    window.KCN_PAY_METHOD_LABEL = payMethodLabel;
+
+    payModal.classList.add('open');
+    payModal.setAttribute('aria-hidden','false');
+  });
+
+  function closePayModal(){
+    payModal.classList.remove('open');
+    payModal.setAttribute('aria-hidden','true');
+  }
+  document.getElementById('kcnClose').addEventListener('click', closePayModal);
+  document.getElementById('kcnClose2').addEventListener('click', closePayModal);
+  payModal.addEventListener('click', (e)=>{ if(e.target===payModal){ closePayModal(); } });
+
+  // Preuve (inchangé)
+  document.getElementById('kcnSaveProof').addEventListener('click', async ()=>{
+    const file = kcnProof.files?.[0];
+    if(!file){ alert('Choisis un fichier (image ou PDF).'); return; }
+    const id = document.getElementById('kcnOrderId').textContent.trim();
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    const idx = orders.findIndex(o=>o.id===id);
+    if(idx<0){ alert("Commande introuvable."); return; }
+    const b64 = await fileToDataURL(file);
+    orders[idx].proof = { name:file.name, type:file.type, data:b64, at:new Date().toISOString() };
+    localStorage.setItem('kcn_orders', JSON.stringify(orders));
+    document.getElementById('kcnProofOk').style.display = 'inline';
+    setTimeout(()=> document.getElementById('kcnProofOk').style.display='none', 2000);
+    kcnProof.value = '';
+    alert('Preuve enregistrée.');
+  });
+
+  function fileToDataURL(file){
+    return new Promise((resolve,reject)=>{
+      const r = new FileReader();
+      r.onload = ()=> resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('kcnReceipt').addEventListener('click', ()=>{
+    const id = document.getElementById('kcnOrderId').textContent.trim();
+    const total = document.getElementById('kcnOrderTotal').textContent.trim();
+    const summaryHTML = document.getElementById('kcnSummary').innerHTML;
+    const method = window.KCN_PAY_METHOD_LABEL || '—';
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!doctype html><html lang="fr"><meta charset="utf-8">
+      <title>Reçu ${id} – KCN</title>
+      <style>
+        body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
+        .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+        h1{color:#0066cc;margin:0 0 8px 0}
+        .meta{color:#475569}
+        .tot{display:flex;justify-content:space-between;font-weight:800;margin-top:10px}
+      </style>
+      <body>
+        <div class="sheet">
+          <h1>KOLTIZ Club de Natation</h1>
+          <div class="meta">Reçu provisoire – Commande ${id}</div>
+          <div class="meta">Mode de paiement : <b>${method}</b></div>
+          <hr>
+          ${summaryHTML}
+          <div class="tot"><span>Total</span><strong>${total}</strong></div>
+          <p class="meta">Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>Un reçu définitif sera émis après vérification.</p>
+        </div>
+        <script>window.print();<\/script>
+      </body></html>
+    `);
+    win.document.close();
+  });
+
+  /* ===================== Init ===================== */
+  function init(){
+    renderProducts();
+    renderCart();
+    // si pa gen overrides anrejistre deja, init ak stock de base
+    if(Object.keys(STOCK_OVERRIDES).length===0){
+      const map = {};
+      INVENTORY.forEach(p=>{ map[p.id] = p.stock|0; });
+      localStorage.setItem(STOCK_KEY, JSON.stringify(map));
+      STOCK_OVERRIDES = map;
+    }
+  }
+  init();
+</script>
+</body>
+</html>

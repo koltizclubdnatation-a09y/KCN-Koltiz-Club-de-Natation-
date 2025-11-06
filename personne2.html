@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="fr" itemscope itemtype="https://schema.org/Person">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Membre – Thérèse Redgie MARC | Secrétaire administrative | KCN</title>
+  <meta name="description" content="Profil de Thérèse Redgie MARC — Secrétaire administrative du KOLTIZ Club de Natation." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc;--accent:#00bcd4;--ink:#1f2937;--muted:#6b7280;--bg:#f4f7fb;
+      --card:#ffffff;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+    a{color:var(--brand);text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .container{max-width:1100px;margin:40px auto;padding:0 24px}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stack{display:grid;gap:clamp(12px,2vw,18px)}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#d7f3f8,#b3e5fc);padding:28px;border-radius:var(--radius);position:relative;overflow:hidden}
+    .hero::after{content:"";position:absolute;inset:auto -20% -40% -20%;height:220px;background:radial-gradient(60% 60% at 50% 0,rgba(255,255,255,.5),transparent)}
+    .hero-inner{display:grid;gap:12px;align-items:center;justify-items:center;text-align:center}
+    .avatar{width:180px;height:180px;border-radius:50%;object-fit:cover;border:5px solid #fff;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+    .title{margin:6px 0 0;color:#0b0b0b}
+    .role{margin:0;color:var(--muted);font-weight:600}
+
+    /* NAV */
+    .tabs{margin-top:16px;background:#0288d1;border-radius:12px}
+    .tabs ul{list-style:none;margin:0;padding:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .tabs a{color:#fff;font-weight:600;padding:10px 14px;border-radius:10px}
+    .tabs a:hover{background:rgba(255,255,255,.18)}
+    .tabs.sticky{position:sticky;top:0;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.06)}
+
+    /* CONTENT */
+    section{margin:26px 0}
+    section h2{font-size:1.25rem;margin:0 0 10px;color:#0b0b0b;border-left:5px solid #0288d1;padding-left:10px}
+    .content{padding:22px}
+
+    /* TIMELINE */
+    .timeline{border-left:3px solid #0288d1;margin-left:12px;padding-left:18px}
+    .timeline-item{margin:18px 0}
+    .timeline-item h3{margin:0 0 6px;font-size:1.05rem}
+    .badge{display:inline-block;background:#0288d1;color:#fff;border-radius:8px;padding:4px 8px;font-size:.8rem;margin-left:6px}
+
+    footer{margin:28px 0;color:#777;text-align:center}
+
+    @media print{
+      .tabs{display:none}
+      .container{margin:0;padding:0}
+      .card{box-shadow:none;border:0}
+      body{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO -->
+    <header class="card hero" role="banner">
+      <div class="hero-inner" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+        <img class="avatar" src="./assets/images/Therese/imaj3.jpeg" alt="Photo de Thérèse Redgie MARC" />
+        <meta itemprop="url" content="./images/Therese/imaj3.jpeg" />
+        <h1 class="title" itemprop="name">Thérèse Redgie MARC</h1>
+        <h2 class="role" itemprop="jobTitle">Secrétaire administrative</h2>
+      </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="tabs sticky" aria-label="Navigation profil">
+      <ul>
+        <li><a href="#presentation">Présentation</a></li>
+        <li><a href="#experience">Expérience</a></li>
+      </ul>
+    </nav>
+
+    <!-- PRÉSENTATION -->
+    <section id="presentation" class="card content" aria-labelledby="pres-title">
+      <h2 id="pres-title">Présentation</h2>
+      <p>
+        <strong>Thérèse Redgie MARC</strong>, diplômée en comptabilité, occupe avec professionnalisme
+        le poste de <b>secrétaire administrative</b> du KOLTIZ Club de Natation. Sa rigueur et son sens de l’organisation
+        assurent la bonne coordination des activités du club et le bon accompagnement des membres.
+      </p>
+      <p>
+        Passionnée par l’univers de la natation, Thérèse est profondément convaincue de l’importance de l’eau comme source d’épanouissement,
+        de confiance et de bien-être. Elle trouve une grande satisfaction à voir les enfants apprendre, progresser et s’émerveiller dans l’eau,
+        considérant chacun de leurs pas comme une victoire partagée.
+      </p>
+      <p>
+        Son engagement va au-delà de la gestion administrative : Thérèse incarne une présence chaleureuse et motivante pour les familles,
+        en soutenant et en valorisant chaque progrès. Elle porte fièrement la vision du KOLTIZ Club de Natation : faire de l’eau un lieu
+        d’apprentissage, de discipline et de joie pour les générations futures.
+      </p>
+    </section>
+
+    <!-- EXPÉRIENCE -->
+    <section id="experience" class="card content" aria-labelledby="exp-title">
+      <h2 id="exp-title">Expérience</h2>
+      <div class="timeline" itemprop="hasOccupation" itemscope itemtype="https://schema.org/Occupation">
+        <div class="timeline-item">
+          <h3>Secrétaire administrative <span class="badge">KCN</span></h3>
+          <p>
+            Elle gère l’organisation interne du club, le suivi administratif et la coordination des activités.
+            Son rôle est central pour assurer la fluidité des opérations et le bien-être des membres.
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <h3>Parcours académique et professionnel</h3>
+          <p>
+            Diplômée en comptabilité, Thérèse a développé des compétences solides en gestion, rigueur et planification,
+            qu’elle met aujourd’hui au service du KOLTIZ Club de Natation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 KOLTIZ Club de Natation – Tous droits réservés
+    </footer>
+  </div>
+</body>
+</html>

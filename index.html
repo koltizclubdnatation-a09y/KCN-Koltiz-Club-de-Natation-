@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>KCN — KOLTIZ Club de Natation | Cours enfants & adultes à Delmas</title>
+  <meta name="description" content="KOLTIZ Club de Natation (KCN) à Delmas, Haïti. Cours pour enfants et adultes, sécurité aquatique, coachs certifiés. Réservez un cours d’essai dès aujourd’hui." />
+  <meta name="theme-color" content="#0066cc" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="KOLTIZ Club de Natation — Cours enfants & adultes à Delmas" />
+  <meta property="og:description" content="Sécurité aquatique, cours adaptés, coachs certifiés. Réservez un cours d’essai." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ton-domaine.com/" />
+  <meta property="og:image" content="https://ton-domaine.com/assets/og-cover.jpg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{--brand:#0066cc;--accent:#00bcd4;--ink:#222;--muted:#6b7280;--line:#e5e7eb;
+      --page:#f9f9f9;--card:#fff;--radius:14px;--shadow:0 10px 28px rgba(0,0,0,.06)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',Arial,sans-serif;background:var(--page);color:var(--ink);line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Accessibilité */
+    .skip{position:absolute;left:-9999px}
+    .skip:focus{position:static;background:#fff;color:#000;padding:6px 10px;border:2px solid var(--brand)}
+
+    /* HEADER */
+    header{background:#fff;border-bottom:4px solid var(--brand);box-shadow:0 2px 8px rgba(0,0,0,.05);position:sticky;top:0;z-index:100}
+    .header-wrap{max-width:1200px;margin:auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .logo{width:300px;max-height:100px;object-fit:contain}
+
+    /* NAV (inline) */
+    nav[aria-label="Navigation principale"]{display:flex;gap:12px;flex-wrap:wrap}
+    nav[aria-label="Navigation principale"] a{color:var(--brand);font-weight:700;padding:8px 14px;border-radius:8px;transition:.2s}
+    nav[aria-label="Navigation principale"] a:hover{background:rgba(0,102,204,.1)}
+
+    /* HAMBURGER */
+    .hamburger{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:44px;height:44px;border-radius:10px;border:2px solid var(--brand);
+      color:var(--brand);background:#fff;font-size:22px;cursor:pointer;flex-shrink:0;
+    }
+    .hamburger:hover{background:#eef6ff}
+
+    .left-group{display:flex;align-items:center;gap:12px}
+    .right-group{display:flex;align-items:center;gap:12px}
+
+    /* DRAWER */
+    .drawer-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.25s ease;z-index:200;
+    }
+    .drawer{
+      position:fixed;top:0;left:0;height:100vh;width:min(86vw,360px);
+      background:#fff;border-right:4px solid var(--brand);box-shadow:0 8px 28px rgba(0,0,0,.25);
+      transform:translateX(-102%);transition:transform .3s ease;z-index:201;display:flex;flex-direction:column;
+    }
+    .drawer-header{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:14px 16px;border-bottom:1px solid var(--line);
+    }
+    .drawer-header img{width:200px;max-height:72px;object-fit:contain}
+    .drawer-close{
+      width:40px;height:40px;border:2px solid var(--brand);border-radius:10px;background:#fff;color:var(--brand);font-size:18px;cursor:pointer;
+    }
+    .drawer-nav{display:flex;flex-direction:column;padding:10px}
+    .drawer-nav a{
+      color:var(--brand);font-weight:700;padding:12px 14px;border-radius:10px;transition:.2s;
+    }
+    .drawer-nav a:hover{background:rgba(0,102,204,.08)}
+    .drawer-footer{margin-top:auto;padding:12px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+
+    .drawer-open .drawer{transform:translateX(0)}
+    .drawer-open .drawer-backdrop{opacity:1;pointer-events:auto}
+
+    /* HERO */
+    .hero{
+      min-height:64vh;display:grid;place-items:center;padding:24px;
+      background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat
+    }
+    .hero-card{background:rgba(255,255,255,.9);padding:30px;border-radius:12px;max-width:720px;text-align:center;box-shadow:var(--shadow)}
+    .hero-card h1{color:var(--brand);font-size:2.4rem;margin-bottom:8px}
+    .hero-card h2{color:var(--brand);font-size:1.8rem;margin-bottom:12px}
+    .hero-card p{margin-bottom:18px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:10px;font-weight:800}
+    .btn.primary{background:linear-gradient(90deg,#ff9800,#ffc107);color:#fff;box-shadow:0 4px 16px rgba(255,152,0,.25);position:relative;animation:pulse 2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,152,0,.5)}70%{box-shadow:0 0 0 18px rgba(255,152,0,0)}100%{box-shadow:0 0 0 0 rgba(255,152,0,0)}}
+    .hand{font-size:2em;position:absolute;right:-32px;bottom:-12px;pointer-events:none;animation:tap 1.5s infinite}
+    @keyframes tap{0%,100%{transform:translateY(0)}50%{transform:translateY(6px) scale(.95)}}
+
+    /* SLIDER */
+    .slider{position:relative;max-width:1000px;margin:28px auto;overflow:hidden;border-radius:16px}
+    .slides img{width:100%;height:320px;object-fit:cover;display:none;border-radius:16px}
+    .slides img.active{display:block;animation:fade 1s}
+    @keyframes fade{from{opacity:.5}to{opacity:1}}
+    .slider-controls{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 8px}
+    .slider-controls button{cursor:pointer;background:rgba(0,0,0,.5);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:1.2rem}
+
+    /* SECTIONS */
+    .container{max-width:1100px;margin:40px auto;padding:0 16px}
+    .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+    .card h3{color:var(--brand);margin-bottom:8px}
+
+    .cta-band{max-width:1100px;margin:40px auto;background:linear-gradient(90deg,rgba(0,102,204,.1),rgba(0,188,212,.15));border-radius:16px;padding:22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px}
+    .cta-band a{border:2px solid var(--brand);color:var(--brand);padding:10px 16px;border-radius:12px;font-weight:800}
+
+    .faq{max-width:1100px;margin:40px auto;padding:0 16px}
+    .faq h2{text-align:center;color:var(--brand)}
+    .faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px 0}
+    .faq summary{cursor:pointer;font-weight:700}
+
+    /* WhatsApp bouton flottant */
+    .whatsapp-float{position:fixed;right:16px;bottom:16px;background:#25D366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none}
+
+    /* Footer */
+    footer{background:#fff;border-top:4px solid var(--accent);text-align:center;color:var(--brand);padding:16px;margin-top:40px}
+
+    /* Mobile : masquer nav inline sous 1024px pour favoriser le drawer */
+    @media(max-width:1024px){
+      nav[aria-label="Navigation principale"]{display:none}
+    }
+
+    /* Masquer la bannière Google en haut (on garde seulement le widget en bas) */
+    .goog-te-banner-frame.skiptranslate { display:none !important; }
+    body { top:0 !important; }
+
+    /* Zone du sélecteur en bas */
+    .translate-bar{
+      margin:0; padding:12px 16px; background:#f1f5f9; border-top:1px solid var(--line);
+      display:flex; justify-content:center; align-items:center; gap:10px; color:#111827; font-weight:600;
+    }
+    .translate-bar small{color:#374151}
+    /* Optionnel: compacter le select Google */
+    .translate-bar select.goog-te-combo{border:1px solid var(--line); border-radius:8px; padding:6px 10px;}
+
+    /* ======= Bloc Vidéo de bienvenue ======= */
+    .welcome-video{max-width:1100px;margin:32px auto;padding:0 16px;}
+    .welcome-video .video-card{
+      background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .welcome-video .video-embed{
+      width:100%;
+      aspect-ratio:16/9;
+      border-radius:12px;
+      overflow:hidden;
+      background:#000;
+    }
+    .welcome-video video{
+      width:100%; height:100%; display:block; border:0;
+    }
+
+    /* CTA bas */
+    .cta-row { text-align: center; margin: 40px 0; }
+    .btn.round {
+      display:inline-block; padding:14px 36px; border-radius:50px;
+      background:linear-gradient(90deg,#005bb5,#f4b400); color:#fff;
+      font-weight:700; font-size:1.05rem; text-transform:uppercase; letter-spacing:.5px;
+      box-shadow:0 6px 18px rgba(0,0,0,.25); transition:.3s;
+    }
+    .btn.round:hover{ transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,.35); background:linear-gradient(90deg,#f4b400,#005bb5) }
+    .btn.round:active{ transform:translateY(0); box-shadow:0 3px 10px rgba(0,0,0,.2) }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#contenu">Aller au contenu</a>
+
+  <!-- BACKDROP & DRAWER -->
+  <div class="drawer-backdrop" data-drawer-backdrop hidden></div>
+  <aside id="drawer" class="drawer" aria-hidden="true" aria-label="Menu" data-drawer>
+    <div class="drawer-header">
+      <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" />
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer le menu">×</button>
+    </div>
+    <nav class="drawer-nav" aria-label="Navigation latérale">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./descriptioncours.html">Cours</a>
+      <a href="./plancours.html">Formation</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignage.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+      <a href="./certificat.html">Certifications</a>
+      <a href="./boutique-kcn.html">Boutique-KCN</a>
+    </nav>
+    <div class="drawer-footer">© 2025 KCN</div>
+  </aside>
+
+  <!-- HEADER -->
+  <header role="banner">
+    <div class="header-wrap">
+      <div class="left-group">
+        <button class="hamburger" type="button" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false" data-drawer-toggle>☰</button>
+        <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" class="logo" />
+      </div>
+
+      <div class="right-group">
+        <nav aria-label="Navigation principale">
+          <a href="./index.html">Accueil</a>
+          <a href="./Apropos.html">À propos</a>
+          <a href="./descriptioncours.html">Cours</a>
+          <a href="./plancours.html">Formation</a>
+          <a href="./evenement.html">Événements</a>
+          <a href="./temoignage.html">Témoignages</a>
+          <a href="./contactez-nous.html">Contact</a>
+          <a href="./boutiquekcn.html">Boutique KCN</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <!-- HERO -->
+    <section class="hero" aria-label="Présentation KCN">
+      <div class="hero-card">
+        <h1>Bienvenue au KOLTIZ Club de Natation</h1>
+        <h2>« Nager vers la sécurité et avec plaisir »</h2>
+        <p>Plongez dans une expérience unique où l’eau devient un espace de liberté pour tous.
+        Que vous soyez débutant ou nageur expérimenté, nos coachs certifiés vous accompagnent
+        avec passion pour vous aider à progresser, vous amuser et dépasser vos limites.</p>
+        <a class="btn primary" href="./Apropos.html" aria-label="Découvrir KCN">
+          Découvrir
+          <span class="hand" aria-hidden="true">👉</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Vidéo de bienvenue -->
+    <section class="welcome-video" aria-label="Vidéo de bienvenue KCN">
+      <div class="video-card">
+        <div class="video-embed">
+          <!-- Lecture locale du MP4 -->
+          <video controls preload="metadata" poster="./assets/images/cover-video.jpg">
+            <source src="./assets/images/Video.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDER -->
+    <section class="slider" aria-label="Galerie d’images">
+      <div class="slides">
+        <img src="./folder3/imaj8.png" class="active" alt="Cours collectif de natation">
+        <img src="./assets/images/image2.jpeg" alt="Séance d'entraînement en famille dans la piscine">
+        <img src="./assets/images/image1.jpeg" alt="Enfants heureux dans l'eau">
+      </div>
+      <div class="slider-controls" aria-hidden="false">
+        <button class="prev" aria-label="Image précédente">‹</button>
+        <button class="next" aria-label="Image suivante">›</button>
+      </div>
+    </section>
+
+    <!-- POINTS FORTS -->
+    <section class="container" aria-label="Points forts du club">
+      <div class="grid">
+        <article class="card"><h3>Encadrement professionnel</h3><p>Nos coachs certifiés suivent chaque nageur pour garantir sécurité, progression et plaisir.</p></article>
+        <article class="card"><h3>Accessibilité pour tous</h3><p>Programme inclusif pour tous les âges et niveaux, y compris les personnes à mobilité réduite.</p></article>
+        <article class="card"><h3>Bien-être & sécurité</h3><p>La natation comme outil de santé, d’épanouissement et de prévention des risques.</p></article>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-band" aria-label="Inscription et réservation">
+      <p><strong>Prêt·e à plonger ?</strong> Cours d’essai dès cette semaine.</p>
+      <a href="./reservation.html">Réservez votre essai gratuit</a>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" aria-label="Questions fréquentes">
+      <h2>Questions fréquentes</h2>
+      <details><summary>À partir de quel âge débutez-vous ?</summary><p>Dès 4 ans, et adultes aussi.</p></details>
+      <details><summary>Proposez-vous un cours d’essai ?</summary><p>Oui, réservez un cours d’essai via la page Contact.</p></details>
+      <details><summary>Et si mon enfant a peur de l’eau ?</summary><p>Pédagogie progressive et ludique pour lui donner confiance.</p></details>
+      <details><summary>Combien de temps on peut prendre pour apprendre à nager ?</summary><p>Chaque élève progresse à son rythme. En moyenne, 8 à 12 semaines suffisent pour acquérir les bases, selon l’âge et la régularité.</p></details>
+      <details><summary>Où êtes-vous situés ?</summary><p>Delmas 75, rue des tourterelles, Hôtel House of Dream, Haïti.</p></details>
+      <details><summary>Peut-on annuler / reporter ?</summary><p>Oui, selon nos Conditions (annulation au moins 7 jours avant le début du cours).</p></details>
+    </section>
+  </main>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/50936956939" class="whatsapp-float" aria-label="Écrire sur WhatsApp" rel="noopener">💬</a>
+
+  <div class="cta-row">
+    <a class="btn round" href="./inscription1eretapes.html">Je m'inscris</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <small>© 2025 KOLTIZ Club de Natation — Tous droits réservés · <a href="./privacy.html">Confidentialité</a> · <a href="./conditions.html">Conditions</a></small>
+  </footer>
+
+ 
+
+  <!-- Slider JS -->
+  <script>
+    const slides=document.querySelectorAll('.slides img');
+    const nextBtn=document.querySelector('.next');
+    const prevBtn=document.querySelector('.prev');
+    let index=0,timer;
+    function show(i){slides.forEach((s,idx)=>s.classList.toggle('active',idx===i))}
+    function next(){index=(index+1)%slides.length;show(index)}
+    function prev(){index=(index-1+slides.length)%slides.length;show(index)}
+    function startAuto(){timer=setInterval(next,5000)}
+    function stopAuto(){clearInterval(timer)}
+    nextBtn.addEventListener('click',()=>{stopAuto();next();startAuto()});
+    prevBtn.addEventListener('click',()=>{stopAuto();prev();startAuto()});
+    startAuto();
+  </script>
+
+  <!-- Drawer JS -->
+  <script>
+    const bodyEl = document.body;
+    const drawer = document.querySelector('[data-drawer]');
+    const backdrop = document.querySelector('[data-drawer-backdrop]');
+    const openBtn = document.querySelector('[data-drawer-toggle]');
+    const closeBtn = document.querySelector('[data-drawer-close]');
+    const drawerLinks = drawer.querySelectorAll('a');
+
+    function openDrawer(){
+      bodyEl.classList.add('drawer-open');
+      drawer.setAttribute('aria-hidden','false');
+      openBtn.setAttribute('aria-expanded','true');
+      backdrop.hidden = false;
+      setTimeout(()=> drawerLinks[0]?.focus(), 200);
+    }
+    function closeDrawer(){
+      bodyEl.classList.remove('drawer-open');
+      drawer.setAttribute('aria-hidden','true');
+      openBtn.setAttribute('aria-expanded','false');
+      setTimeout(()=> { backdrop.hidden = true; }, 250);
+      openBtn.focus();
+    }
+    openBtn.addEventListener('click', ()=> bodyEl.classList.contains('drawer-open') ? closeDrawer() : openDrawer());
+    closeBtn.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+    drawerLinks.forEach(a => a.addEventListener('click', closeDrawer));
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && bodyEl.classList.contains('drawer-open')) closeDrawer(); });
+  </script>
+
+</body>
+</html>

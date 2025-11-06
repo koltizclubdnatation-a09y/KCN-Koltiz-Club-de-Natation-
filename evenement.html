@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Événements – KCN | KOLTIZ Club de Natation</title>
+  <meta name="description" content="Découvrez les événements du KOLTIZ Club de Natation : compétitions, journées découverte, ateliers & formations, stages et vie du club." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc; --accent:#00bcd4; --ink:#1f2937; --muted:#6b7280; --bg:#f5f7fb;
+      --card:#ffffff; --line:#e5e7eb; --radius:16px; --soft:0 10px 28px rgba(0,0,0,.06);
+      --warn:#ff9800; --warn2:#ffc107;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+    img{max-width:100%;height:auto;display:block}
+    a{text-decoration:none;color:inherit}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* Header */
+    header{background:#fff;border-bottom:4px solid var(--brand);box-shadow:0 2px 10px rgba(0,0,0,.05);position:sticky;top:0;z-index:30}
+    .wrap{max-width:1200px;margin:auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .logo{height:56px;object-fit:contain}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav a{color:var(--brand);font-weight:700;padding:8px 12px;border-radius:10px}
+    .nav a[aria-current="page"], .nav a:hover{background:rgba(0,102,204,.08)}
+
+    /* Hero */
+    .hero{min-height:42vh;display:grid;place-items:center;padding:24px;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;position:relative}
+    .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(0,102,204,.12),rgba(0,188,212,.12))}
+    .hero-card{position:relative;z-index:1;background:rgba(255,255,255,.92);backdrop-filter:blur(3px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--soft);padding:26px;max-width:860px;text-align:center}
+    .hero-card h1{margin:0;color:var(--brand);font-size:clamp(1.6rem,1.1rem + 1.6vw,2.2rem)}
+    .hero-card p{margin:8px 0 0;color:#374151}
+
+    /* Filters */
+    .filters{max-width:1200px;margin:18px auto 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:0 16px}
+    .filters .hint{color:var(--muted);font-weight:600}
+    .seg{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{border:2px solid var(--brand);color:var(--brand);background:#fff;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:700;transition:.2s}
+    .chip:hover{background:#eef6ff}
+    .chip[aria-pressed="true"]{background:linear-gradient(90deg,var(--warn),var(--warn2));border-color:var(--warn);color:#fff;box-shadow:0 8px 18px rgba(255,152,0,.25)}
+    .search{margin-left:auto;display:flex;gap:8px}
+    .search input{border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:220px}
+    .reset{border:2px solid #ef4444;background:#fff;color:#ef4444;padding:8px 12px;border-radius:12px;font-weight:700;cursor:pointer}
+
+    /* Accordions */
+    details{max-width:1200px;margin:16px auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--soft);overflow:hidden}
+    summary{cursor:pointer;padding:16px 20px;font-size:1.1rem;font-weight:800;color:var(--brand);background:rgba(0,102,204,.06);display:flex;align-items:center;justify-content:space-between}
+    summary .count{color:var(--muted);font-weight:600;font-size:.95rem}
+    summary::marker{content:""}
+    summary::after{content:"▾";font-size:1.2rem;transition:.3s}
+    details[open] summary::after{transform:rotate(180deg)}
+
+    /* Event grid */
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));padding:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.05);display:flex;flex-direction:column}
+    .thumb{position:relative;overflow:hidden}
+    .thumb img{width:100%;height:170px;object-fit:cover;transition:transform .35s}
+    .card:hover .thumb img{transform:scale(1.05)}
+    .badge{position:absolute;left:10px;top:10px;background:linear-gradient(90deg,#06c,#0bd4);color:#fff;padding:6px 10px;border-radius:999px;font-size:.8rem;font-weight:800}
+    .body{padding:14px 14px 16px 14px;display:flex;flex-direction:column;gap:8px}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-weight:600;font-size:.92rem}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{background:#eef6ff;color:#0369a1;border:1px solid #dbeafe;padding:4px 8px;border-radius:999px;font-size:.8rem;font-weight:700}
+    .title{font-weight:800;color:#0b1730}
+    .cta{margin-top:auto;display:inline-flex;align-items:center;gap:8px;align-self:flex-start;background:#0066cc;color:#fff;padding:10px 14px;border-radius:10px;font-weight:800}
+    .cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+    /* Footer */
+    .footer{background: linear-gradient(90deg, #00b4db, #0093e9); color:#fff; padding:20px 0; border-top:3px solid rgba(255,255,255,0.3); margin-top:26px}
+    .footer-inner{max-width:1100px; margin:auto; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:6px 16px}
+    .footer-top{display:flex; align-items:center; flex-direction:column; gap:8px}
+    .footer-logo{width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .copyright{font-size:.9rem; color:#f1f9ff; margin:0}
+    .footer-social-block{display:flex; flex-direction:column; align-items:center; gap:6px}
+    .follow-text{font-weight:600; font-size:.95rem; color:#ffe082}
+    .footer-social{display:flex; justify-content:center; gap:14px}
+    .footer-social img{width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; transition:transform .3s, box-shadow .3s}
+    .footer-social img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4)}
+    .footer-legal{display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:6px}
+    .footer-legal a{color:#fff; text-decoration:none; font-size:.9rem}
+    .footer-legal a:hover{color:#004c91; text-decoration:underline}
+    @media (min-width:768px){
+      .footer-inner{flex-direction:row; justify-content:space-between; text-align:left}
+      .footer-top{flex-direction:row; gap:14px}
+      .footer-social-block{flex-direction:row; gap:10px}
+      .footer-legal{margin-top:0}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+    }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#contenu">Aller au contenu</a>
+
+  <!-- HEADER (facultatif si déjà inclus ailleurs) -->
+  <header>
+    <div class="wrap">
+      <img class="logo" src="./folder3/imaj10.png" alt="Logo KCN">
+      <nav class="nav">
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./plancours.html">Plan des cours</a>
+        <a href="./reservation.html">Réservation</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" role="banner" aria-label="Bannière événements">
+    <div class="hero-card">
+      <h1>Événements KCN</h1>
+      <p>Compétitions, journées découverte, ateliers & formations, stages et moments forts de la vie du club.</p>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <div class="filters" id="filters" role="region" aria-label="Filtres des événements">
+    <span class="hint">Filtrer par activité :</span>
+    <div class="seg" role="tablist" aria-label="Activités">
+      <button class="chip" aria-pressed="true" data-act="all">Toutes</button>
+      <button class="chip" aria-pressed="false" data-act="competition">Compétition</button>
+      <button class="chip" aria-pressed="false" data-act="decouverte">Journées découverte</button>
+      <button class="chip" aria-pressed="false" data-act="formation">Ateliers & Formations</button>
+      <button class="chip" aria-pressed="false" data-act="stage">Stages / Sorties</button>
+      <button class="chip" aria-pressed="false" data-act="club">Vie du club</button>
+    </div>
+
+    <span class="hint" style="margin-left:10px">Année :</span>
+    <div class="seg" role="tablist" aria-label="Années">
+      <button class="chip" aria-pressed="true" data-year="all">Toutes</button>
+      <button class="chip" aria-pressed="false" data-year="2025">2025</button>
+      <button class="chip" aria-pressed="false" data-year="2024">2024</button>
+      <button class="chip" aria-pressed="false" data-year="2023">2023</button>
+    </div>
+
+    <div class="search" aria-label="Recherche">
+      <input id="q" type="search" placeholder="Rechercher un événement..." aria-label="Rechercher un événement" />
+      <button class="reset" id="reset" type="button">Réinitialiser</button>
+    </div>
+  </div>
+
+  <main id="contenu">
+    <!-- 1. Journées découverte -->
+    <details open data-category="decouverte">
+      <summary>📣 Journées découverte / Portes ouvertes <span class="count" data-count></span></summary>
+      <div class="grid">
+        <article class="card" data-act="decouverte" data-year="2024" data-title="Découverte de la nouvelle piscine">
+          <div class="thumb">
+            <span class="badge">Nov 2024</span>
+            <img loading="lazy" src="./folder1/folder5/imaj1.jpeg" alt="Découverte de la nouvelle piscine — 2024" />
+          </div>
+          <div class="body">
+            <div class="title">Une journée mémorable : nouvelle piscine</div>
+            <div class="meta"><span>01/11/2024</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Sécurité</span><span class="tag">Initiation</span><span class="tag">Familles</span></div>
+            <a class="cta" href="./evenement1.html">Voir l’événement →</a>
+          </div>
+        </article>
+
+        <article class="card" data-act="decouverte" data-year="2025" data-title="Portes ouvertes KCN – Août">
+          <div class="thumb">
+            <span class="badge">Août 2025</span>
+            <img loading="lazy" src="./folder7/aktivite-club/4vie.jpeg" alt="Portes ouvertes, Test d'évaluation & Mini-compétition — Août 2025" />
+          </div>
+          <div class="body">
+            <div class="title">Portes ouvertes, Test d’évaluation & Mini-compétition</div>
+            <div class="meta"><span>30/08/2025</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Mini-compétition</span><span class="tag">Enfants</span><span class="tag">Test</span></div>
+            <a class="cta" href="./evenement2.html">Voir l’événement →</a>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <!-- 2. Compétitions -->
+    <details data-category="competition">
+      <summary>🏆 Compétitions <span class="count" data-count></span></summary>
+      <div class="grid">
+        <article class="card" data-act="competition" data-year="2025" data-title="Meeting régional des jeunes">
+          <div class="thumb">
+            <span class="badge">Juin 2025</span>
+            <img loading="lazy" src="./events/meet-2025.jpg" alt="Meeting régional des jeunes — 2025" />
+          </div>
+          <div class="body">
+            <div class="title">Meeting régional des jeunes</div>
+            <div class="meta"><span>15/06/2025</span>·<span>Port-au-Prince</span></div>
+            <div class="tags"><span class="tag">Compétition</span><span class="tag">Jeunes</span></div>
+            <a class="cta" href="./evenement-meeting-juin-2025.html">Voir l’événement →</a>
+          </div>
+        </article>
+
+        <article class="card" data-act="competition" data-year="2024" data-title="Interclubs d’hiver">
+          <div class="thumb">
+            <span class="badge">Déc 2024</span>
+            <img loading="lazy" src="./events/interclubs-2024.jpg" alt="Interclubs d’hiver — 2024" />
+          </div>
+          <div class="body">
+            <div class="title">Interclubs d’hiver</div>
+            <div class="meta"><span>10/12/2024</span>·<span>Cap-Haïtien</span></div>
+            <div class="tags"><span class="tag">Relais</span><span class="tag">Performance</span></div>
+            <a class="cta" href="./evenement-interclubs-2024.html">Voir l’événement →</a>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <!-- 3. Ateliers & Formations -->
+    <!-- OUVERT PAR DÉFAUT pour que tu voies bien tes liens -->
+    <details open data-category="formation">
+      <summary>🎓 Ateliers & Formations <span class="count" data-count></span></summary>
+      <div class="grid">
+
+        <!-- ✅ Événement atelier leadership corrigé -->
+        <article class="card" data-act="formation" data-year="2025" data-title="Atelier Leadership & Coaching – 11–13 avril 2025">
+          <div class="thumb">
+            <span class="badge">Avr 2025</span>
+            <!-- Mets ici une vraie image (pas une page .html) -->
+            <img loading="lazy" src="./folder7/aktivite-kcn/2.jpeg" alt="Atelier Leadership & Coaching sportif — 11–13 avril 2025" />
+          </div>
+          <div class="body">
+            <div class="title">Atelier Leadership & Coaching (11–13 avril 2025)</div>
+            <div class="meta"><span>11–13/04/2025</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Formation</span><span class="tag">Coaching</span><span class="tag">Leadership</span></div>
+            <!-- Lien vers la page d’événement que je t’ai fournie -->
+            <a class="cta" href="./evenement3.html">Voir l’événement →</a>
+          </div>
+        </article>
+
+        <article class="card" data-act="formation" data-year="2024" data-title="Atelier parents & enfants">
+          <div class="thumb">
+            <span class="badge">Août 2024</span>
+            <img loading="lazy" src="./events/atelier-parents-2024.jpg" alt="Atelier parents & enfants — 2024" />
+          </div>
+          <div class="body">
+            <div class="title">Atelier parents & enfants</div>
+            <div class="meta"><span>18/08/2024</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Pédagogie</span><span class="tag">Familles</span></div>
+            <a class="cta" href="./evenement-atelier-parents-2024.html">Voir l’événement →</a>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <!-- 4. Stages / Sorties -->
+    <details data-category="stage">
+      <summary>🧳 Stages / Sorties <span class="count" data-count></span></summary>
+      <div class="grid">
+        <article class="card" data-act="stage" data-year="2025" data-title="Stage intensif vacances">
+          <div class="thumb">
+            <span class="badge">Juil 2025</span>
+            <img loading="lazy" src="./events/stage-intensif-2025.jpg" alt="Stage intensif vacances — 2025" />
+          </div>
+          <div class="body">
+            <div class="title">Stage intensif – Vacances</div>
+            <div class="meta"><span>05/07/2025</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Technique</span><span class="tag">Endurance</span></div>
+            <a class="cta" href="./evenement-stage-vacances-2025.html">Voir l’événement →</a>
+          </div>
+        </article>
+      </div>
+    </details>
+
+    <!-- 5. Vie du club -->
+    <!-- OUVERT PAR DÉFAUT pour être bien visible -->
+    <details open data-category="club">
+      <summary>🎉 Vie du club / Cérémonies <span class="count" data-count></span></summary>
+      <div class="grid">
+        <article class="card" data-act="club" data-year="2025" data-title="Ambiance du Club">
+          <div class="thumb">
+            <span class="badge">Fév 2025</span>
+            <img loading="lazy" src="./folder7/aktivite-club/2vie.jpeg" alt="Ambiance du Club — 2025" />
+          </div>
+          <div class="body">
+            <div class="title">Ambiance du Club</div>
+            <div class="meta"><span>02/2025</span>·<span>Delmas</span></div>
+            <div class="tags"><span class="tag">Célébration</span><span class="tag">Communauté</span></div>
+            <a class="cta" href="./evenement-vie-du-club.html">Voir l’événement →</a>
+          </div>
+        </article>
+      </div>
+    </details>
+  </main>
+
+  <script>
+    // —— Filtres (activité + année + recherche) —— //
+    const cards = document.querySelectorAll('.card[data-act][data-year]');
+    const categoryBlocks = document.querySelectorAll('details[data-category]');
+    const actButtons = document.querySelectorAll('.filters [data-act]');
+    const yearButtons = document.querySelectorAll('.filters [data-year]');
+    const searchInput = document.getElementById('q');
+    const resetBtn = document.getElementById('reset');
+
+    let currentAct = 'all';
+    let currentYear = 'all';
+    let q = '';
+
+    function setPressed(group, attr, value){
+      group.forEach(btn => btn.setAttribute('aria-pressed', btn.dataset[attr] === value ? 'true' : 'false'));
+    }
+
+    function normalize(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+    function applyFilters(){
+      const nq = normalize(q);
+      const visibleByCategory = new Map();
+
+      cards.forEach(card=>{
+        const matchAct = currentAct === 'all' || card.dataset.act === currentAct;
+        const matchYear = currentYear === 'all' || card.dataset.year === currentYear;
+        const matchQ = !nq || normalize(card.dataset.title).includes(nq);
+        const visible = matchAct && matchYear && matchQ;
+        card.style.display = visible ? '' : 'none';
+        const container = card.closest('details');
+        const key = container ? container.dataset.category : 'other';
+        visibleByCategory.set(key, (visibleByCategory.get(key)||0) + (visible ? 1 : 0));
+      });
+
+      categoryBlocks.forEach(block=>{
+        const countEl = block.querySelector('[data-count]');
+        const n = visibleByCategory.get(block.dataset.category) || 0;
+        if(countEl){ countEl.textContent = `(${n})`; }
+        if(q){ block.open = n > 0; }
+      });
+    }
+
+    // Activity
+    actButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentAct = btn.dataset.act;
+        setPressed(actButtons,'act',currentAct);
+        applyFilters();
+      });
+    });
+
+    // Year
+    yearButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentYear = btn.dataset.year;
+        setPressed(yearButtons,'year',currentYear);
+        applyFilters();
+      });
+    });
+
+    // Search
+    searchInput.addEventListener('input', (e)=>{ q = e.target.value || ''; applyFilters(); });
+
+    // Reset
+    resetBtn.addEventListener('click', ()=>{
+      currentAct='all'; currentYear='all'; q='';
+      setPressed(actButtons,'act','all');
+      setPressed(yearButtons,'year','all');
+      searchInput.value='';
+      applyFilters();
+      // Laisse seulement la première ouverte si tu veux :
+      // categoryBlocks.forEach((d,i)=> d.open = (i===0));
+    });
+
+    // Init (compteurs au chargement)
+    applyFilters();
+  </script>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+      <div class="footer-social-block">
+        <span class="follow-text">Suivez-nous :</span>
+        <div class="footer-social" aria-label="Réseaux sociaux KCN">
+          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
+            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

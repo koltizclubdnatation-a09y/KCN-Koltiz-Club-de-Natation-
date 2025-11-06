@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Notre équipe – KCN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #0093e9 0%, #80d0c7 100%);
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+
+    .team-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0066cc;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    /* ----- Cartes équipe ----- */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 32px;
+    }
+    .team-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,102,204,0.08);
+      padding: 24px 16px 16px 16px;
+      text-align: center;
+      position: relative;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .team-card:hover {
+      box-shadow: 0 8px 32px rgba(0,102,204,0.18);
+      transform: translateY(-6px) scale(1.03);
+    }
+    .team-photo {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #0066cc;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,102,204,0.12);
+      transition: border-color 0.3s;
+    }
+    .team-card:hover .team-photo {
+      border-color: #ffc107;
+    }
+    .team-name {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #0066cc;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #e3f2fd 60%, #00bcd4 100%);
+      border-radius: 6px;
+      padding: 4px 0;
+    }
+    .team-role {
+      font-size: 1em;
+      color: #222;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .team-btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #ffc107 60%, #ff9800 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1em;
+      padding: 10px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(255, 152, 0, 0.18);
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+    .team-btn:hover {
+      background: linear-gradient(90deg, #ff9800 60%, #ffc107 100%);
+      color: #222;
+    }
+
+    @media (max-width: 700px) {
+      h1 { font-size: 1.8em; }
+      .team-photo { width: 90px; height: 90px; }
+    }
+
+    /* ----- Footer harmonisé ----- */
+    footer {
+      margin-top: 50px;
+      background: linear-gradient(90deg,#0093e9,#80d0c7);
+      color: #fff;
+      text-align: center;
+      padding: 24px 0;
+      border-top: 3px solid rgba(255,255,255,0.2);
+    }
+    .footer-inner {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="team-container">
+    <h1>Notre équipe</h1>
+
+    <div class="team-grid">
+
+      <div class="team-card">
+        <a href="personne0.html"><img src="assets/images/valery/imaj134.png" alt="Valéry Gernier" class="team-photo"></a>
+        <div class="team-name">Valéry GERNIER</div>
+        <div class="team-role">Co-Fondateur – Président</div>
+        <a href="personne0.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne1.html"><img src="assets/images/imaj7.jpeg" alt="Ruby King" class="team-photo"></a>
+        <div class="team-name">Ruby KING</div>
+        <div class="team-role">Fondatrice – Vice-Présidente – Formatrice – Entraîneure – Sauveteur</div>
+        <a href="personne1.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne2.html"><img src="assets/images/Therese/imaj3.jpeg" alt="Thérèse Redgie Marc" class="team-photo"></a>
+        <div class="team-name">Thérèse Redgie MARC</div>
+        <div class="team-role">Secrétaire Administrative</div>
+        <a href="personne2.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne10.html"><img src="assets/images/Jodo/1.jpeg" alt="Hervé Juderns DELICE" class="team-photo"></a>
+        <div class="team-name">Hervé Juderns DELICE</div>
+        <div class="team-role">Responsable Développement • Sportif Polyvalent</div>
+        <a href="personne10.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne8.html"><img src="assets/images/nicolson/1.jpeg" alt="Nicolson Alexandre" class="team-photo"></a>
+        <div class="team-name">Nicolson ALEXANDRE</div>
+        <div class="team-role">Entraîneur – Passionné de Natation & Transmission</div>
+        <a href="personne8.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne7.html"><img src="assets/images/Amitai/1.jpeg" alt="Amitai Thelusma" class="team-photo"></a>
+        <div class="team-name">Amitai THELUSMA</div>
+        <div class="team-role">Entraîneur – Maître-nageur – Sauveteur</div>
+        <a href="personne7.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne5.html"><img src="assets/images/Alvins/imaj100.jpeg" alt="Alvins Destima" class="team-photo"></a>
+        <div class="team-name">Alvins DESTIMA</div>
+        <div class="team-role">Entraîneur – Maître-nageur – Sauveteur</div>
+        <a href="personne5.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne3.html"><img src="assets/images/medjina/image6.jpeg" alt="Lumath Medjina Augustin" class="team-photo"></a>
+        <div class="team-name">Lumath Medjina AUGUSTIN</div>
+        <div class="team-role">Entraîneure & Communication Inclusive</div>
+        <a href="personne3.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne4.html"><img src="assets/images/wilson/(13).png" alt="Wilson Aldofrande" class="team-photo"></a>
+        <div class="team-name">Wilson ALDOFRANDE</div>
+        <div class="team-role">Entraîneur de Natation</div>
+        <a href="personne4.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne6.html"><img src="assets/images/Berline/profile-pic(19).png" alt="Berline Benoit" class="team-photo"></a>
+        <div class="team-name">Berline BENOIT</div>
+        <div class="team-role">Entraîneure</div>
+        <a href="personne6.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+      <div class="team-card">
+        <a href="personne9.html"><img src="assets/images/Meloza/1.jpeg" alt="Ed-Dlens Meloza" class="team-photo"></a>
+        <div class="team-name">Ed-Dlens MELOZA</div>
+        <div class="team-role">Athlète & Assistant Communication Digitale</div>
+        <a href="personne9.html" class="team-btn">Voir la fiche</a>
+      </div>
+
+    </div>  
+     <a href="certificat.html" class="team-btn">Nos certificats </a>
+     
+  </div>
+
+  <!-- Pied de page -->
+  <footer>
+    <div class="footer-inner">
+      <div>© 2025 KOLTIZ Club de Natation – Tous droits réservés</div>
+    </div>
+  </footer>
+
+
+
+</body>
+</html>

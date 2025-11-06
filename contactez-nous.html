@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KCN – KOLTIZ Club de Natation | Contact</title>
+  <meta name="description" content="Contactez le KOLTIZ Club de Natation (KCN). Inscriptions, informations cours, événements. Delmas, Haïti." />
+  <meta name="theme-color" content="#0066cc" />
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="KCN – KOLTIZ Club de Natation" />
+  <meta property="og:description" content="Rejoignez KCN : cours de natation pour enfants et adultes, sécurité et plaisir au cœur de notre pédagogie." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="./assets/images/og-cover.jpg" />
+  <meta property="og:url" content="https://example.com/contact" />
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand-600:#0066cc; --brand-500:#0c7fd6; --brand-400:#00bcd4;
+      --accent-500:#ff9800; --accent-400:#ffc107;
+      --text-900:#1f2937; --text-700:#374151; --text-500:#6b7280;
+      --bg:#f9fafb; --white:#ffffff; --muted:#e5e7eb; --ring: 0 0 0 3px rgba(0,102,204,.25);
+      --radius: 12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;background:var(--bg);color:var(--text-900);line-height:1.6}
+    a{color:var(--brand-600);text-decoration:none}
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{outline: none; box-shadow: var(--ring)}
+
+    /* Layout helpers */
+    .container{max-width:1200px;margin-inline:auto;padding:0 24px}
+    .stack{display:grid;gap:clamp(12px,2vw,20px)}
+
+    /* HERO */
+    .hero{position:relative;min-height:42vh;display:grid;place-items:center;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat}
+    .hero-overlay{background:rgba(255,255,255,.9);border-radius:var(--radius);padding:28px;max-width:720px;backdrop-filter:saturate(1.2) blur(2px);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .hero h1{margin:0 0 8px;color:var(--brand-600);font-size:clamp(24px,3.2vw,38px)}
+    .hero p{margin:0;color:var(--text-700)}
+
+    /* Slider */
+    .slider{position:relative;margin:40px auto;border-radius:16px;overflow:hidden;background:#000}
+    .frame{aspect-ratio:16/9;max-height:520px}
+    .slides{height:100%;position:relative}
+    .slides img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.02);transition:opacity .8s ease, transform 6s ease}
+    .slides img.active{opacity:1;transform:scale(1)}
+    .slider-controls{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;pointer-events:none}
+    .ctrl{pointer-events:auto;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:26px;font-weight:700;user-select:none;backdrop-filter:blur(6px)}
+    .ctrl:hover{background:rgba(255,255,255,.28)}
+
+    /* Contact section */
+    .contact{margin:40px 0}
+    .card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.06);border:1px solid var(--muted)}
+    .grid{display:grid;gap:24px}
+    @media (min-width: 900px){.grid{grid-template-columns:1.2fr .8fr}}
+
+    .lead{color:var(--text-700);margin:8px 0 0}
+    .info-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+    .info-list a{word-break:break-word}
+
+    /* Form */
+    form{display:grid;gap:14px}
+    .form-row{display:grid;gap:14px}
+    @media (min-width: 700px){.form-row{grid-template-columns:1fr 1fr}}
+    label{font-weight:600}
+    input, textarea, select{width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:10px;background:#fff;font:inherit}
+    input:invalid, textarea:invalid, select:invalid{border-color:#f59e0b}
+    textarea{min-height:120px;resize:vertical}
+
+    .consent{display:flex;gap:10px;align-items:flex-start}
+    .consent input{margin-top:2px}
+
+    .btn{--_bg:linear-gradient(90deg,var(--accent-500),var(--accent-400));display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;border:none;border-radius:10px;background:var(--_bg);color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease;box-shadow:0 6px 18px rgba(255,152,0,.25)}
+    .btn:hover{transform:translateY(-2px)}
+
+    .meta{font-size:.9rem;color:var(--text-500)}
+
+    /* Reviews bloc */
+    .section.dark{background:#0b4f9c; color:#fff; padding:32px 0; margin-top:16px}
+    .title-center{margin:0 0 12px; text-align:center}
+    .sub{text-align:center; margin-top:10px; color:#e5eefb}
+
+    .reviews-grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:center}
+    .reviews-grid .card{flex:0 1 160px;height:100px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;transition:transform .2s ease, box-shadow .2s ease}
+    .reviews-grid .card:hover{transform:translateY(-4px);box-shadow:0 6px 12px rgba(0,0,0,0.25)}
+    .reviews-grid img{max-width:100px;max-height:60px;object-fit:contain;filter:brightness(.98) contrast(1.05)}
+    @media (max-width:600px){
+      .reviews-grid .card{flex:0 1 120px;height:80px}
+      .reviews-grid img{max-width:80px;max-height:50px}
+    }
+
+    /* Footer */
+    footer{margin-top:50px;background:linear-gradient(90deg,var(--brand-600),var(--brand-400));color:#fff}
+    .footer-inner{display:grid;gap:12px;justify-items:center;padding:18px 0}
+    .legal{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+    .legal a{color:#fff;text-decoration:underline dotted}
+
+    /* A11y helpers */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* Bouton retour */
+    .btn-retour{display:inline-block;padding:10px 18px;background:linear-gradient(90deg, var(--brand-600), var(--brand-400));color:#fff;font-weight:600;border-radius:10px;text-decoration:none;transition:transform .2s ease, box-shadow .2s ease;box-shadow:0 4px 14px rgba(0,102,204,0.25)}
+    .btn-retour:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,102,204,0.3)}
+
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important; scroll-behavior:auto !important}
+    }
+  </style>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    "name": "KOLTIZ Club de Natation (KCN)",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Delmas 75, rue des Tourterelles, Hôtel House of Dream",
+      "addressLocality": "Delmas",
+      "addressRegion": "Ouest",
+      "addressCountry": "HT",
+      "postalCode": "6120"
+    },
+    "telephone": "+50936956939",
+    "email": "koltizclubdnatation@gmail.com",
+    "url": "https://example.com/",
+    "image": "./assets/images/og-cover.jpg"
+  }
+  </script>
+</head>
+<body>
+  <a class="sr-only" href="#main">Aller au contenu</a>
+
+  <main id="main" class="container stack">
+    <!-- HERO -->
+    <section class="hero" role="banner" aria-label="En-tête visuel">
+      <div class="hero-overlay">
+        <h1>Contactez-nous</h1>
+        <p class="lead">Nous répondons à vos questions et accompagnons votre inscription aux cours de natation (enfants & adultes).</p>
+      </div>
+    </section>
+
+    <!-- SLIDER (facultatif : se cache si images manquantes) -->
+    <section class="slider frame" aria-label="Moments KCN">
+      <div class="slides" id="slides">
+        <img src="./folder0/image7.jpg" alt="Enfant souriant dans la piscine" loading="lazy" class="active">
+        <img src="./folder0/image3.png" alt="Cours de natation KCN" loading="lazy">
+        <img src="./folder0/image9.png" alt="Trois enfants heureux dans l'eau" loading="lazy">
+      </div>
+      <div class="slider-controls" aria-hidden="false">
+        <button class="ctrl prev" type="button" aria-label="Diapo précédente">‹</button>
+        <button class="ctrl next" type="button" aria-label="Diapo suivante">›</button>
+      </div>
+    </section>
+
+    <!-- CONTACT & FORM -->
+    <section class="contact grid" aria-labelledby="contact-title">
+      <!-- Infos -->
+      <article class="card stack" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+        <div>
+          <h2 id="contact-title">Nos informations</h2>
+          <p class="lead">Écrivez-nous, appelez-nous ou passez nous voir.</p>
+        </div>
+        <ul class="info-list">
+          <li><strong>Téléphone :</strong>
+            <a href="tel:+50936956939">(+509) 36 95 6939</a> ·
+            <a href="tel:+50936985221">36 98 5221</a> ·
+            <a href="tel:+50940210771">40 21 0771</a>
+          </li>
+          <li><strong>WhatsApp :</strong> <a href="https://wa.me/50936956939" rel="noopener" target="_blank">+509 36 95 6939</a></li>
+          <li><strong>Email :</strong> <a href="mailto:koltizclubdnatation@gmail.com">koltizclubdnatation@gmail.com</a></li>
+          <li><strong>Adresse :</strong>
+            <span itemprop="streetAddress">Delmas 75, rue des Tourterelles, Hôtel House of Dream</span>,
+            <span itemprop="addressLocality">Delmas</span>,
+            <span itemprop="addressRegion">Ouest</span>, Haïti
+            <span itemprop="postalCode">6120</span>
+          </li>
+        </ul>
+        <p class="meta">Horaires : sam–dim 8h–10h & 10h–12h (AST). Fermé la semaine pour le moment.</p>
+        <iframe title="KCN – Plan d'accès (Google Maps)" loading="lazy" style="width:100%;height:260px;border:0;border-radius:10px" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Delmas%2075%20Haiti&output=embed"></iframe>
+      </article>
+
+      <!-- Formulaire -->
+      <article class="card stack" aria-labelledby="form-title">
+        <div>
+          <h2 id="form-title">Envoyez-nous un message</h2>
+          <p class="meta">* Champs requis</p>
+        </div>
+
+        <form id="contact-form" action="https://formspree.io/f/xjkaoyak" method="POST" novalidate>
+          <div class="form-row">
+            <div>
+              <label for="nom">Nom complet *</label>
+              <input id="nom" name="nom" type="text" autocomplete="name" required />
+            </div>
+            <div>
+              <label for="telephone">Téléphone *</label>
+              <input id="telephone" name="telephone" type="tel" autocomplete="tel" required pattern="^[+\d][\d\s()-]{6,}$" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="exemple@mail.com" />
+            </div>
+            <div>
+              <label for="pays">Pays</label>
+              <select id="pays" name="pays" autocomplete="country-name">
+                <option value="">Sélectionnez</option>
+                <option value="HT" selected>Haïti</option>
+                <option value="CA">Canada</option>
+                <option value="US">États-Unis</option>
+                <option value="FR">France</option>
+                <option value="DO">République Dominicaine</option>
+                <option value="JM">Jamaïque</option>
+                <option value="CR">Costa Rica</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="departement">Département (Haïti)</label>
+              <select id="departement" name="departement">
+                <option value="">—</option>
+                <option>Artibonite</option>
+                <option>Centre</option>
+                <option>Grand'Anse</option>
+                <option>Nippes</option>
+                <option>Nord</option>
+                <option>Nord-Est</option>
+                <option>Nord-Ouest</option>
+                <option>Ouest</option>
+                <option>Sud</option>
+                <option>Sud-Est</option>
+              </select>
+            </div>
+            <div>
+              <label for="ville">Ville</label>
+              <input id="ville" name="ville" type="text" placeholder="Votre ville" />
+            </div>
+          </div>
+          <div>
+            <label for="objet">Objet *</label>
+            <input id="objet" name="objet" type="text" required placeholder="Inscription, informations, partenariat…" />
+          </div>
+          <div>
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="6" required></textarea>
+          </div>
+
+          <div class="consent">
+            <input id="consent" name="consent" type="checkbox" required />
+            <label for="consent">J'accepte la <a href="confidentialités.html" target="_blank" rel="noopener">Politique de confidentialité</a> et les <a href="conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a>. *</label>
+          </div>
+
+          <!-- Anti-spam : honeypot -->
+          <input type="text" name="_gotcha" style="display:none" autocomplete="off">
+
+          <button class="btn" type="submit">Envoyer</button>
+          <p id="form-status" class="meta" role="status" aria-live="polite"></p>
+        </form>
+      </article>
+    </section>
+
+    <h4 style="text-align:center;margin:8px 0 0"><em>Abonne-toi et rejoins la vague KOLTIZ ! Ensemble, apprenons à nager, à aider les autres et à faire grandir la culture de la sécurité aquatique en Haïti.</em></h4>
+
+    <!-- REVIEWS -->
+    <section class="section dark" aria-labelledby="reviews-title">
+      <div class="container">
+        <h3 id="reviews-title" class="title-center"><strong>CE QUE NOS MEMBRES DISENT DE NOUS</strong></h3>
+        <div class="cards reviews-grid" role="list">
+          <div class="card" role="listitem">
+            <a href="https://share.google/4BtWuHPeGGOUPtN27" target="_blank" rel="noopener">
+              <img src="./folder0/google.png" alt="Avis Google – KCN" loading="lazy"/>
+            </a>
+          </div>
+          <div class="card" role="listitem">
+            <a href="https://www.facebook.com/koltizclubdnatation/reviews" target="_blank" rel="noopener">
+              <img src="./folder0/facebook.png" alt="Avis Facebook – KCN" loading="lazy"/>
+            </a>
+          </div>
+          <div class="card" role="listitem">
+            <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener">
+              <img src="./folder0/instagram.png" alt="Avis Instagram – KCN" loading="lazy"/>
+            </a>
+          </div>
+          <div class="card" role="listitem">
+            <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener">
+              <img src="./folder0/whatsapp.jpg" alt="Channel WhatsApp – KCN" loading="lazy"/>
+            </a>
+          </div>
+        </div>
+        <h4 class="sub"><em>N'hésite pas à nous laisser un avis 🫶</em></h4>
+      </div>
+    </section>
+
+    <!-- Bouton retour -->
+    <div style="margin-top:16px;text-align:center;">
+      <a href="Apropos.html" class="btn-retour" aria-label="Retour à la page À propos">← Retour</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2025 KOLTIZ Club de Natation – Tous droits réservés</div>
+      <nav class="legal" aria-label="Liens légaux">
+        <a href="confidentialités.html">Confidentialité</a>
+        <a href="conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Slider: auto + boutons, se désactive si pas d'images
+    (function(){
+      const slider = document.querySelector('.slider');
+      const imgs = Array.from(document.querySelectorAll('.slides img'));
+      const prev = document.querySelector('.prev');
+      const next = document.querySelector('.next');
+      if(!slider || imgs.length === 0){ if(slider) slider.style.display='none'; return; }
+
+      let i = 0, id = null;
+      const show = n => imgs.forEach((im, idx)=> im.classList.toggle('active', idx===n));
+      const go = step => { i = (i + step + imgs.length) % imgs.length; show(i); };
+      const start = () => { stop(); id = setInterval(()=> go(1), 5500); };
+      const stop = () => { if(id) clearInterval(id); id = null; };
+
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+      if(prev && next){
+        prev.addEventListener('click', ()=> go(-1));
+        next.addEventListener('click', ()=> go(1));
+      }
+      show(i); start();
+    })();
+
+    // Envoi Formspree avec feedback (sans rechargement)
+    (function(){
+      const form = document.getElementById('contact-form');
+      const status = document.getElementById('form-status');
+      if(!form) return;
+
+      function setStatus(msg, ok=true){
+        status.textContent = msg;
+        status.style.color = ok ? '#15803d' : '#b91c1c';
+      }
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        setStatus('Envoi en cours…', true);
+
+        // validation HTML5
+        if(!form.checkValidity()){
+          setStatus('Merci de compléter les champs requis.', false);
+          form.reportValidity();
+          return;
+        }
+
+        try{
+          const data = new FormData(form);
+          const res = await fetch(form.action, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+          if(res.ok){
+            setStatus('Merci ! Votre message a bien été envoyé. Nous vous répondrons au plus vite.');
+            form.reset();
+          }else{
+            setStatus("Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous à koltizclubdnatation@gmail.com.", false);
+          }
+        }catch(err){
+          setStatus("Connexion impossible. Vérifiez votre réseau et réessayez.", false);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

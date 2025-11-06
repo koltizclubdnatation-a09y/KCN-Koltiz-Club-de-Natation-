@@ -1,0 +1,568 @@
+  <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Certifications – KCN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --brand:#0066cc; --accent:#00bcd4; --ink:#222; --muted:#6b7280;
+      --line:#e5e7eb; --bg:#f9f9f9; --card:#fff; --radius:14px;
+      --shadow:0 10px 28px rgba(0,0,0,.06);
+      --sun:#ff9800; /* manquante dans la version d’origine */
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:'Montserrat',Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    img{display:block;width:100%;height:auto;border-radius:12px}
+    a:focus-visible,button:focus-visible{outline:3px solid #111;outline-offset:2px}
+
+    /* Utilitaires */
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+
+    /* HERO */
+    .hero{min-height:46vh;display:grid;place-items:center;padding:24px;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat}
+    .hero-card{background:rgba(255,255,255,.92);padding:28px;border-radius:var(--radius);max-width:780px;text-align:center;box-shadow:var(--shadow)}
+    .hero-card h1{color:var(--brand);font-size:clamp(1.5rem,1.1rem + 2vw,2.2rem);margin-bottom:8px}
+    .hero-card p{color:#333}
+
+    /* Intro */
+    .intro{margin:30px auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,.05);padding:22px}
+    .intro p{font-size:1.05rem;margin:0}
+
+    /* Filtres */
+    .filters{margin:16px auto 0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+    .filters h3{font-size:1rem;color:var(--muted);margin:10px 6px 0}
+    .filter-btn{
+      border:2px solid var(--brand);color:var(--brand);background:#fff;
+      padding:8px 14px;border-radius:12px;cursor:pointer;font-weight:700;transition:.2s
+    }
+    .filter-btn:hover{background:#eef6ff}
+    .filter-btn[aria-pressed="true"]{background:linear-gradient(90deg,#ff9800,#ffc107);border-color:#ff9800;color:#111;box-shadow:0 6px 16px rgba(255,152,0,.25)}
+
+    /* Accordéon */
+    details{margin:20px auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    summary{cursor:pointer;padding:16px 20px;font-size:1.1rem;font-weight:700;color:var(--brand);background:rgba(0,102,204,.07);display:flex;justify-content:space-between;align-items:center}
+    summary::after{content:"▾";font-size:1.2rem;transition:.3s}
+    details[open] summary::after{transform:rotate(180deg)}
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));padding:16px 20px}
+
+    figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.05);overflow:hidden;transition:transform .2s}
+    figure:hover{transform:translateY(-3px)}
+    figure img{aspect-ratio:4/3;object-fit:cover;cursor:pointer}
+    figure figcaption{padding:10px 12px;font-size:.95rem;color:var(--muted)}
+
+    /* Bouton retour */
+    .btn{
+      background:linear-gradient(90deg,var(--sun),#ffc107);
+      color:#111;
+      padding:12px 22px; border-radius:14px; text-decoration:none; font-weight:800; letter-spacing:.2px;
+      display:inline-block; box-shadow:0 12px 30px rgba(255,152,0,.28); transition:transform .2s ease;
+      border:2px solid transparent;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-wrap{display:flex; justify-content:center; margin:30px auto}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.25s;z-index:9999}
+    .lightbox.active{opacity:1;visibility:visible}
+    .lightbox img{max-width:92vw;max-height:88vh;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.45)}
+    .lightbox .close{position:absolute;top:20px;right:24px;font-size:34px;color:#fff;cursor:pointer;line-height:1}
+    .lightbox .caption{position:absolute;left:0;right:0;bottom:18px;text-align:center;color:#fff;font-size:.95rem;padding:0 16px}
+
+    .hidden{display:none!important}
+
+    /* Footer */
+    footer.footer{background:#fff;border-top:4px solid var(--accent);text-align:center;color:var(--brand);padding:16px;margin-top:30px}
+    .footer-inner{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .footer-top{display:flex;align-items:center;flex-direction:column;gap:8px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .copyright{font-size:.9rem;color:#0b3e74;margin:0}
+    .footer-social-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .follow-text{font-weight:600;font-size:.95rem;color:#0b3e74}
+    .footer-social{display:flex;justify-content:center;gap:14px}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;transition:transform .2s, box-shadow .2s}
+    .footer-social img:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,.15)}
+    .footer-legal{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:6px}
+    .footer-legal a{color:#0b3e74;text-decoration:none;font-size:.9rem}
+    .footer-legal a:hover{text-decoration:underline}
+
+    @media (min-width: 768px){
+      .footer-inner{flex-direction:row;justify-content:space-between;text-align:left}
+      .footer-top{flex-direction:row;gap:14px}
+      .footer-social-block{flex-direction:row;gap:10px}
+      .footer-legal{margin-top:0}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    }
+
+    /* --- Verrou public (filigrane quand non connecté) --- */
+.lb-locked::after{
+  content:"Connectez-vous à l’Espace Parent pour télécharger";
+  position:absolute; inset:0; display:grid; place-items:center;
+  color:#fff; font-weight:800; letter-spacing:.4px; text-align:center;
+  text-shadow:0 2px 6px rgba(0,0,0,.6);
+  background:repeating-linear-gradient(45deg, rgba(0,0,0,.28) 0 12px, rgba(0,0,0,.38) 12px 24px);
+  border-radius:12px; padding:12px;
+}
+.lb-locked img{ filter: blur(1.5px) saturate(.85); }
+
+/* Désactive quelques contournements simples côté UI */
+.no-select{-webkit-user-select:none; user-select:none}
+
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-card">
+      <h1>Certifications KCN</h1>
+      <p>Chaque certificat est une preuve de courage, de persévérance et d’excellence.</p>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <div class="intro container">
+    <p>
+      Retrouvez ci-dessous les différentes catégories de certifications du <strong>KOLTIZ Club de Natation</strong>.
+    </p>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters container" role="group" aria-label="Filtrer par activité">
+    <h3>Activités :</h3>
+    <button class="filter-btn" aria-pressed="true" data-filter-act="all">Toutes</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="competition">Compétition</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="formation">Formation</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="securite">Sécurité</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="stage">Stages</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="clinique">Clinique</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="conference">Conférence</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="championnat">Championnat</button>
+    <button class="filter-btn" aria-pressed="false" data-filter-act="remerciement">Remerciement</button>
+  </div>
+
+  <!-- SECTIONS -->
+  <div class="container">
+    <details open>
+      <summary>Certificats de Coach Ruby</summary>
+      <div class="grid">
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/1.png" alt="Ruby — Certificat formateur #1" loading="lazy"/>
+          <figcaption>Formation - Nage en eau libre</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="clinique">
+          <img src="./folder0/folder4/2.png" alt="Ruby — Entraîneur de natation (clinique)" loading="lazy"/>
+          <figcaption>Clinique - Entraîneur de natation</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="clinique">
+          <img src="./folder0/folder4/3.png" alt="Ruby — Clinique pour entraîneur de plongeon" loading="lazy"/>
+          <figcaption>Clinique - pour entraîneur de plongeon</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/4.jpeg" alt="Ruby — Formation Arbitrage" loading="lazy"/>
+          <figcaption>Formation - Arbitrage</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/5.jpeg" alt="Ruby — Médecine sportive" loading="lazy"/>
+          <figcaption>Formation - Médecine sportive</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/6.jpeg" alt="Ruby — Administration sportive" loading="lazy"/>
+          <figcaption>Formation - Administration sportive</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="conference">
+          <img src="./folder0/folder4/7.jpeg" alt="Ruby — Conférence pour entraîneurs en eau libre" loading="lazy"/>
+          <figcaption>Conférence - Entraîneurs en eau libre</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/8.jpeg" alt="Ruby — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="conference">
+          <img src="./folder0/folder4/9.jpeg" alt="Ruby — Conférence Entraîneur de natation" loading="lazy"/>
+          <figcaption>Conférence - Entraîneur de natation</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="conference">
+          <img src="./folder0/folder4/10.jpeg" alt="Ruby — Conférence pour entraîneurs en eau libre" loading="lazy"/>
+          <figcaption>Conférence - Entraîneurs en eau libre</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="clinique">
+          <img src="./folder0/folder4/11.jpeg" alt="Ruby — Clinique pour entraîneurs en eau libre" loading="lazy"/>
+          <figcaption>Clinique - pour entraîneurs en eau libre</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/12.jpeg" alt="Ruby — Formation Nage à distance" loading="lazy"/>
+          <figcaption>Formation - Nage à distance</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/13.jpeg" alt="Ruby — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="remerciement">
+          <img src="./folder0/folder4/14.jpeg" alt="Ruby — Certificat de remerciement" loading="lazy"/>
+          <figcaption>Remerciement</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="competition">
+          <img src="./folder0/folder4/15.jpeg" alt="Ruby — Compétition" loading="lazy"/>
+          <figcaption>Compétition</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/16.jpeg" alt="Ruby — Formation Entraîneur" loading="lazy"/>
+          <figcaption>Formation - Entraîneur</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/17.jpeg" alt="Ruby — Formation Entraîneur" loading="lazy"/>
+          <figcaption>Formation - Entraîneur</figcaption>
+        </figure>
+        <figure data-cat="ruby" data-act="formation">
+          <img src="./folder0/folder4/18.jpeg" alt="Ruby — Formation Moniteur" loading="lazy"/>
+          <figcaption>Formation - Moniteur</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Certificats de Coach Nicolson</summary>
+      <div class="grid">
+        <figure data-cat="nicolson" data-act="clinique">
+          <img src="./folder0/folder4/nicolson/1.png" alt="Nicolson — Clinique Entraîneur de natation" loading="lazy"/>
+          <figcaption>Clinique - Entraîneur de natation</figcaption>
+        </figure>
+        <figure data-cat="nicolson" data-act="formation">
+          <img src="./folder0/folder4/nicolson/2.png" alt="Nicolson — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="nicolson" data-act="formation">
+          <img src="./folder0/folder4/nicolson/3.png" alt="Nicolson — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="nicolson" data-act="championnat">
+          <img src="./folder0/folder4/nicolson/4.png" alt="Nicolson — Championnat" loading="lazy"/>
+          <figcaption>Championnat</figcaption>
+        </figure>
+        <figure data-cat="nicolson" data-act="formation">
+          <img src="./folder0/folder4/nicolson/5.png" alt="Nicolson — Formation Entraîneur de natation" loading="lazy"/>
+          <figcaption>Formation - Entraîneur de natation</figcaption>
+        </figure>
+        <figure data-cat="nicolson" data-act="formation">
+          <img src="./folder0/folder4/nicolson/6.png" alt="Nicolson — Formation Maître-Nageur" loading="lazy"/>
+          <figcaption>Formation - Maître-Nageur</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Certificats de Coach Amitai</summary>
+      <div class="grid">
+        <figure data-cat="amitai" data-act="conference">
+          <img src="./folder0/folder4/certificat-Amitai/1.jpeg" alt="Amitai — Conférence Entraîneur de natation" loading="lazy"/>
+          <figcaption>Conférence - Entraîneur de natation</figcaption>
+        </figure>
+        <figure data-cat="amitai" data-act="formation">
+          <img src="./folder0/folder4/certificat-Amitai/2.jpeg" alt="Amitai — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="amitai" data-act="formation">
+          <img src="./folder0/folder4/certificat-Amitai/3.jpeg" alt="Amitai — Formation Entraîneur" loading="lazy"/>
+          <figcaption>Formation - Entraîneur</figcaption>
+        </figure>
+        <figure data-cat="amitai" data-act="formation">
+          <img src="./folder0/folder4/certificat-Amitai/4.jpeg" alt="Amitai — Formation Maître-Nageur" loading="lazy"/>
+          <figcaption>Formation - Maître-Nageur</figcaption>
+        </figure>
+        <figure data-cat="amitai" data-act="formation">
+          <img src="./folder0/folder4/certificat-Amitai/5.jpeg" alt="Amitai — Formation Water-Polo" loading="lazy"/>
+          <figcaption>Formation - Water-Polo</figcaption>
+        </figure>
+        <figure data-cat="amitai" data-act="conference">
+          <img src="./folder0/folder4/certificat-Amitai/6.jpeg" alt="Amitai — Conférence Entraîneurs en eau libre" loading="lazy"/>
+          <figcaption>Conférence - Entraîneurs en eau libre</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details>
+      <summary>Certificat Initiation (Élèves – Déc. 2024)</summary>
+      <div class="grid">
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-initiation/1.png" alt="Certificat d’initiation à la natation (Décembre 2024)" loading="lazy"/>
+          <figcaption>Initiation à la Natation — Déc. 2024</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details>
+      <summary>Certifications Coach (Avril 2025)</summary>
+      <div class="grid">
+        <figure data-cat="coach" data-act="formation">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/1.png" alt="Coach — Certification KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+        <figure data-cat="coach" data-act="formation">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/2.png" alt="Coach — Certification KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+        <figure data-cat="coach" data-act="formation">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/3.png" alt="Coach — Certification KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+        <figure data-cat="coach" data-act="formation">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/4.png" alt="Coach — Certification KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+        <figure data-cat="coach" data-act="formation">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/5.png" alt="Coach — Certification KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+        <figure data-cat="coach" data-act="securite">
+          <img src="./folder0/folder4/certificat-Coaching13.04.2025/7.png" alt="Coach — Certification Sécurité KOLTIZ 2025" loading="lazy"/>
+          <figcaption>Coach — Certification KOLTIZ 2025</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details>
+      <summary>Certificat de participation (Élèves – Août 2025)</summary>
+      <div class="grid">
+        <!-- 12 images -->
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/1.png" alt="Mini-Compétition & Test de natation (1)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/2.png" alt="Mini-Compétition & Test de natation (2)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/3.png" alt="Mini-Compétition & Test de natation (3)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/4.png" alt="Mini-Compétition & Test de natation (4)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/5.png" alt="Mini-Compétition & Test de natation (5)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/6.png" alt="Mini-Compétition & Test de natation (6)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/7.png" alt="Mini-Compétition & Test de natation (7)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/8.png" alt="Mini-Compétition & Test de natation (8)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/9.png" alt="Mini-Compétition & Test de natation (9)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/10.png" alt="Mini-Compétition & Test de natation (10)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/11.png" alt="Mini-Compétition & Test de natation (11)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+        <figure data-cat="eleves" data-act="test & mini-competition">
+          <img src="./folder0/folder4/certificat-participation/12.png" alt="Mini-Compétition & Test de natation (12)" loading="lazy"/>
+          <figcaption>Test & Mini-Compétition — Août 2025</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <details>
+      <summary>Droit d’exercer</summary>
+      <div class="grid">
+        <figure data-cat="droit" data-act="securite">
+          <img src="./legal/agrement-ministere-2025.jpg" alt="Agrément Ministériel" loading="lazy"/>
+          <figcaption>Agrément Fédération FHSA &amp; FHSaA</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <!-- BOUTON RETOUR -->
+    <div class="btn-wrap">
+      <a href="./Apropos.html" class="btn" aria-label="Retour à la page À propos">Retour</a>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="Aperçu du certificat">
+    <span class="close" id="lb-close" aria-label="Fermer">×</span>
+    <img id="lb-img" src="" alt="Certificat en grand" />
+    <div class="caption" id="lb-cap" aria-live="polite"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+
+      <div class="footer-social-block">
+        <span class="follow-text">Suivez-nous :</span>
+        <div class="footer-social" aria-label="Réseaux sociaux KCN">
+          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
+            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
+          </a>
+          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener" aria-label="Instagram KCN">
+            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
+          </a>
+          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener" aria-label="WhatsApp KCN">
+            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
+          </a>
+        </div>
+      </div>
+
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Normalisation: sans accents, minuscule
+    const normalize = (s='') => s
+      .toString()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase().trim();
+
+    // Aliases pour correspondre aux libellés variés
+    const ALIASES = {
+      'competition':'competition',
+      'competiton':'competition',
+      'compétition':'competition',
+      'formation':'formation',
+      'securite':'securite',
+      'sécurité':'securite',
+      'stage':'stage',
+      'clinique':'clinique',
+      'conference':'conference',
+      'conférence':'conference',
+      'championnat':'championnat',
+      'championat':'championnat',
+      'remerciement':'remerciement',
+      'test & mini-competition':'test & mini-competition',
+      'test & mini-compétition':'test & mini-competition'
+    };
+
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const figures = document.querySelectorAll('figure');
+
+    function applyFilter(key){
+      const target = normalize(ALIASES[key] || key);
+      figures.forEach(fig=>{
+        const actRaw = fig.getAttribute('data-act') || '';
+        const act = normalize(ALIASES[actRaw] || actRaw);
+        if(target === 'all' || act === target){
+          fig.classList.remove('hidden');
+        }else{
+          fig.classList.add('hidden');
+        }
+      });
+    }
+
+    filterButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        filterButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        applyFilter(btn.getAttribute('data-filter-act'));
+      });
+    });
+
+    // Lightbox
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbCap = document.getElementById('lb-cap');
+    const lbClose = document.getElementById('lb-close');
+    let lastFocused = null;
+
+    function openLB(src, cap){
+      lastFocused = document.activeElement;
+      lbImg.src = src;
+      lbCap.textContent = cap || '';
+      lb.classList.add('active');
+      lbClose.focus();
+      window.addEventListener('keydown', onEsc, {once:true});
+    }
+    function closeLB(){
+      lb.classList.remove('active');
+      lbImg.src = '';
+      if(lastFocused && typeof lastFocused.focus==='function') lastFocused.focus();
+    }
+    function onEsc(e){ if(e.key === 'Escape'){ closeLB(); } }
+    lbClose.addEventListener('click', closeLB);
+    lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); });
+
+    document.querySelectorAll('figure img').forEach(img=>{
+      img.addEventListener('click', ()=>{
+        const cap = img.closest('figure')?.querySelector('figcaption')?.textContent?.trim();
+        openLB(img.src, cap);
+      });
+    });
+
+    // Amélioration: focus clavier sur summaries
+    document.querySelectorAll('summary').forEach(s => { s.setAttribute('tabindex','0'); });
+
+    // Appliquer filtre par défaut (“Toutes”)
+    applyFilter('all');
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

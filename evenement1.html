@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Journée mémorable – Découverte de la nouvelle piscine | KCN – KOLTIZ Club de Natation</title>
+  <meta name="description" content="Retour sur la journée du 1er novembre 2024 : découverte de notre nouvelle piscine, initiation, jeux aquatiques et convivialité au KOLTIZ Club de Natation." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta property="og:title" content="Journée mémorable – Nouvelle piscine KCN" />
+  <meta property="og:description" content="Revivez la journée de découverte de notre nouvelle piscine : sourires, initiation et sécurité pour tous." />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="fr_FR" />
+  <style>
+    :root{
+      --primary:#0066cc; --primary-2:#00bcd4; --accent:#ff9800;
+      --text:#222; --muted:#666; --bg:#f7f9fc; --card:#ffffff; --border:#e6eef7;
+      --shadow:0 8px 24px rgba(0,0,0,.08); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{font-family:Montserrat,Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+    .visually-hidden{position:absolute !important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
+
+    /* Header (min) */
+    header{background:linear-gradient(90deg,var(--primary),var(--primary-2));position:sticky;top:0;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+    .container{max-width:1160px;margin:0 auto;padding:0 20px}
+
+    /* Hero */
+    .hero{position:relative;display:grid;place-items:center;min-height:56vh;overflow:hidden}
+    .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(0,102,204,.10),rgba(0,188,212,.10));z-index:1}
+    .hero__bg{position:absolute;inset:0;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;filter:contrast(1.05) saturate(1.05);transform:scale(1.02)}
+    .hero__card{position:relative;z-index:2;background:rgba(255,255,255,.85);backdrop-filter:saturate(1.2) blur(4px);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;max-width:860px;margin:22px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);color:var(--primary);font-weight:700;border-radius:999px;padding:6px 12px;box-shadow:0 4px 16px rgba(0,102,204,.10)}
+    .hero h2{margin:14px 0 6px 0;font-size:2rem;color:var(--primary);letter-spacing:.3px}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-weight:600}
+
+    /* Content */
+    main.container{padding:30px 20px}
+    .grid{display:grid;gap:22px;grid-template-columns:1.1fr .9fr;margin:34px 0}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .card h3{margin:0 0 10px 0;font-size:1.25rem;color:var(--primary)}
+    .lead{font-size:1.05rem}
+
+    /* Slider */
+    .slider{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .slides{position:relative;height:420px}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+    .slide img{width:100%;height:100%;object-fit:cover;display:block}
+    .slide.active{opacity:1;z-index:2}
+    .slider-controls{position:absolute;top:50%;left:0;right:0;display:flex;justify-content:space-between;transform:translateY(-50%);padding:0 10px;z-index:3}
+    .ctrl{background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-size:1.2rem;cursor:pointer;transition:.25s}
+    .ctrl:hover{background:rgba(0,0,0,.8);transform:scale(1.05)}
+
+    /* Gallery */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:28px 0}
+    .gallery figure{margin:0;position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);cursor:zoom-in}
+    .gallery img, .gallery video{width:100%;height:420px;object-fit:cover;display:block}
+
+    /* Highlights */
+    .highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .pill{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+
+    /* Callout */
+    .callout-outline{border:2px solid var(--primary);border-radius:var(--radius);padding:24px;margin:40px 0;background:transparent;box-shadow:0 4px 14px rgba(0,0,0,.05)}
+    .callout-outline p{color:var(--text);font-weight:600;text-align:center}
+    .btn{background:#0058ccec;color:#fff;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:transform .3s, box-shadow .3s;display:inline-block;margin-top:16px;cursor:pointer}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.15)}
+
+    /* Lightbox */
+    .kcn-lightbox{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.9);z-index:9999}
+    .kcn-lightbox.open{display:grid}
+    .kcn-lb-inner{position:relative;max-width:96vw;max-height:92vh}
+    .kcn-lb-media{max-width:96vw;max-height:92vh;object-fit:contain;display:block;background:#000;border-radius:12px}
+    .kcn-lb-close,.kcn-lb-prev,.kcn-lb-next{
+      position:absolute;border:none;background:rgba(255,255,255,.14);color:#fff;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px;cursor:pointer;backdrop-filter:blur(2px);transition:.2s
+    }
+    .kcn-lb-close{top:-56px;right:0}
+    .kcn-lb-prev{left:-60px;top:50%;transform:translateY(-50%)}
+    .kcn-lb-next{right:-60px;top:50%;transform:translateY(-50%)}
+    .kcn-lb-close:hover,.kcn-lb-prev:hover,.kcn-lb-next:hover{background:rgba(255,255,255,.28)}
+    @media (max-width: 800px){
+      .kcn-lb-prev{left:8px}
+      .kcn-lb-next{right:8px}
+      .kcn-lb-close{top:8px;right:8px}
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr;gap:16px}
+      .slides{height:320px}
+      .hero h2{font-size:1.6rem}
+    }
+
+    /* Footer */
+    .footer{background: linear-gradient(90deg, #00b4db, #0093e9); color:#fff; padding:20px 0; font-family: 'Montserrat', sans-serif; text-align:center; border-top:3px solid rgba(255,255,255,0.3); margin-top:30px}
+    .footer-inner{max-width:1100px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .footer-top{display:flex;align-items:center;flex-direction:column;gap:8px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+    .copyright{font-size:.9rem;color:#f1f9ff;margin:0}
+    .footer-social-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .follow-text{font-weight:600;font-size:.95rem;color:#ffe082}
+    .footer-social{display:flex;justify-content:center;gap:14px}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;transition:transform .3s, box-shadow .3s}
+    .footer-social img:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(255,255,255,.4)}
+    .footer-legal{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:6px}
+    .footer-legal a{color:#fff;text-decoration:none;font-size:.9rem;transition:color .3s}
+    .footer-legal a:hover{color:#004c91;text-decoration:underline}
+    @media (min-width:768px){
+      .footer-inner{flex-direction:row;justify-content:space-between;text-align:left}
+      .footer-top{flex-direction:row;gap:14px}
+      .footer-social-block{flex-direction:row;gap:10px}
+      .footer-legal{margin-top:0}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="titre-event">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__card container">
+      <span class="eyebrow" aria-label="Événement confirmé">• Événement •</span>
+      <h2 id="titre-event">Une Journée mémorable : découverte de notre nouvelle piscine</h2>
+      <div class="meta" aria-label="Informations de l'événement">
+        <span><strong>Date :</strong> 1er novembre 2024</span>
+        <span><strong>Lieu :</strong> KOLTIZ Club de Natation (KCN)</span>
+        <span><strong>Thèmes :</strong> Sécurité aquatique, initiation, convivialité</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" role="main">
+    <div class="grid" id="recap">
+      <!-- Texte -->
+      <article class="card" aria-labelledby="recit-title">
+        <h3 id="recit-title">Retour d'expérience</h3>
+        <p class="lead">
+          Le <strong>1er novembre 2024</strong>, KOLTIZ Club de Natation a organisé une activité qui marque un tournant pour notre club.
+          Cette journée a permis à chacun de <strong>découvrir notre nouvelle piscine</strong> et de profiter d’un moment de partage autour de la natation.
+        </p>
+        <p>
+          <strong>Les participants</strong>, qu’ils soient débutants ou pratiquants occasionnels, ont profité de l’eau, se sont amusés et ont suivi des séances d’initiation.
+          Enfants et adultes ont nagé ensemble dans une ambiance chaleureuse et bienveillante, partageant sourires et convivialité.
+        </p>
+        <p>
+          L’objectif était de montrer à notre communauté l’importance de ce nouveau projet aquatique et de <strong>renforcer les liens</strong> qui nous unissent.
+          Grâce à l’enthousiasme de tous, cette journée a été une véritable réussite. Vos retours positifs nous motivent à renouveler ces moments très bientôt.
+        </p>
+      </article>
+
+      <!-- Slider -->
+      <aside class="card" aria-label="Diaporama photos de l'événement">
+        <div class="slider" id="slider">
+          <div class="slides">
+            <figure class="slide active">
+              <img src="./folder1/folder5/imaj1.jpeg" alt="Découverte de la nouvelle piscine" loading="eager" />
+            </figure>
+            <figure class="slide">
+              <img src="./folder1/folder5/imaj2.jpeg" alt="image de la journée" loading="lazy" />
+            </figure>
+            <figure class="slide">
+              <img src="./folder1/folder5/imaj3.jpeg" alt="image de la journée" loading="lazy" />
+            </figure>
+          </div>
+          <div class="slider-controls" aria-hidden="false">
+            <button class="ctrl" id="prev" aria-label="Photo précédente">&#10094;</button>
+            <button class="ctrl" id="next" aria-label="Photo suivante">&#10095;</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Galerie -->
+    <section aria-labelledby="galerie-title">
+      <h3 id="galerie-title" class="visually-hidden">Galerie photos et vidéos de l'événement</h3>
+      <div class="gallery" aria-label="Galerie d'images">
+        <figure><img src="./folder1/folder5/imaj1.jpeg" alt="Participants au bord du bassin" loading="lazy" /></figure>
+        <figure><img src="./folder1/folder5/imaj2.jpeg" alt="Séance d'initiation à la natation" loading="lazy" /></figure>
+        <figure aria-label="Vidéo portrait 1">
+          <video src="./folder1/folder5/video2.mp4" controls playsinline preload="metadata"></video>
+        </figure>
+        <figure aria-label="Vidéo portrait 2">
+          <video src="./folder1/folder5/video1.mp4" controls playsinline preload="metadata"></video>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Points forts -->
+    <section class="highlights" aria-labelledby="points-forts-title">
+      <h3 id="points-forts-title" class="visually-hidden">Points forts de la journée</h3>
+      <div class="pillars" aria-label="Points forts de l'événement">
+        <div class="pill">
+          <div class="dot" aria-hidden="true"></div>
+          <p><strong>Initiation à la natation</strong> pour tous les niveaux, encadrée par des coachs certifiés.</p>
+        </div>
+        <div class="pill">
+          <div class="dot" aria-hidden="true"></div>
+          <p>Jeux aquatiques ludiques, renforçant la cohésion et le plaisir de nager ensemble.</p>
+        </div>
+        <div class="pill">
+          <div class="dot" aria-hidden="true"></div>
+          <p>Visite guidée de la nouvelle piscine, mettant en avant ses équipements et ses atouts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Callout + CTA -->
+    <section class="callout-outline" aria-label="Rejoignez-nous au KCN">
+      <p>Inscrivez-vous dès maintenant et plongez dans l'univers du <strong>KOLTIZ Club de Natation</strong>.</p>
+      <div style="text-align:center;">
+        <a href="./inscription1eretapes.html" class="btn" aria-label="Je m’inscris">Je m’inscris</a>
+      </div>
+      <div style="text-align:center;">
+        <a href="./evenement.html" class="btn" aria-label="Retour à l’événement">Retour à l’événement</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slider JS -->
+  <script>
+    (function(){
+      const slider = document.getElementById('slider');
+      const slides = slider.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+      let current = 0, timer;
+
+      function show(i){
+        slides.forEach((el,idx)=> el.classList.toggle('active', idx===i));
+      }
+      function go(step){ current = (current + step + slides.length) % slides.length; show(current); }
+      function start(){ timer = setInterval(()=> go(1), 5000); }
+      function stop(){ clearInterval(timer); }
+
+      prevBtn.addEventListener('click', ()=> go(-1));
+      nextBtn.addEventListener('click', ()=> go(1));
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+
+      show(current); start();
+    })();
+  </script>
+
+  <!-- Lightbox (galerie) -->
+  <div class="kcn-lightbox" id="kcnLightbox" aria-hidden="true" role="dialog" aria-label="Agrandissement média">
+    <div class="kcn-lb-inner">
+      <button class="kcn-lb-close" id="kcnLbClose" aria-label="Fermer">✕</button>
+      <button class="kcn-lb-prev"  id="kcnLbPrev"  aria-label="Précédent">‹</button>
+      <button class="kcn-lb-next"  id="kcnLbNext"  aria-label="Suivant">›</button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const items = Array.from(document.querySelectorAll('.gallery figure img, .gallery figure video'));
+      if(!items.length) return;
+      const lb = document.getElementById('kcnLightbox');
+      const inner = lb.querySelector('.kcn-lb-inner');
+      const btnClose = document.getElementById('kcnLbClose');
+      const btnPrev  = document.getElementById('kcnLbPrev');
+      const btnNext  = document.getElementById('kcnLbNext');
+      let current = 0;
+
+      function makeMedia(node){
+        if(node.tagName.toLowerCase()==='img'){
+          const img = new Image();
+          img.src = node.currentSrc || node.src;
+          img.alt = node.alt || '';
+          img.className = 'kcn-lb-media';
+          img.decoding = 'async';
+          img.loading = 'eager';
+          return img;
+        }else{
+          const v = document.createElement('video');
+          v.src = node.currentSrc || node.src;
+          v.controls = true;
+          v.autoplay = true;
+          v.playsInline = true;
+          v.className = 'kcn-lb-media';
+          return v;
+        }
+      }
+      function render(){
+        inner.querySelectorAll('.kcn-lb-media').forEach(m => m.remove());
+        const node = items[current];
+        const media = makeMedia(node);
+        inner.insertBefore(media, btnClose);
+        lb.setAttribute('aria-hidden','false');
+        lb.classList.add('open');
+      }
+      function openAt(i){ current = (i+items.length)%items.length; render(); }
+      function close(){
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden','true');
+        inner.querySelectorAll('video.kcn-lb-media').forEach(v => { try{ v.pause(); }catch{} });
+      }
+      function prev(){ current = (current-1+items.length)%items.length; render(); }
+      function next(){ current = (current+1)%items.length; render(); }
+
+      items.forEach((el, i)=> el.addEventListener('click', (e)=>{ e.preventDefault(); openAt(i); }));
+      btnClose.addEventListener('click', close);
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      lb.addEventListener('click', (e)=>{ if(e.target === lb) close(); });
+      document.addEventListener('keydown', (e)=>{
+        if(!lb.classList.contains('open')) return;
+        if(e.key === 'Escape') close();
+        if(e.key === 'ArrowLeft') prev();
+        if(e.key === 'ArrowRight') next();
+      });
+    })();
+  </script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+      <div class="footer-social-block">
+        <span class="follow-text">Suivez-nous :</span>
+        <div class="footer-social" aria-label="Réseaux sociaux KCN">
+          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" aria-label="Facebook KCN">
+            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
+          </a>
+          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" aria-label="Instagram KCN">
+            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
+          </a>
+          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" aria-label="WhatsApp KCN">
+            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

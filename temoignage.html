@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KCN — Témoignages anonymes (parents & amis)</title>
+  <meta name="description" content="Quelques commentaires anonymes de parents et amis du KOLTIZ Club de Natation. Retours d’expérience, encouragements et avis authentiques." />
+  <meta name="theme-color" content="#0066cc" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="KCN — Témoignages (anonymes)" />
+  <meta property="og:description" content="Avis et retours de parents & amis — KOLTIZ Club de Natation." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="./assets/images/og-cover.jpg" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand:#0066cc; --teal:#00bcd4; --accent:#ff9800;
+      --ink:#0f172a; --muted:#475569; --line:#e6edf6;
+      --page:#f7f9fc; --card:#ffffff;
+      --radius:16px; --shadow:0 18px 48px rgba(2,6,23,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.65}
+
+    /* Header compact */
+    header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--brand);box-shadow:0 2px 12px rgba(0,0,0,.04)}
+    .nav{max-width:1200px;margin:auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .logo{height:56px;object-fit:contain}
+    .nav a{color:var(--brand);font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px}
+    .nav a:hover{background:rgba(0,102,204,.08)}
+
+    /* Hero */
+    .hero{
+      position:relative;min-height:40vh;display:grid;place-items:center;padding:28px;
+      background:
+        linear-gradient(180deg,rgba(0,102,204,.14),rgba(0,188,212,.12)),
+        url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
+      border-bottom:1px solid var(--line);
+    }
+    .hero .card{background:rgba(255,255,255,.92);backdrop-filter:saturate(1.1) blur(3px);
+      border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow);border-radius:var(--radius);
+      padding:20px 22px;max-width:900px;text-align:center}
+    .hero h1{margin:0 0 8px;font-size:clamp(24px,4vw,34px);color:var(--brand)}
+    .hero p{margin:0;color:#1f2937}
+
+    /* Intro strip */
+    .strip{max-width:1100px;margin:24px auto 0;padding:12px 16px;border-left:4px solid var(--brand);
+      background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);color:#223}
+    .strip small{color:#475569}
+
+    /* Grid */
+    .wrap{max-width:1200px;margin:22px auto 60px;padding:0 16px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .cardT{
+      background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,.06);display:flex;flex-direction:column
+    }
+    figure{margin:0;display:flex;flex-direction:column;height:100%}
+    .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:pointer;transition:transform .3s ease}
+    .cardT:hover .thumb{transform:scale(1.02)}
+    figcaption{padding:10px 12px;font-size:.92rem;color:#334;border-top:1px solid var(--line);background:#fcfdff}
+    .badge{display:inline-block;background:rgba(0,102,204,.08);color:#0b4573;border:1px solid rgba(0,102,204,.22);
+      padding:4px 8px;border-radius:999px;font-size:.82rem;font-weight:700;margin-right:6px}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:50}
+    .lightbox.show{display:flex}
+    .lb-inner{position:relative;max-width:92vw;max-height:92vh}
+    .lb-img{max-width:100%;max-height:92vh;border-radius:12px;box-shadow:0 6px 22px rgba(255,255,255,.25)}
+    .lb-close{position:absolute;top:-12px;right:-12px;background:#fff;border:0;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.25);
+      width:44px;height:44px;font-size:22px;cursor:pointer}
+    .lb-caption{color:#fff;text-align:center;margin-top:8px;font-size:.95rem}
+
+    /* CTA */
+    .cta-row{display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ffc107);color:#fff;box-shadow:0 10px 26px rgba(255,152,0,.28)}
+    .btn.ghost{background:#fff;color:var(--brand);border:2px solid var(--brand)}
+
+    /* Footer */
+    footer{background:linear-gradient(90deg,#00b4db,#0093e9);color:#fff;text-align:center;padding:20px 0;border-top:3px solid rgba(255,255,255,.3)}
+    .footer-inner{max-width:1100px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .footer-logo{width:70px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-social{display:flex;gap:14px}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px}
+    .footer-legal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+    .footer-legal a{color:#fff;text-decoration:none}
+    .footer-legal a:hover{text-decoration:underline}
+    @media(min-width:768px){.footer-inner{flex-direction:row;justify-content:space-between;text-align:left}}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
+        <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" class="logo">
+      </a>
+      <div>
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./evenement.html">Événements</a>
+        <a href="./temoignages.html" aria-current="page">Témoignages</a>
+        <a href="./contactez-nous.html">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" role="banner" aria-label="Témoignages (anonymisés)">
+    <div class="card">
+      <h1>Quelques commentaires anonymes — parents & amis</h1>
+      <p>Nous partageons ici des retours authentiques. Les noms et détails sensibles ont été retirés
+         pour respecter la confidentialité.</p>
+      <div class="cta-row">
+        <a href="./inscription1eretapes.html" class="btn primary">Je m’inscris</a>
+        <a href="./reservation.html" class="btn ghost">Essai gratuit</a>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- Grille Témoignages -->
+  <main class="wrap">
+    <section class="grid" aria-label="Galerie des témoignages">
+      <!-- 1 -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj1112.png" alt="Témoignage de parent (anonyme) — capture d’écran"
+               data-full="./folder0/imaj1112.png" data-caption="Parent — remerciements & progrès de l’enfant">
+          <figcaption><span class="badge">Parent</span>Remerciements & progrès de l’enfant</figcaption>
+        </figure>
+      </article>
+      <!-- 2 -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj1111.png" alt="Témoignage d’ami du club (anonyme)"
+               data-full="./folder0/imaj1111.png" data-caption="Ami du club — soutien & encouragements">
+          <figcaption><span class="badge">Ami</span>Soutien & encouragements</figcaption>
+        </figure>
+      </article>
+      <!-- 3 -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj1123.png" alt="Témoignage de parent — expérience positive"
+               data-full="./folder0/imaj1123.png" data-caption="Parent — expérience positive sur la pédagogie">
+          <figcaption><span class="badge">Parent</span>Expérience positive sur la pédagogie</figcaption>
+        </figure>
+      </article>
+      <!-- 4 -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj11234.png" alt="Retour anonyme — progression & sécurité"
+               data-full="./folder0/imaj11234.png" data-caption="Retour — progression & sécurité en priorité">
+          <figcaption><span class="badge">Parent</span>Progression & sécurité en priorité</figcaption>
+        </figure>
+      </article>
+      <!-- 5 (ambiance) -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj12345.png" alt="Enfants qui s’amusent à la piscine (ambiance)"
+               data-full="./folder0/imaj12345.png" data-caption="Ambiance — enfants qui s’amusent">
+          <figcaption><span class="badge">Ambiance</span>Enfants qui s’amusent</figcaption>
+        </figure>
+      </article>
+      <!-- 6 (ambiance) -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" loading="lazy" decoding="async"
+               src="./folder0/imaj02-.jpeg" alt="Ambiance — moments de joie à la piscine"
+               data-full="./folder0/imaj02-.jpeg" data-caption="Ambiance — moments de joie à la piscine">
+          <figcaption><span class="badge">Ambiance</span>Moments de joie à la piscine</figcaption>
+        </figure>
+      </article>
+    </section>
+
+    <!-- CTA bas de page -->
+    <div class="cta-row" style="margin-top:8px">
+      <a href="./contactez-nous.html" class="btn ghost">Partager un témoignage</a>
+      <a href="./Apropos.html" class="btn primary">Retour</a>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement du témoignage">
+    <div class="lb-inner">
+      <button class="lb-close" id="lbClose" aria-label="Fermer">×</button>
+      <img class="lb-img" id="lbImg" src="" alt="">
+      <div class="lb-caption" id="lbCaption"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      </div>
+      <div class="footer-social" aria-label="Réseaux sociaux KCN">
+        <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener"><img src="./folder0/facebook.png" alt="Facebook"></a>
+        <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener"><img src="./folder0/instagram.png" alt="Instagram"></a>
+        <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+      </div>
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Lightbox simple
+    (function(){
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      const lbCaption = document.getElementById('lbCaption');
+      const lbClose = document.getElementById('lbClose');
+
+      document.querySelectorAll('.thumb').forEach(img=>{
+        img.addEventListener('click', ()=>{
+          const full = img.getAttribute('data-full') || img.src;
+          const caption = img.getAttribute('data-caption') || img.alt || '';
+          lbImg.src = full;
+          lbImg.alt = img.alt || '';
+          lbCaption.textContent = caption;
+          lb.classList.add('show');
+        });
+      });
+
+      function closeLB(){ lb.classList.remove('show'); lbImg.src = ''; lbCaption.textContent=''; }
+      lbClose.addEventListener('click', closeLB);
+      lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && lb.classList.contains('show')) closeLB(); });
+    })();
+  </script>
+</body>
+</html>
