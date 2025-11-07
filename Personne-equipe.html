@@ -1,219 +1,293 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Notre équipe – KCN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>KCN — Notre équipe (hiérarchie)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Montserrat', Arial, sans-serif;
-      background: linear-gradient(135deg, #0093e9 0%, #80d0c7 100%);
-      color: #222;
-      margin: 0;
-      padding: 0;
+    :root{
+      --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
+      --ink:#0f172a; --muted:#475569; --page:#f7f9fc; --card:#ffffff; --line:#e5eaf2;
+      --radius:16px; --shadow:0 20px 50px rgba(2,6,23,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--page);color:var(--ink);line-height:1.65}
+
+    /* Header / Sommaire sticky */
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(180%) blur(8px);
+      background:linear-gradient(90deg,#ffffffcc,#ffffffcc);
+      border-bottom:1px solid var(--line);
+    }
+    .bar{
+      max-width:1200px; margin:0 auto; padding:14px 20px; display:flex; gap:14px; align-items:center; justify-content:space-between;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .brand .title{font-weight:700; color:var(--brand)}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 16px; border-radius:10px; font-weight:700; text-decoration:none; transition:.25s;
+      background:linear-gradient(90deg, var(--sun) 0%, #ffb74d 100%); color:#fff; box-shadow:0 6px 20px rgba(255,152,0,.25);
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 28px rgba(255,152,0,.33)}
+    .filters{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px;
+    }
+    .chip{
+      border:1px solid var(--line); background:#fff; color:var(--muted);
+      padding:8px 12px; border-radius:999px; font-weight:600; cursor:pointer; transition:.2s;
+    }
+    .chip[data-active="true"]{background:var(--brand); color:#fff; border-color:var(--brand)}
+    .search{
+      border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:220px; outline:none;
     }
 
-    .team-container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
+    /* Container */
+    .wrap{max-width:1200px; margin:24px auto 60px; padding:0 20px}
+
+    /* Section titres (hiérarchie) */
+    .section{
+      margin-top:28px;
+    }
+    .hgroup{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;
+    }
+    .hgroup h2{
+      font-size:1.35rem; color:var(--brand); margin:0; display:flex; align-items:center; gap:10px;
+    }
+    .badge{
+      font-size:.85rem; font-weight:700; color:#0b3b75; background:#e6f0ff; border:1px solid #d3e2ff;
+      padding:6px 10px; border-radius:999px;
     }
 
-    h1 {
-      text-align: center;
-      color: #0066cc;
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    }
-
-    /* ----- Cartes équipe ----- */
-    .team-grid {
-      display: grid;
+    /* Grid cartes */
+    .grid{
+      display:grid; gap:22px;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 32px;
     }
-    .team-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,102,204,0.08);
-      padding: 24px 16px 16px 16px;
-      text-align: center;
-      position: relative;
-      transition: box-shadow 0.3s, transform 0.3s;
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:16px; text-align:center; transition:transform .25s, box-shadow .25s;
     }
-    .team-card:hover {
-      box-shadow: 0 8px 32px rgba(0,102,204,0.18);
-      transform: translateY(-6px) scale(1.03);
+    .card:hover{transform:translateY(-4px); box-shadow:0 24px 60px rgba(2,6,23,.16)}
+    .photo{
+      width:128px; aspect-ratio:1/1; object-fit:cover; border-radius:50%; border:4px solid var(--brand);
+      box-shadow:0 6px 18px rgba(0,102,204,.18); margin:6px auto 12px; transition:border-color .25s;
     }
-    .team-photo {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 4px solid #0066cc;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0,102,204,0.12);
-      transition: border-color 0.3s;
+    .card:hover .photo{border-color:var(--sun)}
+    .name{font-weight:700; font-size:1.05rem; color:#0b3b75; margin:2px 0 6px}
+    .role{color:var(--muted); font-weight:600; font-size:.95rem; margin-bottom:10px; min-height:40px}
+    .cta{
+      display:inline-block; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; transition:.2s;
+      background:linear-gradient(90deg,#0ea5e9,#22d3ee); color:#fff; box-shadow:0 8px 22px rgba(34,211,238,.25);
     }
-    .team-card:hover .team-photo {
-      border-color: #ffc107;
-    }
-    .team-name {
-      font-size: 1.3em;
-      font-weight: 700;
-      color: #0066cc;
-      margin-bottom: 6px;
-      background: linear-gradient(90deg, #e3f2fd 60%, #00bcd4 100%);
-      border-radius: 6px;
-      padding: 4px 0;
-    }
-    .team-role {
-      font-size: 1em;
-      color: #222;
-      margin-bottom: 12px;
-      font-weight: 500;
-    }
-    .team-btn {
-      display: inline-block;
-      background: linear-gradient(90deg, #ffc107 60%, #ff9800 100%);
-      color: #fff;
-      font-weight: 700;
-      font-size: 1em;
-      padding: 10px 24px;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 2px 8px rgba(255, 152, 0, 0.18);
-      transition: 0.3s;
-      margin-top: 10px;
-    }
-    .team-btn:hover {
-      background: linear-gradient(90deg, #ff9800 60%, #ffc107 100%);
-      color: #222;
-    }
+    .cta:hover{transform:translateY(-1px); opacity:.95}
+    .tags{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:8px 0 0}
+    .tag{font-size:.75rem; font-weight:700; background:#eef8ff; color:#0a4a7a; border:1px solid #daecff; padding:4px 8px; border-radius:999px}
 
-    @media (max-width: 700px) {
-      h1 { font-size: 1.8em; }
-      .team-photo { width: 90px; height: 90px; }
-    }
+    /* Footer */
+    footer{margin-top:50px; background:linear-gradient(90deg,#0093e9,#80d0c7); color:#fff; text-align:center; padding:26px 0; border-top:3px solid rgba(255,255,255,.2)}
+    .footer-inner{max-width:1200px; margin:0 auto; padding:0 20px}
 
-    /* ----- Footer harmonisé ----- */
-    footer {
-      margin-top: 50px;
-      background: linear-gradient(90deg,#0093e9,#80d0c7);
-      color: #fff;
-      text-align: center;
-      padding: 24px 0;
-      border-top: 3px solid rgba(255,255,255,0.2);
-    }
-    .footer-inner {
-      display: grid;
-      gap: 12px;
-      justify-items: center;
+    /* Responsif */
+    @media (max-width:720px){
+      .actions{flex-direction:column; align-items:stretch}
+      .filters{justify-content:space-between}
+      .search{width:100%}
     }
   </style>
 </head>
-
 <body>
 
-  <div class="team-container">
-    <h1>Notre équipe</h1>
-
-    <div class="team-grid">
-
-      <div class="team-card">
-        <a href="personne0.html"><img src="assets/images/valery/imaj134.png" alt="Valéry Gernier" class="team-photo"></a>
-        <div class="team-name">Valéry GERNIER</div>
-        <div class="team-role">Co-Fondateur – Président</div>
-        <a href="personne0.html" class="team-btn">Voir la fiche</a>
+  <!-- Barre sticky (sommaire + actions) -->
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <span class="title">Notre équipe KCN</span>
       </div>
-
-      <div class="team-card">
-        <a href="personne1.html"><img src="assets/images/imaj7.jpeg" alt="Ruby King" class="team-photo"></a>
-        <div class="team-name">Ruby KING</div>
-        <div class="team-role">Fondatrice – Vice-Présidente – Formatrice – Entraîneure – Sauveteur</div>
-        <a href="personne1.html" class="team-btn">Voir la fiche</a>
+      <div class="actions">
+        <nav class="filters" aria-label="Sommaire hiérarchique">
+          <button class="chip" data-anchor="#direction" data-active="true">Direction</button>
+          <button class="chip" data-anchor="#encadrement">Encadrement</button>
+          <button class="chip" data-anchor="#developpement">Développement & Com</button>
+          <button class="chip" data-anchor="#athletes">Athlètes</button>
+        </nav>
+        <input class="search" id="search" type="search" placeholder="Rechercher un profil…" aria-label="Rechercher un profil" />
+        <a class="btn" href="certificat.html">Nos certificats</a>
       </div>
-
-      <div class="team-card">
-        <a href="personne2.html"><img src="assets/images/Therese/imaj3.jpeg" alt="Thérèse Redgie Marc" class="team-photo"></a>
-        <div class="team-name">Thérèse Redgie MARC</div>
-        <div class="team-role">Secrétaire Administrative</div>
-        <a href="personne2.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne10.html"><img src="assets/images/Jodo/1.jpeg" alt="Hervé Juderns DELICE" class="team-photo"></a>
-        <div class="team-name">Hervé Juderns DELICE</div>
-        <div class="team-role">Responsable Développement • Sportif Polyvalent</div>
-        <a href="personne10.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne8.html"><img src="assets/images/nicolson/1.jpeg" alt="Nicolson Alexandre" class="team-photo"></a>
-        <div class="team-name">Nicolson ALEXANDRE</div>
-        <div class="team-role">Entraîneur – Passionné de Natation & Transmission</div>
-        <a href="personne8.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne7.html"><img src="assets/images/Amitai/1.jpeg" alt="Amitai Thelusma" class="team-photo"></a>
-        <div class="team-name">Amitai THELUSMA</div>
-        <div class="team-role">Entraîneur – Maître-nageur – Sauveteur</div>
-        <a href="personne7.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne5.html"><img src="assets/images/Alvins/imaj100.jpeg" alt="Alvins Destima" class="team-photo"></a>
-        <div class="team-name">Alvins DESTIMA</div>
-        <div class="team-role">Entraîneur – Maître-nageur – Sauveteur</div>
-        <a href="personne5.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne3.html"><img src="assets/images/medjina/image6.jpeg" alt="Lumath Medjina Augustin" class="team-photo"></a>
-        <div class="team-name">Lumath Medjina AUGUSTIN</div>
-        <div class="team-role">Entraîneure & Communication Inclusive</div>
-        <a href="personne3.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne4.html"><img src="assets/images/wilson/(13).png" alt="Wilson Aldofrande" class="team-photo"></a>
-        <div class="team-name">Wilson ALDOFRANDE</div>
-        <div class="team-role">Entraîneur de Natation</div>
-        <a href="personne4.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne6.html"><img src="assets/images/Berline/profile-pic(19).png" alt="Berline Benoit" class="team-photo"></a>
-        <div class="team-name">Berline BENOIT</div>
-        <div class="team-role">Entraîneure</div>
-        <a href="personne6.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-      <div class="team-card">
-        <a href="personne9.html"><img src="assets/images/Meloza/1.jpeg" alt="Ed-Dlens Meloza" class="team-photo"></a>
-        <div class="team-name">Ed-Dlens MELOZA</div>
-        <div class="team-role">Athlète & Assistant Communication Digitale</div>
-        <a href="personne9.html" class="team-btn">Voir la fiche</a>
-      </div>
-
-    </div>  
-     <a href="certificat.html" class="team-btn">Nos certificats </a>
-     
-  </div>
-
-  <!-- Pied de page -->
-  <footer>
-    <div class="footer-inner">
-      <div>© 2025 KOLTIZ Club de Natation – Tous droits réservés</div>
     </div>
+  </header>
+
+  <main class="wrap" id="team-root">
+
+    <!-- Direction -->
+    <section class="section" id="direction" data-section="direction">
+      <div class="hgroup">
+        <h2>Direction & Administration <span class="badge">Niveau 1</span></h2>
+      </div>
+      <div class="grid">
+
+        <article class="card" data-name="Valéry GERNIER" data-roles="Président,Direction" data-group="direction">
+          <a href="personne0.html"><img class="photo" loading="lazy" src="assets/images/valery/imaj134.png" alt="Portrait — Valéry Gernier" /></a>
+          <div class="name">Valéry GERNIER</div>
+          <div class="role">Co-Fondateur — Président</div>
+          <div class="tags"><span class="tag">Direction</span><span class="tag">Stratégie</span></div>
+          <a class="cta" href="personne0.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Ruby KING" data-roles="Vice-Présidente,Formatrice,Entraîneure,Sauveteur" data-group="direction">
+          <a href="personne1.html"><img class="photo" loading="lazy" src="assets/images/imaj7.jpeg" alt="Portrait — Ruby King" /></a>
+          <div class="name">Ruby KING</div>
+          <div class="role">Fondatrice — Vice-Présidente — Formatrice — Entraîneure — Sauveteur</div>
+          <div class="tags"><span class="tag">Direction</span><span class="tag">Pédagogie</span></div>
+          <a class="cta" href="personne1.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Thérèse Redgie MARC" data-roles="Secrétaire Administrative,Administration" data-group="direction">
+          <a href="personne2.html"><img class="photo" loading="lazy" src="assets/images/Therese/imaj3.jpeg" alt="Portrait — Thérèse Redgie Marc" /></a>
+          <div class="name">Thérèse Redgie MARC</div>
+          <div class="role">Secrétaire Administrative</div>
+          <div class="tags"><span class="tag">Administration</span></div>
+          <a class="cta" href="personne2.html">Voir la fiche</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Encadrement sportif -->
+    <section class="section" id="encadrement" data-section="encadrement">
+      <div class="hgroup">
+        <h2>Encadrement Sportif <span class="badge">Niveau 2</span></h2>
+      </div>
+      <div class="grid">
+
+        <article class="card" data-name="Amitai THELUSMA" data-roles="Entraîneur,Maître-nageur,Sauveteur" data-group="encadrement">
+          <a href="personne7.html"><img class="photo" loading="lazy" src="assets/images/Amitai/1.jpeg" alt="Portrait — Amitai Thelusma" /></a>
+          <div class="name">Amitai THELUSMA</div>
+          <div class="role">Entraîneur — Maître-nageur — Sauveteur</div>
+          <div class="tags"><span class="tag">Coaching</span><span class="tag">Sécurité</span></div>
+          <a class="cta" href="personne7.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Alvins DESTIMA" data-roles="Entraîneur,Maître-nageur,Sauveteur" data-group="encadrement">
+          <a href="personne5.html"><img class="photo" loading="lazy" src="assets/images/Alvins/imaj100.jpeg" alt="Portrait — Alvins Destima" /></a>
+          <div class="name">Alvins DESTIMA</div>
+          <div class="role">Entraîneur — Maître-nageur — Sauveteur</div>
+          <div class="tags"><span class="tag">Coaching</span></div>
+          <a class="cta" href="personne5.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Wilson ALDOFRANDE" data-roles="Entraîneur" data-group="encadrement">
+          <a href="personne4.html"><img class="photo" loading="lazy" src="assets/images/wilson/(13).png" alt="Portrait — Wilson Aldofrande" /></a>
+          <div class="name">Wilson ALDOFRANDE</div>
+          <div class="role">Entraîneur de Natation</div>
+          <div class="tags"><span class="tag">Coaching</span></div>
+          <a class="cta" href="personne4.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Berline BENOIT" data-roles="Entraîneure" data-group="encadrement">
+          <a href="personne6.html"><img class="photo" loading="lazy" src="assets/images/Berline/profile-pic(19).png" alt="Portrait — Berline Benoit" /></a>
+          <div class="name">Berline BENOIT</div>
+          <div class="role">Entraîneure</div>
+          <div class="tags"><span class="tag">Coaching</span></div>
+          <a class="cta" href="personne6.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Lumath Medjina AUGUSTIN" data-roles="Entraîneure,Communication" data-group="encadrement">
+          <a href="personne3.html"><img class="photo" loading="lazy" src="assets/images/medjina/image6.jpeg" alt="Portrait — Lumath Medjina Augustin" /></a>
+          <div class="name">Lumath Medjina AUGUSTIN</div>
+          <div class="role">Entraîneure & Communication inclusive</div>
+          <div class="tags"><span class="tag">Coaching</span><span class="tag">Com</span></div>
+          <a class="cta" href="personne3.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Nicolson ALEXANDRE" data-roles="Entraîneur,Transmission" data-group="encadrement">
+          <a href="personne8.html"><img class="photo" loading="lazy" src="assets/images/nicolson/1.jpeg" alt="Portrait — Nicolson Alexandre" /></a>
+          <div class="name">Nicolson ALEXANDRE</div>
+          <div class="role">Entraîneur — Passionné de natation & transmission</div>
+          <div class="tags"><span class="tag">Coaching</span></div>
+          <a class="cta" href="personne8.html">Voir la fiche</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Développement & Communication -->
+    <section class="section" id="developpement" data-section="developpement">
+      <div class="hgroup">
+        <h2>Développement & Communication <span class="badge">Niveau 3</span></h2>
+      </div>
+      <div class="grid">
+
+        <article class="card" data-name="Hervé Juderns DELICE" data-roles="Développement,Sportif Polyvalent" data-group="developpement">
+          <a href="personne10.html"><img class="photo" loading="lazy" src="assets/images/Jodo/1.jpeg" alt="Portrait — Hervé Juderns Delice" /></a>
+          <div class="name">Hervé Juderns DELICE</div>
+          <div class="role">Responsable Développement • Sportif polyvalent</div>
+          <div class="tags"><span class="tag">Développement</span></div>
+          <a class="cta" href="personne10.html">Voir la fiche</a>
+        </article>
+
+        <article class="card" data-name="Ed-Dlens MELOZA" data-roles="Athlète,Assistant Communication" data-group="developpement">
+          <a href="personne9.html"><img class="photo" loading="lazy" src="assets/images/Meloza/1.jpeg" alt="Portrait — Ed-Dlens Meloza" /></a>
+          <div class="name">Ed-Dlens MELOZA</div>
+          <div class="role">Athlète & Assistant Communication Digitale</div>
+          <div class="tags"><span class="tag">Com</span><span class="tag">Athlète</span></div>
+          <a class="cta" href="personne9.html">Voir la fiche</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Athlètes (exemple de volet futur si tu ajoutes des profils) -->
+    <section class="section" id="athletes" data-section="athletes">
+      <div class="hgroup">
+        <h2>Ambassadeurs & Athlètes <span class="badge">Niveau 4</span></h2>
+      </div>
+      <div class="grid">
+        <!-- Tu pourras ajouter ici tes athlètes au fur et à mesure, même modèle de carte -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">© 2025 KOLTIZ Club de Natation — Tous droits réservés</div>
   </footer>
 
+  <script>
+    // Sommaire: scroll vers section + état actif
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        chips.forEach(c=>c.dataset.active="false");
+        chip.dataset.active="true";
+        const target = document.querySelector(chip.dataset.anchor);
+        if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
 
+    // Recherche simple par nom / rôle
+    const search = document.getElementById('search');
+    const cards = [...document.querySelectorAll('.card')];
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      cards.forEach(card=>{
+        const name = (card.dataset.name||'').toLowerCase();
+        const roles = (card.dataset.roles||'').toLowerCase();
+        const show = name.includes(q) || roles.includes(q);
+        card.style.display = show ? '' : 'none';
+      });
+    });
 
+    // Optionnel: filtrer par section via hash (#direction, etc.)
+    if(location.hash){
+      const active = [...chips].find(c=>c.dataset.anchor===location.hash);
+      if(active){ active.click(); }
+    }
+  </script>
 </body>
 </html>
