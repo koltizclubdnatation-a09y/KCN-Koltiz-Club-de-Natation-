@@ -192,7 +192,7 @@
             </div>
             <div id="rateWrap" style="display:none">
               <label for="usdrate">Taux USD ↔ HTG</label>
-              <input id="usdrate" type="text" inputmode="decimal" placeholder="130HTG">
+              <input id="usdrate" type="text" inputmode="decimal" placeholder="130">
               <p class="help">Saisissez le taux courant pour l’affichage en USD.</p>
             </div>
           </div>
@@ -471,13 +471,14 @@
 
   <script>
     /* ======= Constantes ======= */
-    const STORAGE_KEY = 'kcn_receipts';
+    const STORAGE_KEY = 'kcn_receipts';       // ⚠️ doit matcher l'Admin
     const BASE_MONTH = 6500;
 
     /* ======= Outils ======= */
     const fmtMoney = (val, cur) => (cur==='USD'?'$ ':'') + new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(val) + (cur==='HTG'?' HTG':'');
     const $ = s => document.querySelector(s);
-    function loadList(){ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }
+    const $$ = s => [...document.querySelectorAll(s)];
+    function loadList(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{ return []; } }
     function saveList(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
 
     // Convertir un fichier en DataURL pour l'Admin (image/pdf)
@@ -553,6 +554,11 @@
       return parseFloat((rateInput.value||'').replace(',','.'))||0;
     }
 
+    function parseDecSafe(v, fallback=0){
+      const x = parseFloat(String(v||'').replace(',','.'));
+      return isFinite(x) ? x : fallback;
+    }
+
     function currentSubtotalHTG(){
       let sub=0;
       products.forEach(p=>{
@@ -561,17 +567,17 @@
         const key = p.dataset.key;
         let amt = 0;
         if(key==='custom'){
-          const raw = ($('#customAmount').value||'').replace(',','.');
-          const val = Math.max(0, parseFloat(raw)||0);
-          $('#customAmount').value = (raw && val===0) ? '0' : $('#customAmount').value;
+          const raw = ($('#customAmount').value||'').trim();
+          const val = Math.max(0, parseDecSafe(raw,0));
+          if(raw && !isFinite(val)) { /* sécurité */ }
           amt = val;
         } else if(key==='month'){
           amt = adjustedMonthPrice();
         } else {
-          const unit = parseFloat(p.querySelector('.price').dataset.htg)||0;
+          const unit = parseDecSafe(p.querySelector('.price').dataset.htg,0);
           if(qtyMap.has(key)){
             const qid = qtyMap.get(key);
-            const q = Math.max(1, parseFloat(($('#'+qid).value||'1').replace(',','.'))||1);
+            const q = Math.max(1, parseDecSafe($('#'+qid)?.value,1));
             amt = unit * q;
           } else {
             amt = unit;
@@ -650,7 +656,7 @@
     paybox.querySelectorAll('input[type="radio"]').forEach(r=>{
       r.addEventListener('change', ()=>{
         state.method = r.value;
-        state.pay = { pct: parseFloat(r.dataset.feePct)||0, fix: parseFloat(r.dataset.feeFixed)||0 };
+        state.pay = { pct: parseDecSafe(r.dataset.feePct,0), fix: parseDecSafe(r.dataset.feeFixed,0) };
         bankDetails.style.display = (r.value==='bank') ? 'block' : 'none';
         compute();
       });
@@ -701,15 +707,15 @@
     }
 
     function fillReceiptUI(data){
-      document.getElementById('receiptStatus').textContent = data.status;
-      document.getElementById('receiptNo').textContent = data.no;
-      document.getElementById('receiptDate').textContent = data.date;
-      document.getElementById('receiptName').textContent = data.name || '—';
-      document.getElementById('receiptEmail').textContent = data.email || '—';
-      document.getElementById('receiptMethod').textContent = data.method.toUpperCase();
-      document.getElementById('receiptCurrency').textContent = data.currency;
+      $('#receiptStatus').textContent = data.status;
+      $('#receiptNo').textContent = data.no;
+      $('#receiptDate').textContent = data.date;
+      $('#receiptName').textContent = data.name || '—';
+      $('#receiptEmail').textContent = data.email || '—';
+      $('#receiptMethod').textContent = (data.method||'-').toUpperCase();
+      $('#receiptCurrency').textContent = data.currency;
 
-      const tbody = document.getElementById('receiptRows');
+      const tbody = $('#receiptRows');
       tbody.innerHTML = '';
       data.rows.forEach(r=>{
         const v = toDisp(r.amt, data.currency, data.rate);
@@ -718,24 +724,24 @@
         tbody.appendChild(tr);
       });
 
-      document.getElementById('rcSub').textContent = fmtMoney(toDisp(data.sub, data.currency, data.rate), data.currency);
-      document.getElementById('rcFee').textContent = fmtMoney(toDisp(data.fee, data.currency, data.rate), data.currency);
-      document.getElementById('rcTot').textContent = fmtMoney(toDisp(data.tot, data.currency, data.rate), data.currency);
+      $('#rcSub').textContent = fmtMoney(toDisp(data.sub, data.currency, data.rate), data.currency);
+      $('#rcFee').textContent = fmtMoney(toDisp(data.fee, data.currency, data.rate), data.currency);
+      $('#rcTot').textContent = fmtMoney(toDisp(data.tot, data.currency, data.rate), data.currency);
 
       if(data.proof){
-        document.getElementById('rcProof').style.display = 'block';
-        document.getElementById('rcProofText').innerHTML = `
+        $('#rcProof').style.display = 'block';
+        $('#rcProofText').innerHTML = `
           Réf: <strong>${data.proof.ref||'—'}</strong><br>
           N°/Compte: <strong>${data.proof.phone||'—'}</strong><br>
           Date/heure: <strong>${data.proof.when||'—'}</strong><br>
           Fichier: <strong>${data.proof.file||data.proof.fileName||'—'}</strong>
         `;
       } else {
-        document.getElementById('rcProof').style.display = 'none';
-        document.getElementById('rcProofText').innerHTML = '';
+        $('#rcProof').style.display = 'none';
+        $('#rcProofText').innerHTML = '';
       }
 
-      const wm = document.getElementById('rcWM');
+      const wm = $('#rcWM');
       const mark = computeWatermarkText(data);
       if(mark){
         wm.style.display = 'grid';
@@ -746,20 +752,21 @@
     }
 
     function openReceiptModal(){
-      document.getElementById('receiptBackdrop').classList.add('show');
-      document.getElementById('receiptModal').classList.add('show');
+      $('#receiptBackdrop').classList.add('show');
+      $('#receiptModal').classList.add('show');
     }
     function closeReceiptModal(){
-      document.getElementById('receiptBackdrop').classList.remove('show');
-      document.getElementById('receiptModal').classList.remove('show');
+      $('#receiptBackdrop').classList.remove('show');
+      $('#receiptModal').classList.remove('show');
     }
-    document.getElementById('receiptBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='receiptBackdrop') closeReceiptModal(); });
-    document.getElementById('rcX').addEventListener('click', closeReceiptModal);
-    document.getElementById('rcClose').addEventListener('click', closeReceiptModal);
+    $('#receiptBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='receiptBackdrop') closeReceiptModal(); });
+    $('#rcX').addEventListener('click', closeReceiptModal);
+    $('#rcClose').addEventListener('click', closeReceiptModal);
 
     function downloadReceipt(){
       const node = document.getElementById('receiptCard');
       const w = window.open('', 'PRINT', 'height=900,width=900');
+      if(!w){ alert("Autorisez les fenêtres popup pour imprimer / télécharger le reçu."); return; }
       w.document.write(`<!doctype html><html><head><title>Reçu KCN</title>
         <meta charset='utf-8'>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -777,7 +784,7 @@
       w.document.write('</body></html>');
       w.document.close(); w.focus(); w.print(); w.close();
     }
-    document.getElementById('rcDownload').addEventListener('click', downloadReceipt);
+    $('#rcDownload').addEventListener('click', downloadReceipt);
 
     function persistReceipt(data){
       const list = loadList();
@@ -788,13 +795,13 @@
 
     // buildReceiptData async pour capter la preuve (image/pdf)
     async function buildReceiptData(status){
-      const fname = document.getElementById('fname').value || '';
-      const lname = document.getElementById('lname').value || '';
-      const email = document.getElementById('email').value || '';
+      const fname = $('#fname').value || '';
+      const lname = $('#lname').value || '';
+      const email = $('#email').value || '';
       const method = (document.querySelector('input[name="pay"]:checked')||{}).value || '-';
-      const cur = document.getElementById('currency').value;
+      const cur = $('#currency').value;
       const rate = (cur==='USD') ? getRate() : 1;
-      const month = (document.getElementById('payMonth')||{value:''}).value || '';
+      const month = ($('#payMonth')||{value:''}).value || '';
 
       const rows = [];
       const prods = document.querySelectorAll('#items .product');
@@ -806,16 +813,16 @@
         let label = p.querySelector('label').textContent.trim();
         let unit = 0; let qty = 1; let amt = 0;
         if(key==='custom'){
-          const raw = (document.getElementById('customAmount').value||'').replace(',','.');
-          amt = Math.max(0, parseFloat(raw)||0);
+          const raw = ($('#customAmount').value||'').replace(',','.');
+          amt = Math.max(0, parseDecSafe(raw,0));
         }else if(key==='month'){
           unit = adjustedMonthPrice();
           amt = unit;
           if(month) label += ` — Mois: ${month}`;
         }else{
-          unit = parseFloat(p.querySelector('.price').dataset.htg)||0;
+          unit = parseDecSafe(p.querySelector('.price').dataset.htg,0);
           const qInput = p.querySelector('input[type="number"]');
-          qty = qInput ? (Math.max(1, parseFloat((qInput.value||'1').replace(',','.'))||1)) : 1;
+          qty = qInput ? (Math.max(1, parseDecSafe((qInput.value||'1'),1))) : 1;
           amt = unit * qty;
         }
         sub += amt; // HTG
@@ -823,8 +830,8 @@
       });
 
       const pay = document.querySelector('input[name="pay"]:checked');
-      const pct = parseFloat(pay?.dataset.feePct||'0');
-      const fix = parseFloat(pay?.dataset.feeFixed||'0');
+      const pct = parseDecSafe(pay?.dataset.feePct,0);
+      const fix = parseDecSafe(pay?.dataset.feeFixed,0);
       const fee = sub*pct + fix; // HTG
       const tot = sub + fee;     // HTG
 
@@ -861,10 +868,14 @@
     }
 
     // Submit → génère + enregistre le reçu
-    document.getElementById('kcn-form').addEventListener('submit', async (e)=>{
+    $('#kcn-form').addEventListener('submit', async (e)=>{
       e.preventDefault();
       if(!payMonth.value){
         alert('Merci de sélectionner le mois concerné.');
+        return;
+      }
+      if(!state.method){
+        alert('Merci de choisir une méthode de paiement.');
         return;
       }
       if(state.currency==='USD' && getRate()<=0){
