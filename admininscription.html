@@ -3,192 +3,553 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="robots" content="noindex,nofollow">
-  <title>KCN — Admin Reçus (Sécurisé)</title>
+  <title>KCN — Admin Inscriptions & Paiements</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root{
-      --brand:#0b63c7; --accent:#00bcd4; --ink:#0f172a; --muted:#475569; --page:#f4f7fb;
-      --line:#e6eef6; --card:#ffffff; --ok:#16a34a; --wait:#b45309; --danger:#b91c1c;
-      --grad: linear-gradient(135deg, #0b63c7 0%, #00bcd4 100%);
-      --soft: 0 18px 48px rgba(2,6,23,.10);
-      --rad: 16px;
+      --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
+      --ink:#0f172a; --muted:#475569; --line:#e5e7eb; --page:#f7f9fc; --card:#ffffff;
+      --danger:#ef4444; --success:#10b981; --warn:#f59e0b;
+      --radius:16px; --shadow:0 18px 48px rgba(2,6,23,.12);
     }
-    *,*::before,*::after{box-sizing:border-box}
-    html{font-size:16px}
-    body{margin:0;font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-    h1{font-size:clamp(1.1rem,1rem + 1.2vw,1.6rem);line-height:1.2}
-    .mini{font-size:.95rem;color:var(--muted)}
-
-    .wrap{max-width:1200px;margin:32px auto;padding:0 16px}
-    .hero{background:var(--grad);color:#fff;border-radius:20px;box-shadow:var(--soft);padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--soft);padding:16px}
-    .row{display:grid;gap:10px;grid-template-columns:1fr}
-    @media(min-width:720px){.row.two{grid-template-columns:2fr 1fr}}
-
-    input,button{font-family:inherit}
-    input[type="password"],input[type="search"]{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
-    input[type="search"]{min-width:260px}
-    .btn{background:linear-gradient(90deg,#ff9800,#ffc107);color:#111;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.2);transition:transform .06s}
-    .btn:hover{transform:translateY(-1px)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6}
+    a{color:var(--brand);text-decoration:none}
+    .wrap{max-width:1200px;margin:28px auto 60px;padding:0 16px}
+    header .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    header h1{font-size:1.6rem;color:#0b4573}
+    .bar{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 16px}
+    .bar input[type="search"], .bar select{
+      padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:180px
+    }
+    .btn{background:linear-gradient(90deg,var(--brand),#2499ff);color:#fff;border:0;border-radius:12px;
+      padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(0,102,204,.20)}
     .btn.ghost{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
-    .btn.danger{background:#fff;color:var(--danger);border:2px solid var(--danger)}
+    .btn.warn{background:linear-gradient(90deg,var(--sun),#ffc107)}
+    .btn.danger{background:linear-gradient(90deg,var(--danger),#ff6b6b)}
     .btn:disabled{opacity:.6;cursor:not-allowed}
-
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
-    table{width:100%;border-collapse:collapse;min-width:720px;background:#fff}
-    th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}
-    thead th{position:sticky;top:0;background:#f8fbff;color:#0b4573;z-index:1}
-    .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;border:1px solid var(--line);background:#fff}
-    .ok{color:var(--ok);border-color:#86efac;background:#f0fdf4}
-    .wait{color:var(--wait);border-color:#fde68a;background:#fffbeb}
-
-    .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
-    .modal{position:fixed;inset:0;display:grid;place-items:center;z-index:61;opacity:0;pointer-events:none;transition:opacity .18s}
-    .show{opacity:1;pointer-events:auto}
-    .mcard{width:min(94%,860px);max-height:min(90vh,90dvh);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--soft);padding:16px;position:relative}
-
-    @media (max-width:520px){
-      .btn{padding:9px 12px}
-      .hero{padding:14px 16px}
-    }
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+    .panel .hd{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+    .panel .hd h2{font-size:1.1rem;color:#0b4573}
+    .panel .bd{padding:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}
+    th{font-size:.9rem;color:#0b4573}
+    tbody tr:hover{background:#f8fbff}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:800;font-size:.8rem}
+    .paid{background:rgba(16,185,129,.12);color:#065f46;border:1px solid rgba(16,185,129,.35)}
+    .pending{background:rgba(245,158,11,.12);color:#7c2d12;border:1px solid rgba(245,158,11,.35)}
+    .await{background:rgba(15,23,42,.06);color:#0f172a;border:1px solid rgba(15,23,42,.15)}
+    .chip{border:1px solid rgba(0,102,204,.25);background:rgba(0,102,204,.06);color:#0b4573;border-radius:999px;padding:6px 10px;font-weight:700}
+    .mini{font-size:.9rem;color:#475569}
+    .act{display:flex;gap:6px;flex-wrap:wrap}
+    .money{white-space:nowrap}
+    .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+    /* Drawer */
+    .drawer{position:fixed;inset:0;display:none}
+    .drawer.show{display:block}
+    .mask{position:absolute;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px)}
+    .sheet{position:absolute;right:0;top:0;height:100%;width:min(560px,92vw);background:#fff;border-left:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .sheet .head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .sheet .body{padding:16px;overflow:auto}
+    .kv{display:grid;grid-template-columns:140px 1fr;gap:10px;margin:8px 0}
+    .proof{margin-top:10px;border:1px dashed var(--line);border-radius:12px;padding:10px}
+    .proof img{max-width:100%;border-radius:10px;display:block}
+    .proof .file{display:inline-block;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
+    .empty{padding:24px;text-align:center;color:#64748b}
+    /* Gate */
+    .gate{max-width:520px;margin:8vh auto 0;padding:18px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .gate h3{color:#0b4573;margin-bottom:8px}
+    .gate input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px}
+    .gate .row{display:flex;gap:10px;margin-top:10px}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="hero" role="banner">
-      <h1>Admin — Reçus d’inscription KCN</h1>
-      <div class="mini" aria-hidden="true">Accès restreint</div>
-    </div>
-
-    <!-- Connexion -->
-    <div class="card" id="loginBox">
-      <div class="row two">
-        <div>
-          <label for="adminCode" class="mini">Code Admin</label>
-          <input id="adminCode" type="password" placeholder="Entrer le code Admin" autocomplete="current-password" />
-        </div>
-        <div style="align-self:end">
-          <button class="btn" id="adminLogin" type="button">Se connecter</button>
+  <div class="wrap" id="app" style="display:none">
+    <header>
+      <div class="top">
+        <h1>🛡️ KCN — Administration des inscriptions & paiements</h1>
+        <div class="act">
+          <a class="btn ghost" href="./inscription1eretapes.html">← Retour Formulaire</a>
+          <button class="btn" id="exportCsv">Exporter CSV</button>
         </div>
       </div>
-    </div>
 
-    <!-- Tableau -->
-    <div class="card" id="tableBox" style="display:none">
-      <div class="bar">
-        <input id="q" type="search" placeholder="Rechercher (nom, email, méthode…)" aria-label="Recherche">
-        <button class="btn" id="refresh" type="button">Rafraîchir</button>
-        <button class="btn ghost" id="exportCsv" type="button">Exporter CSV</button>
-        <button class="btn ghost" id="logout" type="button" style="margin-left:auto">Se déconnecter</button>
+      <div class="panel">
+        <div class="hd"><h2>Filtres & recherche</h2><span class="chip">Clé stockage : <strong>kcn_receipts</strong></span></div>
+        <div class="bd">
+          <div class="bar">
+            <input id="q" type="search" placeholder="Recherche (nom, email, reçu, réf)…"/>
+            <select id="fStatus">
+              <option value="">Tous statuts</option>
+              <option value="PAYÉ">PAYÉ</option>
+              <option value="EN ATTENTE">EN ATTENTE</option>
+              <option value="EN ATTENTE — PREUVE À VALIDER">EN ATTENTE — PREUVE À VALIDER</option>
+              <option value="EN ATTENTE — VÉRIF VIREMENT">EN ATTENTE — VÉRIF VIREMENT</option>
+            </select>
+            <select id="fMethod">
+              <option value="">Toutes méthodes</option>
+              <option value="cash">Espèces / Cash</option>
+              <option value="bank">Virement</option>
+              <option value="moncash">MonCash</option>
+              <option value="natcash">NatCash</option>
+            </select>
+            <select id="sort">
+              <option value="date_desc">Tri : Date ↓</option>
+              <option value="date_asc">Tri : Date ↑</option>
+              <option value="name_asc">Tri : Nom A→Z</option>
+              <option value="name_desc">Tri : Nom Z→A</option>
+              <option value="tot_desc">Tri : Total ↓</option>
+              <option value="tot_asc">Tri : Total ↑</option>
+            </select>
+            <button class="btn warn" id="markPaidSel">Marquer PAYÉ (sélection)</button>
+            <button class="btn danger" id="deleteSel">Supprimer (sélection)</button>
+          </div>
+        </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th><th>Nom</th><th>Méthode</th><th>Devise</th><th>Total</th><th>Statut</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
+    </header>
+
+    <section class="panel" style="margin-top:16px">
+      <div class="hd"><h2>Reçus enregistrés</h2></div>
+      <div class="bd">
+        <div id="tableWrap"></div>
+        <div class="foot mini">
+          <div><span id="count"></span></div>
+          <div>Astuce : clique sur le N° de reçu pour ouvrir le détail</div>
+        </div>
       </div>
-      <p id="empty" class="mini" style="margin-top:10px;display:none">
-        Aucun reçu pour le moment. (Vérifie que le formulaire et l’admin sont sur le même domaine.)
-      </p>
+    </section>
+  </div>
+
+  <!-- === Gate d'accès admin === -->
+  <div id="gate" class="wrap">
+    <div class="gate">
+      <h3>Accès administration KCN</h3>
+      <p class="mini">Entrez le code d’administration.</p>
+      <div class="row">
+        <input id="gateInput" type="password" placeholder="Code admin"/>
+        <button id="gateBtn" class="btn">Entrer</button>
+      </div>
+      <p class="mini" style="margin-top:8px">Conseil : modifiez le code dans la constante <strong>ADMIN_PASS</strong> du script.</p>
     </div>
   </div>
 
-  <script>
-    // Bloquer accès depuis un autre domaine (option)
-    if (location.hostname && !/^(localhost|127\.0\.0\.1|koltizclub\.com)$/i.test(location.hostname)) {
-      location.replace('./index.html');
-    }
+  <!-- === Drawer détail === -->
+  <div class="drawer" id="drawer">
+    <div class="mask" id="drawerMask"></div>
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="head">
+        <strong id="dNo">Reçu</strong>
+        <div class="act">
+          <button class="btn" id="dPrint">Télécharger/Imprimer</button>
+          <button class="btn warn" id="dPaid">Marquer PAYÉ</button>
+          <button class="btn ghost" id="dClose">Fermer</button>
+        </div>
+      </div>
+      <div class="body" id="dBody"></div>
+    </div>
+  </div>
 
-    // ================== CONFIG ==================
-    const STORAGE_KEY = 'kcn_rcp_v1_x9q3';
-    // SHA-256 du code : "KCN#Ruby-2026!"
-    const ADMIN_CODE_SHA256 = "dc8ce42283e3923daab700a3f788c73c1e38d38e7e1b054cb0e68cd41d65a509";
-    // ============================================
+<script>
+/* ===================== PARAMÈTRES ===================== */
+const STORAGE_KEY = 'kcn_receipts'; // ⚠️ doit matcher la page d'inscription
+const ADMIN_PASS  = 'KCN-ADMIN';    // 🔐 change-moi !
 
-    const $ = s => document.querySelector(s);
-    const loginBox = $('#loginBox');
-    const tableBox = $('#tableBox');
-    const rows = $('#rows');
-    const empty = $('#empty');
-    const q = $('#q');
+/* ===================== OUTILS ===================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const safeParse = (x, f=[])=>{try{return JSON.parse(x||'[]')}catch{ return f }};
+const fmt = (n)=> new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(n);
+const fmtMoney = (v, cur)=> (cur==='USD'?'$ ':'') + fmt(v) + (cur==='HTG'?' HTG':'');
+function loadList(){ return safeParse(localStorage.getItem(STORAGE_KEY), []); }
+function saveList(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function download(filename, text){
+  const a = document.createElement('a');
+  a.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(text));
+  a.setAttribute('download', filename);
+  a.style.display='none'; document.body.appendChild(a); a.click(); a.remove();
+}
+function csvEscape(s){
+  if(s==null) return '';
+  const str = String(s).replace(/"/g,'""');
+  return /[",;\n]/.test(str) ? `"${str}"` : str;
+}
+function statusBadge(s){
+  const cls = (s||'').toUpperCase()==='PAYÉ' ? 'paid' :
+              (s||'').includes('PREUVE') || (s||'').includes('VÉRIF') ? 'pending' : 'await';
+  return `<span class="badge ${cls}">${s||'—'}</span>`;
+}
+function htmlRows(rows, currency, rate){
+  return (rows||[]).map(r=>{
+    const vHTG = Number(r.amt||0);
+    const v = currency==='USD' ? (rate>0 ? vHTG/rate : vHTG) : vHTG;
+    return `<tr><td>${r.label}</td><td>${r.qty||1}</td><td class="money" style="text-align:right">${fmtMoney(v, currency)}</td></tr>`;
+  }).join('');
+}
+function guessMonth(rows){
+  const r = (rows||[]).find(x=>/Mois:\s*/i.test(x.label||''));
+  if(!r) return '—';
+  const m = r.label.match(/Mois:\s*([A-Za-zÀ-ÿ]+)/i);
+  return m ? m[1] : '—';
+}
+function fileIsPDF(dataUrl){
+  return typeof dataUrl === 'string' && dataUrl.startsWith('data:application/pdf');
+}
 
-    const nf = new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2});
-    const money = (val,cur)=> (cur==='USD'?'$ ':'')+nf.format(val)+(cur==='HTG'?' HTG':'');
-    const pick = (a,b)=> a==null?b:a;
+/* ===================== ÉTAT ===================== */
+let DATA = [];
+let SELECTED = new Set();
+let CUR = null;
 
-    function load(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{return [];} }
-    function save(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+/* ===================== RENDU TABLE ===================== */
+function render(){
+  const q = $('#q').value.trim().toLowerCase();
+  const fStatus = $('#fStatus').value;
+  const fMethod = $('#fMethod').value;
+  const sort = $('#sort').value;
 
-    function render(){
-      const all = load();
-      const term = (q.value||'').toLowerCase();
-      rows.innerHTML='';
-      const list = all.filter(r=>{
-        if(!term) return true;
-        return [r.no,r.name,r.email,r.method,r.status].join(' ').toLowerCase().includes(term);
-      });
-      if(!list.length){ empty.style.display='block'; return; }
-      empty.style.display='none';
-      list.forEach(r=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td>${r.date||''}</td>
-          <td>${r.name||'—'}</td>
-          <td>${(r.method||'-').toUpperCase()}</td>
-          <td>${r.currency||'HTG'}</td>
-          <td>${money(pick(r.tot,r.totHTG)||0,r.currency||'HTG')}</td>
-          <td>${(r.status||'EN ATTENTE').toUpperCase()==='PAYÉ'
-                ?'<span class="pill ok">PAYÉ</span>'
-                :'<span class="pill wait">'+(r.status||'EN ATTENTE')+'</span>'}</td>
-          <td><button class="btn ghost" data-id="${r.id}" type="button">Supprimer</button></td>`;
-        rows.appendChild(tr);
-      });
-    }
+  let list = [...DATA];
 
-    rows.addEventListener('click',e=>{
-      const id=e.target.getAttribute('data-id');
-      if(!id) return;
-      if(confirm('Supprimer ce reçu ?')){
-        const list=load().filter(x=>x.id!==id);
-        save(list);
-        render();
-      }
+  // Filtres
+  list = list.filter(x=>{
+    const okS = !fStatus || (x.status||'').toUpperCase()===fStatus.toUpperCase();
+    const okM = !fMethod || (x.method||'')===fMethod;
+    return okS && okM;
+  });
+
+  // Recherche
+  if(q){
+    list = list.filter(x=>{
+      const hay = [
+        x.no, x.name, x.email, x.method, x.currency,
+        (x.proof?.ref||''), (x.proof?.phone||''),
+        (x.rows||[]).map(r=>r.label).join(' ')
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
     });
+  }
 
-    $('#refresh').addEventListener('click',render);
-    q.addEventListener('input',render);
-
-    const adminCodeInput = $('#adminCode');
-    $('#adminLogin').addEventListener('click',login);
-    adminCodeInput.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-    $('#logout').addEventListener('click',()=>{tableBox.style.display='none';loginBox.style.display='block';adminCodeInput.value='';});
-
-    async function sha256Hex(text){
-      const enc=new TextEncoder().encode(text);
-      const buf=await crypto.subtle.digest('SHA-256',enc);
-      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  // Tri
+  list.sort((a,b)=>{
+    switch(sort){
+      case 'date_asc':  return (a.id||0) - (b.id||0);
+      case 'name_asc':  return (a.name||'').localeCompare(b.name||'');
+      case 'name_desc': return (b.name||'').localeCompare(a.name||'');
+      case 'tot_asc':   return (a.tot||0) - (b.tot||0);
+      case 'tot_desc':  return (b.tot||0) - (a.tot||0);
+      case 'date_desc':
+      default:          return (b.id||0) - (a.id||0);
     }
+  });
 
-    async function login(){
-      const code=(adminCodeInput.value||'').trim();
-      if(!code) return alert('Entrer le code.');
-      const h=await sha256Hex(code);
-      if(h===ADMIN_CODE_SHA256){
-        loginBox.style.display='none';
-        tableBox.style.display='block';
-        render();
-        q.focus();
-      }else alert('Code invalide.');
+  // Table
+  const table = list.length ? `
+    <table aria-label="Liste des reçus">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="chkAll"></th>
+          <th>Reçu</th>
+          <th>Date</th>
+          <th>Nom</th>
+          <th>Méthode</th>
+          <th>Devise</th>
+          <th style="text-align:right">Total (affiché)</th>
+          <th>Mois</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${list.map(x=>{
+          const rate = Number(x.rate||0);
+          const cur  = x.currency||'HTG';
+          const totDisp = (cur==='USD' && rate>0) ? x.tot/rate : x.tot;
+          const month = guessMonth(x.rows);
+          const checked = SELECTED.has(x.id) ? 'checked' : '';
+          const methodLabel = (x.method||'-').toUpperCase();
+          return `
+          <tr data-id="${x.id}">
+            <td><input type="checkbox" class="chk" ${checked}></td>
+            <td><a href="#" class="open" title="Voir le reçu">${x.no||'—'}</a></td>
+            <td>${x.date||'—'}</td>
+            <td>${x.name||'—'}<div class="mini">${x.email||''}</div></td>
+            <td>${methodLabel}</td>
+            <td>${cur}</td>
+            <td class="money" style="text-align:right">${fmtMoney(totDisp, cur)}</td>
+            <td>${month}</td>
+            <td>${statusBadge(x.status)}</td>
+            <td class="act">
+              <button class="btn warn sm open">Ouvrir</button>
+              <button class="btn sm setPaid">PAYÉ</button>
+              <button class="btn ghost sm setWait">EN ATTENTE</button>
+              <button class="btn danger sm del">Supprimer</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  ` : `<div class="empty">Aucun reçu trouvé. Dès qu’un formulaire est validé, il apparaît ici.</div>`;
+
+  $('#tableWrap').innerHTML = table;
+  $('#count').textContent = `${list.length} reçu(x) affiché(s) • ${DATA.length} au total`;
+
+  // Événements de ligne
+  $('#chkAll')?.addEventListener('change', (e)=>{
+    const rows = $$('#tableWrap tbody tr');
+    rows.forEach(r=>{
+      const id = r.dataset.id;
+      r.querySelector('.chk').checked = e.target.checked;
+      if(e.target.checked) SELECTED.add(id); else SELECTED.delete(id);
+    });
+  });
+
+  $$('#tableWrap .chk').forEach(ch=>{
+    ch.addEventListener('change', (e)=>{
+      const id = e.target.closest('tr').dataset.id;
+      if(e.target.checked) SELECTED.add(id); else SELECTED.delete(id);
+    });
+  });
+
+  $$('#tableWrap .open').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const id = e.target.closest('tr').dataset.id;
+      openDrawer(id);
+    });
+  });
+
+  $$('#tableWrap .setPaid').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.closest('tr').dataset.id; setStatus(id,'PAYÉ');
+    });
+  });
+  $$('#tableWrap .setWait').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.closest('tr').dataset.id; setStatus(id,'EN ATTENTE');
+    });
+  });
+  $$('#tableWrap .del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.closest('tr').dataset.id; delOne(id);
+    });
+  });
+}
+
+/* ===================== DÉTAIL (DRAWER) ===================== */
+function openDrawer(id){
+  CUR = DATA.find(x=>x.id===id);
+  if(!CUR) return;
+  $('#dNo').textContent = CUR.no || 'Reçu';
+  const cur = CUR.currency||'HTG';
+  const rate = Number(CUR.rate||0);
+
+  const rowsHTML = htmlRows(CUR.rows, cur, rate);
+  const subDisp = cur==='USD' && rate>0 ? CUR.sub/rate : CUR.sub;
+  const feeDisp = cur==='USD' && rate>0 ? CUR.fee/rate : CUR.fee;
+  const totDisp = cur==='USD' && rate>0 ? CUR.tot/rate : CUR.tot;
+
+  const proofBox = (()=>{
+    if(!CUR.proof) return '<div class="mini">Aucune preuve fournie.</div>';
+    const parts = [];
+    parts.push(`<div><strong>Réf:</strong> ${CUR.proof.ref||'—'}</div>`);
+    parts.push(`<div><strong>N° / Compte:</strong> ${CUR.proof.phone||'—'}</div>`);
+    parts.push(`<div><strong>Date/heure:</strong> ${CUR.proof.when||'—'}</div>`);
+    let media = '';
+    if(CUR.proof.fileData){
+      if(fileIsPDF(CUR.proof.fileData)){
+        media = `<a class="file" href="${CUR.proof.fileData}" target="_blank" rel="noopener">📄 Ouvrir la preuve (PDF)</a>`;
+      }else{
+        media = `<img src="${CUR.proof.fileData}" alt="Preuve de paiement">`;
+      }
+    }else if(CUR.proof.fileName){
+      media = `<div class="file">Fichier: ${CUR.proof.fileName}</div>`;
     }
+    return `<div class="proof">${parts.join('')}<div style="margin-top:8px">${media}</div></div>`;
+  })();
 
-    window.addEventListener('storage',e=>{if(e.key===STORAGE_KEY)render();});
-  </script>
+  $('#dBody').innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+      ${statusBadge(CUR.status)}
+      <span class="chip">${(CUR.method||'-').toUpperCase()} • ${cur}</span>
+    </div>
+    <div class="kv"><div><strong>N° de reçu</strong></div><div>${CUR.no||'—'}</div></div>
+    <div class="kv"><div><strong>Date</strong></div><div>${CUR.date||'—'}</div></div>
+    <div class="kv"><div><strong>Nom</strong></div><div>${CUR.name||'—'}</div></div>
+    <div class="kv"><div><strong>Email</strong></div><div>${CUR.email||'—'}</div></div>
+
+    <h3 style="margin:10px 0;color:#0b4573">Détail</h3>
+    <table>
+      <thead><tr><th>Description</th><th>Qté</th><th style="text-align:right">Montant</th></tr></thead>
+      <tbody>${rowsHTML}</tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px">
+      <table>
+        <tr><td>Sous-total</td><td style="text-align:right" class="money">${fmtMoney(subDisp, cur)}</td></tr>
+        <tr><td>Frais paiement</td><td style="text-align:right" class="money">${fmtMoney(feeDisp, cur)}</td></tr>
+        <tr><th>Total</th><th style="text-align:right" class="money">${fmtMoney(totDisp, cur)}</th></tr>
+      </table>
+    </div>
+
+    <h3 style="margin:14px 0;color:#0b4573">Preuve</h3>
+    ${proofBox}
+    <p class="mini" style="margin-top:10px">
+      Filigrane/Statut automatique : <em>EN ATTENTE — PREUVE À VALIDER</em> si paiement en ligne sans preuve, 
+      <em>EN ATTENTE — VÉRIF VIREMENT</em> si virement avec preuve, etc.
+    </p>
+  `;
+
+  $('#drawer').classList.add('show');
+}
+function closeDrawer(){ $('#drawer').classList.remove('show'); CUR=null; }
+
+$('#dClose').addEventListener('click', closeDrawer);
+$('#drawerMask').addEventListener('click', closeDrawer);
+
+$('#dPaid').addEventListener('click', ()=>{
+  if(!CUR) return;
+  setStatus(CUR.id,'PAYÉ', true);
+  openDrawer(CUR.id);
+});
+
+$('#dPrint').addEventListener('click', ()=>{
+  if(!CUR) return;
+  printReceipt(CUR);
+});
+
+/* ===================== ACTIONS ===================== */
+function setStatus(id, status, silent){
+  const i = DATA.findIndex(x=>x.id===id);
+  if(i<0) return;
+  DATA[i].status = status;
+  saveList(DATA);
+  if(!silent) alert('Statut mis à jour.');
+  render();
+}
+function delOne(id){
+  if(!confirm('Supprimer ce reçu ?')) return;
+  DATA = DATA.filter(x=>x.id!==id);
+  saveList(DATA);
+  SELECTED.delete(id);
+  render();
+}
+function markPaidSelected(){
+  if(SELECTED.size===0) return alert('Sélection vide.');
+  DATA = DATA.map(x=> SELECTED.has(x.id) ? {...x, status:'PAYÉ'} : x);
+  saveList(DATA); render(); alert('Sélection marquée PAYÉ.');
+}
+function deleteSelected(){
+  if(SELECTED.size===0) return alert('Sélection vide.');
+  if(!confirm('Supprimer tous les reçus sélectionnés ?')) return;
+  DATA = DATA.filter(x=>!SELECTED.has(x.id));
+  saveList(DATA); SELECTED.clear(); render();
+}
+
+/* ===================== EXPORT CSV ===================== */
+function exportCSV(){
+  const head = [
+    'id','no','date','name','email','method','currency','rate','sub_HTG','fee_HTG','tot_HTG','status','proof_ref','proof_phone','proof_when','proof_file'
+  ];
+  const rows = DATA.map(x=>[
+    x.id, x.no, x.date, x.name, x.email, x.method, x.currency, x.rate, x.sub, x.fee, x.tot, x.status,
+    x.proof?.ref||'', x.proof?.phone||'', x.proof?.when||'', x.proof?.file||x.proof?.fileName||''
+  ]);
+  const csv = [head.map(csvEscape).join(','), ...rows.map(r=>r.map(csvEscape).join(','))].join('\n');
+  download('kcn_receipts.csv', csv);
+}
+
+/* ===================== IMPRESSION (HTML minimal) ===================== */
+function printReceipt(d){
+  const cur = d.currency||'HTG';
+  const rate = Number(d.rate||0);
+  const subDisp = cur==='USD' && rate>0 ? d.sub/rate : d.sub;
+  const feeDisp = cur==='USD' && rate>0 ? d.fee/rate : d.fee;
+  const totDisp = cur==='USD' && rate>0 ? d.tot/rate : d.tot;
+  const wm = (()=>{
+    const s = (d.status||'').toUpperCase();
+    if(s==='PAYÉ') return '';
+    const proofOk = d.proof && d.proof.ref && d.proof.phone && d.proof.when && (d.proof.fileData || d.proof.fileName);
+    if(['moncash','natcash','bank'].includes(d.method) && !proofOk) return 'EN ATTENTE — PREUVE À VALIDER';
+    if(d.method==='bank' && proofOk) return 'EN ATTENTE — VÉRIF VIREMENT';
+    return 'EN ATTENTE';
+  })();
+
+  const w = window.open('', 'PRINT', 'height=900,width=900');
+  w.document.write(`<!doctype html><html><head><title>${d.no||'Reçu KCN'}</title>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:Montserrat,Arial,sans-serif;padding:24px;color:#0f172a}
+      h2{margin:0 0 8px 0;color:#0b4573}
+      .chip{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#f8fafc;font-weight:700;color:#0b4573}
+      table{width:100%;border-collapse:collapse}
+      th,td{border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left}
+      th{color:#0b4573}
+      .wm{position:fixed; inset:0; display:${wm?'grid':'none'}; place-items:center; pointer-events:none; z-index:0;}
+      .wm span{font-size:92px; font-weight:900; letter-spacing:4px; color:#0f172a; opacity:.09; transform:rotate(-20deg); text-transform:uppercase;}
+    </style>
+  </head><body>`);
+  w.document.write(`
+    <div class="wm"><span>${wm}</span></div>
+    <h2>Reçu KCN / KOLTIZ Club de Natation</h2>
+    <div style="display:flex;gap:8px;align-items:center;margin:6px 0">${statusBadge(d.status)}<span class="chip">${(d.method||'-').toUpperCase()} • ${cur}</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin:8px 0">
+      <div><strong>N°:</strong> ${d.no||'—'}</div>
+      <div><strong>Date:</strong> ${d.date||'—'}</div>
+      <div><strong>Nom:</strong> ${d.name||'—'}</div>
+      <div><strong>Email:</strong> ${d.email||'—'}</div>
+    </div>
+    <table><thead><tr><th>Description</th><th>Qté</th><th>Montant</th></tr></thead>
+      <tbody>${htmlRows(d.rows, cur, rate)}</tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px">
+      <table>
+        <tr><td>Sous-total</td><td style="text-align:right">${fmtMoney(subDisp, cur)}</td></tr>
+        <tr><td>Frais paiement</td><td style="text-align:right">${fmtMoney(feeDisp, cur)}</td></tr>
+        <tr><th>Total</th><th style="text-align:right">${fmtMoney(totDisp, cur)}</th></tr>
+      </table>
+    </div>
+    <p style="margin-top:12px"><em>Merci pour votre confiance !</em><br><strong>Therese Redgie Marc</strong> — Secrétaire administrative - KCN</p>
+  `);
+  w.document.write(`</body></html>`);
+  w.document.close(); w.focus(); w.print(); w.close();
+}
+
+/* ===================== INIT ===================== */
+function init(){
+  DATA = loadList();
+  SELECTED = new Set();
+  ['q','fStatus','fMethod','sort'].forEach(id=> $('#'+id).addEventListener('input', render));
+  $('#markPaidSel').addEventListener('click', markPaidSelected);
+  $('#deleteSel').addEventListener('click', deleteSelected);
+  $('#exportCsv').addEventListener('click', exportCSV);
+  render();
+}
+
+
+/* force le prompt à chaque chargement */
+try{ sessionStorage.removeItem('kcn_admin_ok'); }catch(e){}
+
+
+/* ===================== GATE D'ACCÈS ===================== */
+(function gate(){
+  const passOK = sessionStorage.getItem('kcn_admin_ok')==='1';
+  if(passOK){ $('#gate').style.display='none'; $('#app').style.display='block'; init(); return; }
+  $('#gate').style.display='block';
+  $('#app').style.display='none';
+
+  function tryEnter(){
+    const v = $('#gateInput').value;
+    if(v===ADMIN_PASS){
+      sessionStorage.setItem('kcn_admin_ok','1');
+      $('#gate').style.display='none'; $('#app').style.display='block';
+      init();
+    }else{
+      alert('Code incorrect.');
+    }
+  }
+  $('#gateBtn').addEventListener('click', tryEnter);
+  $('#gateInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') tryEnter(); });
+})();
+</script>
 </body>
 </html>
