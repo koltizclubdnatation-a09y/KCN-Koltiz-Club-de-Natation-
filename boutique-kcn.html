@@ -33,6 +33,11 @@
   @media(min-width:840px){.toolbar{grid-template-columns:2fr 1fr 1fr 1fr}}
   label{font-weight:700;color:#0b4573;display:block;margin:4px 0}
   input[type="text"],select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+  input[type="email"], input[type="tel"], textarea{
+    width:100%; padding:10px 12px; border-radius:12px;
+    border:1px solid var(--line); background:#fff
+  }
+  textarea{ min-height:86px; resize:vertical }
 
   .layout{display:grid;gap:22px;grid-template-columns:1fr}
   @media(min-width:980px){.layout{grid-template-columns:1fr 340px}}
@@ -80,10 +85,29 @@
   .close{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
   .product-content{display:grid;gap:16px;grid-template-columns:1fr}
   @media(min-width:860px){.product-content{grid-template-columns:1.2fr .8fr}}
-  .viewer{border:1px solid var(--line);border-radius:12px;padding:8px}
-  .viewer img{width:100%;height:360px;object-fit:cover;border-radius:10px}
+
+  /* ✅ Viewer : affiche toute l'image */
+  .viewer{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:8px;
+    background:#000;
+  }
+  .viewer img{
+    width:100%;
+    max-height:420px;
+    object-fit:contain;
+    border-radius:10px;
+  }
   .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .thumbs img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer}
+  .thumbs img{
+    width:84px;
+    height:64px;
+    object-fit:contain;
+    border-radius:8px;
+    border:2px solid transparent;
+    cursor:pointer;
+  }
   .thumbs img[aria-current="true"]{border-color:var(--brand)}
   .pd-actions{display:grid;gap:10px}
   .pd-price{font-size:1.3rem;font-weight:800}
@@ -111,6 +135,63 @@
   .kcn-mini{font-size:.9rem;color:#475569}
   .kcn-copy{border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;background:#fff;cursor:pointer}
   .kcn-ok{color:#16a34a;font-weight:700}
+
+  /* ====== FAB Admin (discret) ====== */
+  .fab-admin{
+    position:fixed; right:18px; bottom:18px;
+    width:54px; height:54px; display:none; place-items:center;
+    border-radius:999px; border:2px solid #0066cc; background:#fff;
+    box-shadow:0 12px 30px rgba(0,0,0,.15); cursor:pointer; z-index:9999;
+  }
+  .fab-admin span{font-size:22px; line-height:1}
+  .fab-admin:hover{transform:translateY(-2px)}
+  #shopAdminHotspot{
+    position:fixed; right:0; bottom:0; width:68px; height:68px;
+    z-index:9998; background:transparent;
+  }
+
+  /* ====== ZOOM IMAGE PRODUIT (lightbox) ====== */
+  .zoom-modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    place-items:center;
+    background:rgba(0,0,0,.9);
+    z-index:1000;
+  }
+  .zoom-modal.open{
+    display:grid;
+    animation:fade .2s ease;
+  }
+  .zoom-inner{
+    position:relative;
+    max-width:96vw;
+    max-height:96vh;
+  }
+  .zoom-inner img{
+    max-width:100%;
+    max-height:96vh;
+    object-fit:contain;
+    border-radius:12px;
+    box-shadow:0 18px 48px rgba(0,0,0,.6);
+  }
+  .zoom-close{
+    position:absolute;
+    top:-14px;
+    right:-14px;
+    border-radius:999px;
+    border:none;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ffffff;
+    cursor:pointer;
+    font-size:18px;
+    box-shadow:0 10px 26px rgba(0,0,0,.4);
+  }
+
 </style>
 </head>
 <body>
@@ -130,7 +211,7 @@
   <section class="toolbar" aria-label="Filtres boutique">
     <div>
       <label for="q">Recherche</label>
-      <input id="q" type="text" placeholder="bonnet, lunettes, brassards, tenue enfant garcon, tenue enfant fille, tenue de bain pour homme, tenue de bain, tenue de femme, palme de nanation, tuba, bouchon d'oreille, pince nez, pull buoy, corde bande resistance, planche, grand anneau, ballon piscine, masque tuba,…">
+      <input id="q" type="text" placeholder="bonnet, lunettes, brassards, tenue enfant garçon, tenue enfant fille, tenue de bain homme/femme, palme de natation, tuba, bouchon d'oreille, pince-nez, pull buoy, élastique, planche, anneau, ballon piscine, masque tuba…">
     </div>
     <div>
       <label for="cat">Catégorie</label>
@@ -139,22 +220,12 @@
         <option value="bonnets">Bonnets</option>
         <option value="lunettes">Lunettes</option>
         <option value="brassards">Brassards</option>
+        <option value="frite-spagettie">Frite/Spagettie</option>
+        <option value="gilet">Gilet</option>
+        <option value="masque-tuba">Masque-Tuba</option>
+        <option value="planche">Planche</option>
+        <option value="pince-nez-bouchons">Pince-nez & bouchons</option>
         <option value="packs">Packs</option>
-        <option value="tenue enfant garcon">tenue enfant garcon</option>
-        <option value="tenue enfant fille">tenue enfant fille</option>  
-        <option value="tenue de bain pour homme">tenue de bain pour homme</option>
-        <option value="tenue de bain">tenue de bain</option>
-        <option value="tenue de femme">tenue de femme</option>
-        <option value="palme de nanation">palme de nanation</option>
-        <option value="tuba">tuba</option>
-        <option value="bouchon d'oreille">bouchon d'oreille</option>
-        <option value="pince nez">pince nez</option>
-        <option value="pull buoy">pull buoy</option>
-        <option value="corde bande resistance">corde bande resistance</option>
-        <option value="planche">planche</option>
-        <option value="grand anneau">grand anneau</option>
-        <option value="ballon piscine">ballon piscine</option>
-        <option value="masque tuba">masque tuba</option>
       </select>
     </div>
     <div>
@@ -176,7 +247,7 @@
       <div id="grid" class="grid" aria-live="polite"></div>
     </main>
 
-    <!-- Cart -->
+    <!-- Cart / Récap + Coordonnées -->
     <aside class="side" aria-label="Panier">
       <h3 style="color:#0b4573;margin-bottom:6px">Votre panier</h3>
       <div id="cartList" class="mini">Aucun article pour l’instant.</div>
@@ -185,18 +256,35 @@
       <div class="row total"><span>Total estimé</span><strong id="tot">0 HTG</strong></div>
 
       <div class="actions">
-        <div class="mini">Mode de paiement</div>
+        <!-- ✅ Coordonnées client -->
+        <h4 style="color:#0b4573;margin:4px 0 2px">Coordonnées client</h4>
+        <label class="mini" for="custName">Nom complet</label>
+        <input id="custName" type="text" placeholder="Prénom NOM" autocomplete="name" required>
+
+        <label class="mini" for="custPhone">Téléphone / WhatsApp</label>
+        <input id="custPhone" type="tel" inputmode="tel" placeholder="+509…" required pattern="^[0-9+()\\s-]{8,}$">
+
+        <label class="mini" for="custEmail">E-mail</label>
+        <input id="custEmail" type="email" placeholder="ex: nom@domaine.com" autocomplete="email" required>
+
+        <div class="mini" style="margin-top:6px">Mode de paiement</div>
         <label class="mini"><input type="radio" name="shopPay" value="bank" data-fee-pct="0" data-fee-fixed="0" checked> Virement bancaire (0%)</label>
-        <label class="mini"><input type="radio" name="shopPay" value="moncash" data-fee-pct="0.02" data-fee-fixed="0"> MonCash (+2%)</label>
-        <label class="mini"><input type="radio" name="shopPay" value="natcash" data-fee-pct="0.02" data-fee-fixed="0"> NatCash (+2%)</label>
+        <label class="mini"><input type="radio" name="shopPay" value="moncash" data-fee-pct="0.03" data-fee-fixed="0"> MonCash (+3%)</label>
+        <label class="mini"><input type="radio" name="shopPay" value="natcash" data-fee-pct="0.03" data-fee-fixed="0"> NatCash (+3%)</label>
         <label class="mini"><input type="radio" name="shopPay" value="cash" data-fee-pct="0" data-fee-fixed="0"> Espèces (0%)</label>
 
         <!-- Livraison locale -->
-        <div class="row">
+        <div class="row" style="margin-top:8px">
           <label class="mini" style="display:flex;align-items:center;gap:8px">
             <input type="checkbox" id="deliverOpt"> Livraison locale (zones proches) +500 HTG
           </label>
           <strong id="delivery">0 HTG</strong>
+        </div>
+
+        <!-- Adresse de livraison (affichée seulement si cochée) -->
+        <div id="custAddrWrap" style="display:none">
+          <label class="mini" for="custAddr">Adresse de livraison</label>
+          <textarea id="custAddr" placeholder="Quartier, repères, personne à joindre…"></textarea>
         </div>
 
         <div class="row"><span class="muted">Frais paiement</span><strong id="fee">0 HTG</strong></div>
@@ -230,11 +318,8 @@
       <div class="pd-actions">
         <div class="pd-price" id="pdPrice">—</div>
         <div id="pdTags"></div>
-
-        <!-- Choix de couleur -->
         <div id="pdColors"></div>
-
-        <!-- ETAT STOCK ICI -->
+        <div id="pdSizes"></div>
         <div id="pdStock" class="mini"></div>
 
         <div class="pd-qty">
@@ -251,7 +336,15 @@
   </div>
 </div>
 
-<!-- ===== Modal Paiement ===== (inchangé) ===== -->
+<!-- ===== Modal Zoom Image Produit ===== -->
+<div class="zoom-modal" id="zoomModal" aria-hidden="true">
+  <div class="zoom-inner">
+    <img id="zoomImg" src="" alt="">
+    <button class="zoom-close" id="zoomClose" aria-label="Fermer l’image">✕</button>
+  </div>
+</div>
+
+<!-- ===== Modal Paiement ===== -->
 <div class="kcn-modal" id="payModal" aria-hidden="true">
   <div class="kcn-sheet" role="dialog" aria-modal="true" aria-labelledby="kcnPayTitle">
     <div class="kcn-head">
@@ -291,17 +384,17 @@
           <div><strong>Nom :</strong> KOLTIZ Club</div>
           <div class="kcn-actions">
             <button class="kcn-copy" data-copy="+50936985221">Copier numéro</button>
-            <a class="kcn-btn alt" id="kcnWhatsApp" target="_blank">WhatsApp (pré-rempli)</a>
+            <a class="kcn-btn alt" id="kcnWhatsApp" target="_blank" rel="noopener">WhatsApp (pré-rempli)</a>
           </div>
         </div>
       </div>
 
       <div class="kcn-pane" id="pane-natcash" role="tabpanel">
         <div class="kcn-box">
-          <div><strong>NatCash :</strong> +509 36 95 69 39</div>
+          <div><strong>NatCash :</strong> +509 55 49 72 37</div>
           <div><strong>Nom :</strong> KOLTIZ Club</div>
           <div class="kcn-actions">
-            <button class="kcn-copy" data-copy="+50936956939">Copier numéro</button>
+            <button class="kcn-copy" data-copy="+50955497237">Copier numéro</button>
           </div>
         </div>
       </div>
@@ -326,11 +419,11 @@
         <div class="kcn-box" id="kcnSummary"></div>
       </div>
       <div>
-        <h4 style="margin:6px 0;color:#0b4573">Preuve de paiement</h4>
+        <h4 style="margin:6px 0;color:#0b4573">Preuve de paiement obligatoire</h4>
         <div class="kcn-box" id="kcnProofWrap">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <input type="file" id="kcnProof" accept="image/*,application/pdf">
-            <button class="kcn-btn alt" id="kcnSaveProof">Enregistrer preuve</button>
+            <button class="kcn-btn alt" id="kcnSaveProof">Enregistrer preuve </button>
             <span id="kcnProofOk" class="kcn-ok" style="display:none">Enregistrée ✓</span>
           </div>
           <p class="kcn-mini" style="margin-top:8px">Après paiement, téléverse la capture/attestation. Un reçu définitif sera émis après vérification.</p>
@@ -338,7 +431,7 @@
 
         <div class="kcn-actions">
           <button class="kcn-btn" id="kcnReceipt">Télécharger le reçu (provisoire)</button>
-          <button class="kcn-btn alt" id="kcnClose2">Fermer</button>
+          <button class="kcn-btn alt" id="kcnClose2">OK</button>
         </div>
       </div>
     </div>
@@ -346,146 +439,214 @@
   </div>
 </div>
 
+<!-- ===== Hotspot + FAB Admin (boutique) ===== -->
+<div id="shopAdminHotspot" aria-hidden="true"></div>
+<button type="button" id="fabShopAdmin" class="fab-admin" title="Espace admin boutique" aria-label="Aller à l’admin boutique">
+  <span>🛡️</span>
+</button>
+
 <script>
   /* ===================== Données Produits (AVEC STOCK) ===================== */
   const INVENTORY = [
-    // Bonnets — GROS
-    {
-      id:'bonnet-g', cat:'bonnets',
-      name:'Bonnet (gros)', priceHTG:3500, stock:0,
-      imgs:['./boutique-kcn/bonnet3/23.png','./boutique-kcn/bonnet3/24.png','./boutique-kcn/bonnet3/25.png','./boutique-kcn/bonnet3/26.png'],
-      desc:"Bonnet de bain en silicone grande taille Bonnets de bain protecteurs Formation Bonnet de bain personnalisé pour cheveux longs & tresses & dreadlock",
-      tags:['adulte','cheveux volumineux'],
-      colors:['bleu','violet','noir','rose','blanc'],
-    },
+    /* Bonnets */
+    { id:'bonnet-g', cat:'bonnets', name:'Bonnet (gros) #110', priceHTG:2900, stock:0,
+      imgs:['./boutique-kcn/bonnet3/23.png','./boutique-kcn/bonnet3/24.png','./boutique-kcn/bonnet3/25.png','./boutique-kcn/bonnet3/28.jpeg','./boutique-kcn/bonnet3/29.jpeg','./boutique-kcn/bonnet3/30.jpeg'],
+      desc:"Bonnets de bain pour hommes et femme - Très grands bonnets de bain - Bonnet en silicone imperméable - Tresses en dreadlocks Extensions de cheveux afro,  Accessoires de plage, de piscine.",
+      tags:['adulte','cheveux volumineux'], colors:['bleu','violet','noir','rose','blanc'] },
 
-     // Bonnet — ENFANT
-    {
-      id:'bonnet-enfant', cat:'bonnets',
-      name:'Bonnet Enfant unisexe', priceHTG:2025, stock:5,
+    { id:'bonnet-enfant', cat:'bonnets', name:'Bonnet Enfant unisexe #210', priceHTG:2025, stock:5,
       imgs:['./boutique-kcn/bonnet-enfant/9.png','./boutique-kcn/bonnet-enfant/2.png','./boutique-kcn/bonnet-enfant/3.png','./boutique-kcn/bonnet-enfant/4.png','./boutique-kcn/bonnet-enfant/5.png','./boutique-kcn/bonnet-enfant/6.png','./boutique-kcn/bonnet-enfant/7.png','./boutique-kcn/bonnet-enfant/8.png','./boutique-kcn/bonnet-enfant/1.png'],
-      desc:"Casquettes de natation en gros pour filles, femmes avec de longues tresses sur les cheveux.",
-      tags:['confort','enfant'],
-      colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale']
-    },
-    {
-      id:'bonnets-enfant', cat:'bonnets',
-      name:'Bonnet pour enfant', priceHTG:3052, stock:5,
-      imgs:['./boutique-kcn/enfant2/1.png','./boutique-kcn/enfant2/2.png','./boutique-kcn/enfant2/3.png','./boutique-kcn/enfant2/4.png','./boutique-kcn/enfant2/5.png',],
-      desc:"Bonnet de natation en gros pour filles et garcon .",
-      tags:['fille','garcon'],
-      colors:['bleu-turquoise','rose/sirene','rose/licorne','bleu-ciel'],
-    },
-         // Bonnet — Adult
-    {
-      id:'bonnet-adulte', cat:'bonnets',
-      name:'Bonnet pour adulte', priceHTG:2025, stock:5,
+      desc:"1pc Bonnet de Natation Cartoon Vibrant pour Jeunes - Protégeant les Oreilles en Couleurs Mélangées - Parfait pour les Activités de Piscine & le Bain.",
+      tags:['enfant','confort'], colors:['bleu-requin','bleu-clair','bleu-mickey','blanc-poisson','blanc-canard','rose-saumon-fraise','rose-chat','vert','violet-canard','noir','bleu-pale'] },
+
+    { id:'bonnets-enfant', cat:'bonnets', name:'Bonnet pour enfant #310', priceHTG:3052, stock:5,
+      imgs:['./boutique-kcn/enfant2/1.png','./boutique-kcn/enfant2/2.png','./boutique-kcn/enfant2/3.png','./boutique-kcn/enfant2/4.png','./boutique-kcn/enfant2/5.png'],
+      desc:"Bonnet de natation (filles & garçons).",
+      tags:['fille','garçon'], colors:['bleu-turquoise','rose-sirène','rose-licorne','bleu-ciel'] },
+
+    { id:'bonnet-adulte', cat:'bonnets', name:'Bonnet pour adulte #410', priceHTG:2025, stock:5,
       imgs:['./boutique-kcn/adulte-bonnet/1.png','./boutique-kcn/adulte-bonnet/2.png','./boutique-kcn/adulte-bonnet/3.png','./boutique-kcn/adulte-bonnet/4.png','./boutique-kcn/adulte-bonnet/5.png','./boutique-kcn/adulte-bonnet/6.png','./boutique-kcn/adulte-bonnet/7.png','./boutique-kcn/adulte-bonnet/8.png','./boutique-kcn/adulte-bonnet/9.png'],
-      desc:"Casquettes de natation en gros pour filles, femmes avec de longues tresses sur les cheveux.",
-      tags:['confort','fille','femme'],
-      colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale']
-    },
-    // Bonnet de bain (autre réf.)
-    {
-      id:'bonnet-de-bain', cat:'bonnets',
-      name:'Bonnet de bain', priceHTG:3500, stock:2,
+      desc:"Bonnet adulte unisexe.",
+      tags:['confort','adulte'], colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale'] },
+
+    { id:'bonnet-de-bain', cat:'bonnets', name:'Bonnet de bain #510', priceHTG:3500, stock:10,
       imgs:['./boutique-kcn/bonnet-de-bain2/1.png','./boutique-kcn/bonnet-de-bain2/2.png','./boutique-kcn/bonnet-de-bain2/3.png','./boutique-kcn/bonnet-de-bain2/4.png','./boutique-kcn/bonnet-de-bain2/5.png','./boutique-kcn/bonnet-de-bain2/6.png','./boutique-kcn/bonnet-de-bain2/7.png'],
-      desc:"Casquette de natation en silicone adulte unisexe, adaptée cheveux longs, protection auditive.",
-      tags:['Sports et divertissements','Sports nautiques'],
-      colors:['rouge','bleu','blanc','rose','turquoise','noir','gris']
-    },
-    
+      desc:"Bonnets de Natation Imperméables et Cache-Oreilles, Couleur Unie pour Hommes et Femmes, Adaptés aux Cheveux Longs et Courts, Design Ergonomique 3D, Protection des Oreilles, Confortable, Bonnet de Douche.",
+      tags:['sport','nautique'], colors:['rouge','bleu','blanc','rose','turquoise','noir','gris'] },
 
-    // Lunettes
-    {
-      id:'lunettes-e', cat:'lunettes',
-      name:'Lunettes (Enfant)', priceHTG:2000, stock:20,
+    { id:'bonnets', cat:'bonnets', name:'Bonnet de bain #610', priceHTG:3500, stock:25,
+      imgs:['./boutique-kcn/bonnet1-tout-monde/5.png','./boutique-kcn/bonnet1-tout-monde/2.png','./boutique-kcn/bonnet1-tout-monde/3.png','./boutique-kcn/bonnet1-tout-monde/4.png','./boutique-kcn/bonnet1-tout-monde/1.png'],
+      desc:"Bonnets de natation en silicone, couvre-oreilles imperméables unisexe, accessoires de natation, fournitures de sports nautiques, conception ajustée, silicone de haute qualité, spéciaux pour les nageurs compétitifs, essentiels de la piscine, bonnets de natation imperméables de qualité supérieure.",
+      tags:['sport','nautique'], colors:['bleu-pale','blanc','rose','jaune','noir'] },
+
+    /* Lunettes */
+    { id:'lunettes-e', cat:'lunettes', name:'Lunettes (Enfant) #710', priceHTG:2000, stock:20,
       imgs:['./boutique-kcn/lunettes-enfant/1.png','./boutique-kcn/lunettes-enfant/2.png','./boutique-kcn/lunettes-enfant/3.png','./boutique-kcn/lunettes-enfant/4.png','./boutique-kcn/lunettes-enfant/5.png','./boutique-kcn/lunettes-enfant/7.png'],
-      desc:'Lunettes unisexe (Garçons et Filles) Âge 3-14, Lunettes anti-brouillard Lunettes de natation pour enfants',
-      tags:['débutant','enfant','confort'],
-      colors:['bleu','bleu-ciel','multi-color','noir']
-    },
-    {
-      id:'lunettes-g', cat:'lunettes',
-      name:'Lunettes (avec bouchon oreille)', priceHTG:2700, stock:9,
+      desc:'Antibuée, 3–14 ans.',
+      tags:['débutant','enfant','confort'], colors:['bleu','bleu-ciel','multi-color'] },
+
+    { id:'lunettes-g', cat:'lunettes', name:'Lunettes (avec bouchon oreille) #810', priceHTG:2700, stock:0,
       imgs:['./boutique-kcn/lunettes-pro/1.png','./boutique-kcn/lunettes-pro/2.png','./boutique-kcn/lunettes-pro/3.png','./boutique-kcn/lunettes-pro/4.png','./boutique-kcn/lunettes-pro/5.png','./boutique-kcn/lunettes-pro/6.png'],
-      desc:'Lunettes de natation pour adultes en silicone avec une grande monture, lentilles PC anti-buée et lunettes de natation pour hommes',
-      tags:['confort','homme'],
+      desc:'Monture adulte silicone, anti-buée.',
+      tags:['confort','homme'], colorChooserHTML:true, colors:['bleu-ciel','bleu','noir','gris'] },
 
-    },
-    {
-      id:'lunettes-de-natation', cat:'lunettes',
-      name:'Lunettes de natation', priceHTG:3500, stock:2,
+    { id:'lunettes-de-natation', cat:'lunettes', name:'Lunettes de natation #910', priceHTG:3500, stock:2,
       imgs:['./boutique-kcn/lunettes-suv/1.png','./boutique-kcn/lunettes-suv/2.png','./boutique-kcn/lunettes-suv/3.png','./boutique-kcn/lunettes-suv/4.png','./boutique-kcn/lunettes-suv/5.png','./boutique-kcn/lunettes-suv/6.png'],
-      desc:"Protection UV professionnelle Lunettes de natation confort réglables pour adultes Hommes Femmes Anti-Fog Lunettes de plongée pour la natation.",
-      tags:['adultes ','unisexes'],
-      colors:['bleu','noir'],
-    },
-    // Brassards
-    {
-      id:'brassards', cat:'brassards',
-      name:'Brassards', priceHTG:3000, stock:12,
+      desc:"Protection UV pro, réglables.",
+      tags:['adultes','unisexe'], colors:['bleu','noir'] },
+
+    { id:'lunettes', cat:'lunettes', name:'Lunettes de natation #1000', priceHTG:3500, stock:24,
+      imgs:['./boutique-kcn/lunette2-14-ans/4.png','./boutique-kcn/lunette2-14-ans/2.png','./boutique-kcn/lunette2-14-ans/3.png','./boutique-kcn/lunette2-14-ans/1.png'],
+      desc:"Paire de Lunettes de Natation Anti-Buée pour Adultes, Hommes & Femmes - Protection UV, Design Étanche avec Sangles en Silicone Réglables et 6 Options de Couleurs (Monture Blanche), Accessoires de Piscine, Tenue de Bain Élégante, Équipement Sécurisé.",
+      tags:['adultes','unisexe'], colors:['bleu','noir','rouge','transparent-rouge','transparent-bleu','transparent-rose','orange','violet','vert'] },
+
+    /* Brassards */
+    { id:'brassards', cat:'brassards', name:'Brassards #1110', priceHTG:3000, stock:12,
       imgs:['./boutique-kcn/brassard/br1.png','./boutique-kcn/brassard/br2.png','./boutique-kcn/brassard/br3.png','./boutique-kcn/brassard/br4.png','./boutique-kcn/brassard/br5.png','./boutique-kcn/brassard/br6.png'],
-      desc:'Brassards gonflables Anneaux Flotteurs Ailes d’eau Bandes de bras Tubes de natation Brassards pour enfants Tout-petits et adultes',
-      tags:['sécurité','enfant'],
-    
-    },
+      desc:'Brassards gonflables (enfants & adultes).',
+      tags:['sécurité','enfant'], colors:['jaune','orange','rose','bleu'] },
 
-    // Frite ou spagettie (en gros et séparé)
+    /* Frite / spagettie */
+    { id:'frite-spagettie', cat:'frite-spagettie', name:'Frite/Spagettie #1120', priceHTG:5000, stock:4,
+      imgs:['./boutique-kcn/Frite/16.png','./boutique-kcn/Frite/14.png'],
+      desc:'Frite en mousse (enfants & adultes).',
+      tags:['flexible','économie'], colors:['jaune','vert','rouge','violet','bleu'] },
 
-     {
-      id:'frite/spagettie', cat:'frite/spagettie',
-      name:'Frite/Spagettie', priceHTG:5000, stock:4,
-      imgs:['./boutique-kcn/Frite/16.png','./boutique-kcn/Frite/14.png','./boutique-kcn/Frite/fr1.webp','./boutique-kcn/Frite/fr2.jpeg','./boutique-kcn/Frite/fr4.jpg','./boutique-kcn/Frite/pl3.jpg'],
-      desc:'Frite ou spagettie en mousse amusantes flexibles pour enfants et adultes flotteur de piscine',
-      tags:['flexibles','économie'],
-      pack:['bonnet-p','lunettes-g','brassards']
-    },
+    /* pull-buoy */
+    { id:'pull-buoy', cat:'pull-buoy', name:'Pull-buoy #1130', priceHTG:1500, stock:2,
+      imgs:['./boutique-kcn/pull-buoy/1.png','./boutique-kcn/pull-buoy/2.png'],
+      desc:'Styles de flotteurs de formation de natation pour adultes, flotteurs de formation de natation.',
+      tags:['flexible','économie'], colors:['bleu'] },
 
+    /* tenu kids boy */
+    { id:'tenu-enfant-garcon', cat:'tenu-enfant-garcon', name:'Tenu-enfant-garcon #1140', priceHTG:1500, stock:2,
+      imgs:['./boutique-kcn/tenugarcon1a3ans/1.png','./boutique-kcn/tenugarcon1a3ans/2.png','./boutique-kcn/tenugarcon1a3ans/3.png','./boutique-kcn/tenugarcon1a3ans/4.png'],
+      desc:'Maillot de Bain Printemps-Été pour garcon à Motif requin - Vacances Plage etc...',
+      tags:['Maillot de Bain','Printemps-Été'],
+      colors:['bleu'],
+      sizes:['1-2 ans','2-3 ans','3-4 ans'] },
 
-    // Gilet de sauvetage gonflables
-      {
-      id:'gilet', cat:'gilet',
-      name:'Gilet de sauvetage gonflable', priceHTG:4500, stock:5,
-      imgs:['./boutique-kcn/gilet/1.png','./boutique-kcn/gilet/2.png','./boutique-kcn/gilet/3.png','./boutique-kcn/gilet/4.png','./boutique-kcn/gilet/5.png','./boutique-kcn/gilet/6.png'],
-      desc:"Gilet de sauvetage pour enfants, gilet gonflable pour enfants.",
-      tags:['gilet de sauvetage','sécurité'],
-      colors:['bleu-small ','bleu-medium ','bleu-large ','rose-small ','orange-small','orange-medium ','orange-large','jaune-small ','jaune-medium ','jaune-large',],
-    },
+    /* pince-nez */
+    { id:'pince-nez', cat:'pince-nez', name:'Pince-nez #1150', priceHTG:1400, stock:20,
+      imgs:['./boutique-kcn/pince-nez/1.png','./boutique-kcn/pince-nez/2.png','./boutique-kcn/pince-nez/3.png','./boutique-kcn/pince-nez/4.png'],
+      desc:'Paire Pinces à Nez en Silicone Colorées - Bouchons Réutilisables pour Natation et Plongée.',
+      tags:['flexible','économie'], colors:['bleu','vert','rouge','rose','orange','noir','transparent','jaune'] },
 
-    // Masque + Tuba
-    {
-      id:'masque-tuba', cat:'masque-tuba',
-      name:'Masque-Tuba', priceHTG:2025+2025, stock:1,
+    /* tenue fille 8 a 10 ans  */
+    { id:'tenue-fille', cat:'tenue-fille', name:'Tenue fille #1160', priceHTG:1400, stock:0,
+      imgs:['./boutique-kcn/tenuefille8ans-10/4.png','./boutique-kcn/tenuefille8ans-10/2.png','./boutique-kcn/tenuefille8ans-10/3.png','./boutique-kcn/tenuefille8ans-10/4.png'],
+      desc:'Tenue de bain fille 8 à 10 ans.',
+      tags:['tenue de bain','fille'],
+      colors:['bleu','vert','rouge','rose','orange','noir','transparent','jaune'],
+      sizes:['8 ans','9 ans','10 ans'] },
+
+    /* tenue fille 7 a 12 ans  */
+    { id:'tenue', cat:'tenue', name:'Tenue fille #1170', priceHTG:1400, stock:0,
+      imgs:['./boutique-kcn/te-fi-En/1.png','./boutique-kcn/te-fi-En/2.png','./boutique-kcn/te-fi-En/3.png','./boutique-kcn/te-fi-En/4.png'],
+      desc:'Maillot de bain une pièce, style conservateur, pour filles 7 à 12 ans.',
+      tags:['tenue de bain','fille'],
+      colors:['noir'],
+      sizes:['7-8 ans','9-10 ans','11-12 ans'] },
+
+   /* tenue garçon  */
+    { id:'tenue-garçon', cat:'tenue-garçon', name:'Tenue garçon #1180', priceHTG:1400, stock:0,
+      imgs:['./boutique-kcn/te-gar-en3/1.png','./boutique-kcn/te-gar-en3/3.jpeg','./boutique-kcn/te-gar-en3/4.png','./boutique-kcn/te-gar-en3/5.png','./boutique-kcn/te-gar-en3/6.jpeg','./boutique-kcn/te-gar-en3/15.png','./boutique-kcn/te-gar-en3/33.png'],
+      desc:'Maillot de bain pour bébé garçon Joli maillot de bain une pièce en tissu tricoté motif requin, tenue de loisirs élégante adaptée à la natation, aux vacances et aux escapades estivales, vacances, voyages, détente, été, vacances.',
+      tags:['tenue de bain','garçon'],
+      colors:['noir'],
+      sizes:['7-8 ans','9-10 ans','11-12 ans'] },
+
+    /* Gilet de sauvetage */
+    { id:'gilet', cat:'gilet', name:'Gilet de sauvetage gonflable #1190', priceHTG:1960, stock:5,
+      imgs:['./boutique-kcn/gilet/1.png','./boutique-kcn/gilet/2.png','./boutique-kcn/gilet/3.png','./boutique-kcn/gilet/4.png'],
+      desc:"Gilet de natation gonflable - anneaux de sécurité orange vif, jaune et bleu pour fêtes en piscine, matériau PVC résistant, facile à gonfler et dégonfler.",
+      tags:['sécurité'], colors:['bleu-S','bleu-M','bleu-L','orange-S','orange-M','orange-L','jaune-S','jaune-M','jaune-L'] },
+
+    /* Masque + Tuba */
+    { id:'masque-tuba', cat:'masque-tuba', name:'Masque-Tuba #2000', priceHTG:4050, stock:6,
       imgs:['./boutique-kcn/masque-tuba/17.png','./boutique-kcn/masque-tuba/19.png','./boutique-kcn/masque-tuba/20.png','./boutique-kcn/masque-tuba/21.png','./boutique-kcn/masque-tuba/22.png'],
-      desc:'Les meilleurs accessoires de plongée unisexe pour lunettes de plongée en silicone, ensemble de tuba, équipement de natation à guichet unique',
-      tags:['unisexe','plongée'],
-      pack:['masque-tuba']
-    },
-    // Planche de natation
-    {
-      id:'planche', cat:'planche',
-      name:'Planche de natation', priceHTG:5000, stock:6,
-      imgs:['./boutique-kcn/planche/01.png','./boutique-kcn/planche/1.png','./boutique-kcn/planche/2.png','./boutique-kcn/planche/3.png','./boutique-kcn/planche/4.png','./boutique-kcn/planche/5.png','./boutique-kcn/planche/6.png'],
-      desc:'Équipement d’entraînement de planche de natation pour enfants et adultes en mousse EVA',
-      tags:['3 graine','lot 2'],
-      pack:['bonnet-p','lunettes-p','brassards']
-    },
-   
-    // Ensembles de clips pour le nez et bouchons d’oreilles 
-    {
-      id:'pince-nez&bouchon-oreilles', cat:'pince-nez&bouchon-oreilles',
-      name:'Pince-nez & bouchon-oreilles', priceHTG:3500, stock:2,
+      desc:'Lunettes de plongée pour adultes, masque de snorkeling étanche et anti-buée avec verre trempé, angle panoramique 180°, tube de ventilation prolongé, idéal pour la baignade et le tourisme.',
+      tags:['unisexe','plongée'], pack:['masque-tuba'], colors:['rouge','rose','blanc','jaune','noir'] },
+
+    /* Planche */
+    { id:'planche', cat:'planche', name:'Planche de natation #2010', priceHTG:1100, stock:6,
+      imgs:['./boutique-kcn/planche/01.png','./boutique-kcn/planche/1.png','./boutique-kcn/planche/2.png','./boutique-kcn/planche/3.png','./boutique-kcn/planche/4.png','./boutique-kcn/planche/5.png'],
+      desc:'Équipement de flotteurs d’aide d’été pour adultes et débutants, accessoires de natation, flotteurs de piscine, design ludique, construction robuste.',
+      tags:['entrainement'], colors:['bleu','rose','orange','jaune','vert'] },
+
+    /* Articles additionnels importés depuis dossiers boutique-kcn (ajoutés automatiquement) */
+    { id:'colan-1', cat:'colan', name:'Collant/homme #2020', priceHTG:1800, stock:0,
+      imgs:['./boutique-kcn/colan-1/1.png','./boutique-kcn/colan-1/2.png','./boutique-kcn/colan-1/3.png','./boutique-kcn/colan-1/4.png','./boutique-kcn/colan-1/5.png'],
+      desc:'Collant / caleçon bain — modèle 1.',
+      tags:['tenue','bain'], colors:['Noir avec une finition bleue','Noir avec une finition rouge'] },
+
+    { id:'colan-2', cat:'colan', name:'Collant/homme #2030', priceHTG:2000, stock:6,
+      imgs:['./boutique-kcn/colan-2/1.png','./boutique-kcn/colan-2/2.png','./boutique-kcn/colan-2/3.png','./boutique-kcn/colan-2/4.png','./boutique-kcn/colan-2/5.png','./boutique-kcn/colan-2/6.png'],
+      desc:'Collant / caleçon bain — modèle 2.',
+      tags:['tenue','bain'], colors:['noir','gris'] },
+
+    { id:'sac-gonflable', cat:'sac-gonflable', name:'Sac gonflable #2040', priceHTG:2500, stock:4,
+      imgs:['./boutique-kcn/sac-gonflable/1.png','./boutique-kcn/sac-gonflable/2.png','./boutique-kcn/sac-gonflable/3.png'],
+      desc:'Sac gonflable de sécurité / rangement étanche (avec vidéo de présentation).',
+      tags:['accessoire'], colors:['bleu','rose'] },
+
+    { id:'tenue-adu-fi1', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2050', priceHTG:4200, stock:5,
+      imgs:['./boutique-kcn/tenue-adu-fi1/1.png','./boutique-kcn/tenue-adu-fi1/2.png','./boutique-kcn/tenue-adu-fi1/3.png','./boutique-kcn/tenue-adu-fi1/4.png'],
+      desc:'Tenue de bain pour adulte femme - modèle 1.',
+      tags:['tenue de bain','femme'], colors:['rose','noir'] },
+
+    { id:'tenue-adu-fi2', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2060', priceHTG:4200, stock:5,
+      imgs:['./boutique-kcn/tenue-adu-fi2/1.png','./boutique-kcn/tenue-adu-fi2/2.png','./boutique-kcn/tenue-adu-fi2/3.png','./boutique-kcn/tenue-adu-fi2/5.png'],
+      desc:'Tenue de bain pour adulte femme - modèle 2.',
+      tags:['tenue de bain','femme'], colors:['bleu','noir'] },
+
+    { id:'tenue-adu-fi3', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2070', priceHTG:4200, stock:5,
+      imgs:['./boutique-kcn/tenue-adu-fi3/1.png','./boutique-kcn/tenue-adu-fi3/2.png','./boutique-kcn/tenue-adu-fi3/3.png','./boutique-kcn/tenue-adu-fi3/4.png','./boutique-kcn/tenue-adu-fi3/5.png'],
+      desc:'Tenue de bain pour adulte femme - modèle 3.',
+      tags:['tenue de bain','femme'], colors:['violet','noir'] },
+
+    { id:'tenue-fi-en1', cat:'tenue-fille', name:'Tenue fille modèle #2080', priceHTG:1400, stock:6,
+      imgs:['./boutique-kcn/tenue-fi-en1/1.png','./boutique-kcn/tenue-fi-en1/2.png','./boutique-kcn/tenue-fi-en1/3.png','./boutique-kcn/tenue-fi-en1/4.png','./boutique-kcn/tenue-fi-en1/5.png'],
+      desc:'Tenue fille, modèle A (divers tailles).',
+      tags:['tenue de bain','fille'], colors:['rose','bleu'] },
+
+    { id:'tenue-fi-en2', cat:'tenue-fille', name:'Tenue fille modèle #2090', priceHTG:1400, stock:6,
+      imgs:['./boutique-kcn/tenue-fi-en2/1.png','./boutique-kcn/tenue-fi-en2/2.png','./boutique-kcn/tenue-fi-en2/3.png','./boutique-kcn/tenue-fi-en2/4.png','./boutique-kcn/tenue-fi-en2/5.png'],
+      desc:'Tenue fille, modèle B (divers tailles).',
+      tags:['tenue de bain','fille'], colors:['vert','bleu'] },
+
+    { id:'tenue-gar-en1', cat:'tenue-garcon', name:'Tenue garçon modèle #2100', priceHTG:1500, stock:6,
+      imgs:['./boutique-kcn/tenue-gar-en1/1.png','./boutique-kcn/tenue-gar-en1/2.png','./boutique-kcn/tenue-gar-en1/3.png','./boutique-kcn/tenue-gar-en1/4.png','./boutique-kcn/tenue-gar-en1/5.png','./boutique-kcn/tenue-gar-en1/6.png'],
+      desc:'Tenue garçon, modèle A (tailles enfants).',
+      tags:['tenue de bain','garçon'], colors:['bleu','jaune'] },
+
+    /* Corde-élastique */
+    { id:'corde-élastique', cat:'corde-élastique', name:'corde-élastique #2110', priceHTG:2100, stock:2,
+      imgs:['./boutique-kcn/corde-naje/1.png','./boutique-kcn/corde-naje/2.png','./boutique-kcn/corde-naje/3.png','./boutique-kcn/corde-naje/4.png'],
+      desc:'Équipement de renforcement musculaire avec résistance à la natation, corde élastique, ceinture de natation, bande de renforcement musculaire avec force de tractage.',
+      tags:['entrainement'], colors:[ 'jaune','noir'] },
+
+    /* Pince-nez & bouchons */
+    { id:'pince-nez-bouchons', cat:'pince-nez-bouchons', name:'Pince-nez & bouchons d’oreilles #2120', priceHTG:1120, stock:2,
       imgs:['./boutique-kcn/bouchon-pince-nez/2.png','./boutique-kcn/bouchon-pince-nez/1.png','./boutique-kcn/bouchon-pince-nez/3.png','./boutique-kcn/bouchon-pince-nez/4.png','./boutique-kcn/bouchon-pince-nez/5.png','./boutique-kcn/bouchon-pince-nez/6.png'],
-      desc:"Pinces nasales en silicone souple et bouchons d’oreilles, Protecteur nasal de natation imperméable pour adultes et enfants pour les sports nautiques.",
-      tags:['Ensembles de clips pour le nez et bouchons d’oreilles',],
-      colors:['bleu','rose','noir',],
+      desc:"Ensemble de pince à nez de natation et de bouchons d'oreille en silicone, fournitures de sports aquatiques en plein air.",
+      tags:['accessoires'], colors:['bleu','rose','noir'] },
+      
+    // Nouveau produit : te-fil-en
+    { id:'te-fil-en', cat:'tenue-fille', name:'Tenue fille modèle #2130', priceHTG:1460, stock:5,
+      imgs:['./boutique-kcn/te-fil-en/1.png','./boutique-kcn/te-fil-en/2.png', './boutique-kcn/te-fil-en/3.png','./boutique-kcn/te-fil-en/4.png', './boutique-kcn/te-fil-en/5.png', './boutique-kcn/te-fil-en/6.png','./boutique-kcn/te-fil-en/7.png'],
+      desc:'Maillot de Bain Une Pièce Fermeture Éclair Dos Nu pour Filles - Maillot de Bain Compétition à Changement Rapide avec Jambes Courtes, Sans Manches pour Entraînement, Plage et Piscine, Lavable en Machine (Adolescentes) - Maillot de Bain Sportif Ajusté.',
+      tags:['tenue de bain','fille'],
+      colors:['bleu-marin','noir']
+    },
+    // Nouveau produit : brassard-
+    { id:'brassard-', cat:'brassards', name:'Brassards modèle #2140', priceHTG:2000, stock:10,
+      imgs:['./boutique-kcn/brassard-/1.png','./boutique-kcn/brassard-/2.png','./boutique-kcn/brassard-/2 (2).png','./boutique-kcn/brassard-/4.png','./boutique-kcn/brassard-/5.png'],
+      desc:'Bestway, 1 Paire de Brassards Gonflables pour la Natation avec Sangle à Bobine - Motif Poisson Jaune Vif, Bobine Ajustable et Fixations Sécurisées pour Plage, Piscine, Lac, Activités Extérieures en Vacances, Jouets Aquatiques de Vacances | Accessoire de Bain Amusant | Bande Gonflable Durable, Flotteurs de Piscine.',
+      tags:['sécurité','enfant'],
+      colors:['jaune']
     }
-     
   ];
-
-  
-
 
   /* ===================== Config & État ===================== */
   const COURSE_ITEMS = [
@@ -496,27 +657,16 @@
   const DELIVERY_HTG = 500;
 
   const state = { q:'', cat:'', currency:'HTG', rate:null, cart:{}, delivery:false };
-  state.options = {}; // ex: { 'bonnet-g': { color:'rouge' } }
+  state.options = {};
 
-  // Charger panier
   try{ state.cart = JSON.parse(localStorage.getItem('kcn_cart')||'{}'); }catch{ state.cart = {}; }
 
-  // ===== STOCK PERSISTANT (admin local) =====
-  // on peut modifier stock au fil des ventes
   const STOCK_KEY = 'kcn_stock';
   let STOCK_OVERRIDES = {};
   try{ STOCK_OVERRIDES = JSON.parse(localStorage.getItem(STOCK_KEY)||'{}'); }catch{ STOCK_OVERRIDES = {}; }
 
-  // applique overrides
-  function getStock(id){
-    const base = (INVENTORY.find(p=>p.id===id)?.stock ?? 0);
-    const delta = STOCK_OVERRIDES[id] ?? base;
-    return Number.isFinite(delta) ? delta : base;
-  }
-  function setStock(id, qty){
-    STOCK_OVERRIDES[id] = Math.max(0, qty|0);
-    localStorage.setItem(STOCK_KEY, JSON.stringify(STOCK_OVERRIDES));
-  }
+  function getStock(id){ const base = (INVENTORY.find(p=>p.id===id)?.stock ?? 0); const cur = STOCK_OVERRIDES[id]; return Number.isFinite(cur)?cur:base; }
+  function setStock(id, qty){ STOCK_OVERRIDES[id] = Math.max(0, qty|0); localStorage.setItem(STOCK_KEY, JSON.stringify(STOCK_OVERRIDES)); }
 
   /* ===================== Helpers ===================== */
   const fmt = (v,cur) => (cur==='USD'?'$ ':'')+
@@ -526,17 +676,17 @@
   function viewPrice(htg){
     if(state.currency==='USD'){
       const r = parseFloat((elRate.value||'').replace(',','.'));
-      if(r>0) return htg/r; else return NaN;
+      return (r>0) ? htg/r : NaN;
     }
     return htg;
   }
 
-  // Stock label + classe
+  // ⚙️ Statuts courts unifiés
   function stockLabelAndClass(stock){
-    if(stock<=0) return {label:'Stock épuisé', cls:'out'};
-    if(stock<=2) return {label:'Stock presque épuisé', cls:'warn'};
-    if(stock<=5) return {label:`Disponible — reste ${stock}`, cls:'low'};
-    return {label:'', cls:'ok'};
+    if (stock <= 0) return { label: 'rupture',  cls: 'out'  };
+    if (stock <= 2) return { label: 'critique', cls: 'warn' };
+    if (stock <= 5) return { label: 'limité',   cls: 'low'  };
+    return              { label: 'en stock',    cls: 'ok'   };
   }
 
   /* ===================== Rendu Produits ===================== */
@@ -554,6 +704,13 @@
   const gt  = document.getElementById('gt');
   const delivery = document.getElementById('delivery');
   const deliverOpt = document.getElementById('deliverOpt');
+
+  // ✅ Coordonnées client
+  const custName = document.getElementById('custName');
+  const custPhone = document.getElementById('custPhone');
+  const custEmail = document.getElementById('custEmail');
+  const custAddr = document.getElementById('custAddr');
+  const custAddrWrap = document.getElementById('custAddrWrap');
 
   function renderProducts(){
     const q = state.q.trim().toLowerCase();
@@ -580,11 +737,10 @@
       const currentStock = getStock(p.id);
       const {label, cls} = stockLabelAndClass(currentStock);
       const stockBadge = label ? `<span class="stock ${cls}">${label}</span>` : '';
-
       const disabled = currentStock<=0 ? 'disabled' : '';
 
       card.innerHTML = `
-        <img src="${firstImg}" alt="${p.name}" class="thumb" loading="lazy">
+        <img src="${firstImg}" alt="${p.name}" class="thumb" loading="lazy" data-view="${p.id}">
         <div class="bd">
           <h3>${p.name}</h3>
           <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;gap:8px;flex-wrap:wrap">
@@ -596,7 +752,7 @@
             <div class="qty"><small class="muted">Qté</small> <input type="number" min="1" value="1" data-qty-for="${p.id}"></div>
             <div style="display:flex;gap:8px">
               <button class="btn alt" data-view="${p.id}">Voir</button>
-              <button class="btn" data-add="${p.id}" ${disabled} title="${currentStock<=0?'Indisponible':''}">Ajouter</button>
+              <button class="btn" data-add="${p.id}" ${disabled} title="${currentStock<=0?'rupture':''}">Ajouter</button>
             </div>
           </div>
         </div>`;
@@ -655,10 +811,18 @@
     const ul = document.createElement('div');
     ids.forEach(id=>{
       const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
-      if(!item) return; const qty = state.cart[id];
+      if(!item) return;
+      const qty = state.cart[id];
       const priceEach = viewPrice(item.priceHTG);
-      const opt = state.options[id];
-      const label = opt?.color ? `${item.name} – Couleur: ${opt.color}` : item.name;
+      const opt = state.options[id] || {};
+      let label = item.name;
+      if(opt.color && opt.size){
+        label += ` – Couleur: ${opt.color} – Taille: ${opt.size}`;
+      }else if(opt.color){
+        label += ` – Couleur: ${opt.color}`;
+      }else if(opt.size){
+        label += ` – Taille: ${opt.size}`;
+      }
       const line = document.createElement('div');
       line.className='row';
       line.innerHTML = `<span>${label} × ${qty}</span><strong>${isNaN(priceEach)?'—':fmt(priceEach*qty,state.currency)}</strong>`;
@@ -669,6 +833,30 @@
   }
 
   function saveCart(){ localStorage.setItem('kcn_cart', JSON.stringify(state.cart)); }
+
+  /* ===================== Coordonnées client: save/load ===================== */
+  function saveCustomer(){
+    const data = {
+      name: (custName.value||'').trim(),
+      phone: (custPhone.value||'').trim(),
+      email: (custEmail.value||'').trim(),
+      addr: (custAddr.value||'').trim()
+    };
+    localStorage.setItem('kcn_customer', JSON.stringify(data));
+  }
+  function loadCustomer(){
+    try{
+      const c = JSON.parse(localStorage.getItem('kcn_customer')||'null');
+      if(!c) return;
+      if(c.name) custName.value = c.name;
+      if(c.phone) custPhone.value = c.phone;
+      if(c.email) custEmail.value = c.email;
+      if(c.addr) custAddr.value = c.addr;
+    }catch{}
+  }
+  ;[custName, custPhone, custEmail, custAddr].forEach(el=>{
+    if(el) el.addEventListener('input', saveCustomer);
+  });
 
   /* ===================== Écouteurs ===================== */
   elQ.addEventListener('input', e=>{ state.q=e.target.value; renderProducts(); });
@@ -682,9 +870,32 @@
   document.addEventListener('change', (e)=>{
     if(e.target.name==='shopPay'){ updateFeesAndGrandTotal(); }
   });
+
   deliverOpt.addEventListener('change', ()=>{
     state.delivery = deliverOpt.checked;
+    custAddrWrap.style.display = state.delivery ? 'block' : 'none';
     updateFeesAndGrandTotal();
+  });
+
+  // ✅ Bouton "Vider le panier" : vide immédiatement sans confirmation
+  document.getElementById('clearCart').addEventListener('click', () => {
+    // 1) On vide l'état du panier
+    state.cart = {};
+    state.options = {};
+
+    // 2) On sauvegarde l'état vide dans le localStorage
+    saveCart();
+
+    // 3) On met à jour l'affichage du panier
+    renderCart();
+
+    // 4) On réinitialise les quantités dans la grille de produits
+    grid.querySelectorAll('input[data-qty-for]').forEach(input => {
+      input.value = 1;
+    });
+
+    // 5) On met à jour l'affichage des produits
+    renderProducts();
   });
 
   // Délégation sur la grille
@@ -694,32 +905,42 @@
 
     if(addId){
       const stockLeft = getStock(addId);
-      if(stockLeft<=0){ alert("Stock épuisé pour cet article."); return; }
+      const cartQty   = state.cart[addId] || 0;
 
-      const qtyInput = grid.querySelector(`input[data-qty-for="${addId}"]`);
-      let qty = Math.max(1, parseInt(qtyInput?.value||'1',10)||1);
-
-      // Pa depase stock
-      if(qty > stockLeft){
-        qty = stockLeft;
-        if(qtyInput) qtyInput.value = stockLeft;
-        alert(`Stock disponib: ${stockLeft}. Quantité ajustée.`);
+      if (stockLeft <= cartQty){
+        alert("Quantité maximum atteinte dans le panier");
+        return;
       }
 
-      state.cart[addId] = Math.min((state.cart[addId]||0) + qty, stockLeft);
-      saveCart(); renderCart(); renderProducts(); // re-render pou mete bouton si stock rive 0
+      const qtyInput = grid.querySelector(`input[data-qty-for="${addId}"]`);
+
+      // quantité demandée (par défaut 1)
+      let qtyToAdd = Math.max(1, parseInt(qtyInput?.value || '1', 10) || 1);
+      let newQty   = cartQty + qtyToAdd;
+
+      // on ne dépasse pas le stock
+      if (newQty > stockLeft){
+        qtyToAdd = stockLeft - cartQty;
+        newQty   = stockLeft;
+        alert(`Reste disponible : ${stockLeft - cartQty}`);
+      }
+
+      // 🛒 mettre à jour le panier
+      state.cart[addId] = newQty;
+
+      // 🧮 mettre à jour SEULEMENT la case "Qté" à côté du bouton
+      if (qtyInput) qtyInput.value = newQty;
+
+      saveCart();
+      renderCart();
+      // ❌ PAS de renderProducts() ici, sinon la Qté revient à 1
     }
 
-    if(viewId){
-      openProductModal(viewId);
-    }
+    if(viewId){ openProductModal(viewId); }
   });
 
-  document.getElementById('clearCart').addEventListener('click', ()=>{
-    state.cart={}; state.options={}; saveCart(); renderCart(); renderProducts();
-  });
 
-  /* ===================== Modal Produit (galerie) ===================== */
+  /* ===================== Modal Produit ===================== */
   const pdModal = document.getElementById('pdModal');
   const pdClose = document.getElementById('pdClose');
   const pdBack  = document.getElementById('pdBack');
@@ -732,9 +953,15 @@
   const pdQty   = document.getElementById('pdQty');
   const pdAdd   = document.getElementById('pdAdd');
   const pdColors = document.getElementById('pdColors');
+  const pdSizes = document.getElementById('pdSizes');
   const pdStock = document.getElementById('pdStock');
 
   let currentPdId = null;
+
+  // Zoom image (lightbox)
+  const zoomModal = document.getElementById('zoomModal');
+  const zoomImg   = document.getElementById('zoomImg');
+  const zoomClose = document.getElementById('zoomClose');
 
   function colorChooserHTML(colors){
     if(!colors || !colors.length) return '';
@@ -752,10 +979,65 @@
       </div>`;
   }
 
+  function sizeChooserHTML(sizes){
+    if(!sizes || !sizes.length) return '';
+    return `
+      <div>
+        <div style="font-weight:700;color:#0b4573;margin:4px 0">Taille</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pdSizeWrap">
+          ${sizes.map((s,i)=>`
+            <label class="mini" style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 10px;border-radius:10px;cursor:pointer">
+              <input type="radio" name="pdSize" value="${s}" ${i===0?'checked':''}>
+              <span>${s}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  function getSelectedSize(){
+    const r = document.querySelector('input[name="pdSize"]:checked');
+    return r ? r.value : null;
+  }
+
   function getSelectedColor(){
     const r = document.querySelector('input[name="pdColor"]:checked');
     return r ? r.value : null;
   }
+
+  function openZoom(src, alt){
+    if(!src) return;
+    zoomImg.src = src;
+    zoomImg.alt = alt || '';
+    zoomModal.classList.add('open');
+    zoomModal.setAttribute('aria-hidden','false');
+  }
+
+  function closeZoom(){
+    zoomModal.classList.remove('open');
+    zoomModal.setAttribute('aria-hidden','true');
+  }
+
+  // Clic sur l’image principale de la fiche produit → zoom
+  pdMain.addEventListener('click', ()=>{
+    if(!pdMain.src) return;
+    openZoom(pdMain.src, pdMain.alt);
+  });
+
+  // Bouton fermer du zoom
+  zoomClose.addEventListener('click', closeZoom);
+
+  // Clic en dehors de l’image → fermer
+  zoomModal.addEventListener('click', (e)=>{
+    if(e.target === zoomModal) closeZoom();
+  });
+
+  // ESC → fermer le zoom
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      closeZoom();
+    }
+  });
 
   function openProductModal(id){
     const p = INVENTORY.find(x=>x.id===id);
@@ -772,10 +1054,9 @@
     pdThumbs.innerHTML = images.map((src,i)=>`<img src="${src}" alt="vignette ${i+1}" ${i===0?'aria-current="true"':''}>`).join('');
     pdTags.innerHTML = (p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ');
 
-    // Couleurs
     pdColors.innerHTML = colorChooserHTML(p.colors);
+    pdSizes.innerHTML  = sizeChooserHTML(p.sizes);
 
-    // Stock info
     const s = getStock(p.id);
     const {label, cls} = stockLabelAndClass(s);
     pdStock.innerHTML = label ? `<span class="stock ${cls}">${label}</span>` : '';
@@ -800,6 +1081,7 @@
     pdModal.setAttribute('aria-hidden','true');
     currentPdId = null;
     pdColors.innerHTML = '';
+    pdSizes.innerHTML = '';
     pdStock.innerHTML = '';
   }
   pdClose.addEventListener('click', closePdModal);
@@ -808,17 +1090,38 @@
 
   pdAdd.addEventListener('click', ()=>{
     if(!currentPdId) return;
-    let qty = Math.max(1, parseInt(pdQty.value||'1',10)||1);
+    
+    let qtyToAdd = Math.max(1, parseInt(pdQty.value||'1',10)||1);
+    
     const s = getStock(currentPdId);
-    if(s<=0){ alert('Stock épuisé.'); return; }
-    if(qty > s){
-      qty = s; pdQty.value = s;
-      alert(`Stock disponib: ${s}. Quantité ajustée.`);
+    if(s <= 0){ 
+      alert('Rupture de stock'); 
+      return; 
     }
+
+    const currentQty = state.cart[currentPdId] || 0;
+    let newQty = currentQty + qtyToAdd;
+
+    if(newQty > s){
+      alert(`Stock disponible : ${s}\nQuantité déjà dans le panier : ${currentQty}\nQuantité maximum ajoutée.`);
+      newQty = s;
+    }
+
     const color = getSelectedColor();
-    if(color) state.options[currentPdId] = { color };
-    state.cart[currentPdId] = Math.min((state.cart[currentPdId]||0) + qty, s);
-    saveCart(); renderCart(); renderProducts(); closePdModal();
+    const size  = getSelectedSize();
+    const opt = {};
+    if (color) opt.color = color;
+    if (size)  opt.size  = size;
+    if (Object.keys(opt).length){
+      state.options[currentPdId] = opt;
+    }
+
+    state.cart[currentPdId] = newQty;
+    
+    saveCart(); 
+    renderCart(); 
+    renderProducts(); 
+    closePdModal();
   });
 
   /* ===================== Modal Paiement (checkout) ===================== */
@@ -832,7 +1135,6 @@
   const kcnLabel2 = document.getElementById('kcnLabel2');
   const kcnWhatsApp = document.getElementById('kcnWhatsApp');
   const kcnProof = document.getElementById('kcnProof');
-  const kcnSaveProof = document.getElementById('kcnSaveProof');
 
   document.querySelectorAll('.kcn-tab').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -853,12 +1155,23 @@
     navigator.clipboard.writeText(txt).then(()=>{ t.textContent='Copié ✓'; setTimeout(()=>t.textContent='Copier',1200); });
   });
 
-  function getSelectedPay(){ const r = document.querySelector('input[name="shopPay"]:checked'); if(!r) return {pct:0,fix:0}; return {pct: parseFloat(r.dataset.feePct||'0'), fix: parseFloat(r.dataset.feeFixed||'0')}; }
-
   document.getElementById('checkout').addEventListener('click', ()=>{
     if (!Object.keys(state.cart||{}).length) { alert('Votre panier est vide.'); return; }
 
-    // active onglet selon mode choisi
+    // ✅ Validation coordonnées
+    const nameVal  = (custName.value||'').trim();
+    const phoneVal = (custPhone.value||'').trim();
+    const emailVal = (custEmail.value||'').trim();
+    const addrVal  = (custAddr.value||'').trim();
+    const telOK = /^[0-9+()\s-]{8,}$/.test(phoneVal);
+    const mailOK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+
+    if(!nameVal){ alert("Merci d’indiquer le nom complet."); custName.focus(); return; }
+    if(!telOK){ alert("Numéro de téléphone invalide."); custPhone.focus(); return; }
+    if(!mailOK){ alert("Adresse e-mail invalide."); custEmail.focus(); return; }
+    if(state.delivery && !addrVal){ alert("Merci d’indiquer l’adresse de livraison."); custAddr.focus(); return; }
+    saveCustomer();
+
     const payRadio = document.querySelector('input[name="shopPay"]:checked');
     const payMethod = payRadio ? payRadio.value : 'bank';
     const payMethodLabel = payRadio?.parentElement?.textContent.trim() || payMethod;
@@ -877,14 +1190,12 @@
     kcnLabel1.textContent = id;
     kcnLabel2.textContent = id;
 
-    // Calcul prix
     let totalHTG = 0, discountHTG = 0;
     const ALL_ITEMS = [...INVENTORY, ...COURSE_ITEMS];
     const lines = [];
     Object.entries(state.cart).forEach(([pid,qty])=>{
       const item = ALL_ITEMS.find(x=>x.id===pid);
       if(!item) return;
-      // Sekirite: pa depase stock ki rete
       const s = getStock(pid);
       const finalQty = Math.min(qty, s);
       if(finalQty<=0) return;
@@ -892,10 +1203,17 @@
       totalHTG += lineHTG;
       if (PROMO.active && item.cat==='packs') discountHTG += lineHTG * PROMO.rate;
 
-      const opt = state.options[pid];
-      const nameWithColor = opt?.color ? `${item.name} – Couleur: ${opt.color}` : item.name;
+      const opt = state.options[pid] || {};
+      let nameWithOpt = item.name;
+      if(opt.color && opt.size){
+        nameWithOpt += ` – Couleur: ${opt.color} – Taille: ${opt.size}`;
+      }else if(opt.color){
+        nameWithOpt += ` – Couleur: ${opt.color}`;
+      }else if(opt.size){
+        nameWithOpt += ` – Taille: ${opt.size}`;
+      }
 
-      lines.push({id:pid, name:nameWithColor, qty:finalQty, priceHTG:item.priceHTG, lineHTG});
+      lines.push({id:pid, name:nameWithOpt, qty:finalQty, priceHTG:item.priceHTG, lineHTG});
     });
     const netHTG = totalHTG - discountHTG;
 
@@ -912,7 +1230,6 @@
 
     kcnOrderTotal.textContent = isNaN(vGrand)?'—':fmt(vGrand, state.currency);
 
-    // Récap
     kcnSummary.innerHTML = `
       ${lines.map(l=>{
         const v = viewPrice(l.lineHTG);
@@ -944,11 +1261,17 @@
       </div>
     `;
 
-    const msg = encodeURIComponent(`Bonjour KCN, paiement commande ${id} pour un montant de ${kcnOrderTotal.textContent}. Je vous envoie la preuve ci-après.`);
-    const kcnWhatsApp = document.getElementById('kcnWhatsApp');
+    // WhatsApp message pré-rempli avec coordonnées
+    const msg = encodeURIComponent(
+      `Bonjour KCN, paiement commande ${id} pour un montant de ${kcnOrderTotal.textContent}.
+Nom: ${nameVal}
+Tel: ${phoneVal}
+Email: ${emailVal}
+${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
+    );
     if (kcnWhatsApp) kcnWhatsApp.href = `https://wa.me/50936985221?text=${msg}`;
 
-    // Sauvegarder commande
+    // Enregistrer commande incluant client
     const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
     orders.push({
       id, createdAt: d.toISOString(),
@@ -959,26 +1282,30 @@
       status:'pending',
       deliveryStatus: (state.delivery ? 'à livrer' : 'retrait'),
       payMethod,
-      payMethodLabel
+      payMethodLabel,
+      customer: {
+        name: nameVal,
+        phone: phoneVal,
+        email: emailVal,
+        addr: state.delivery ? addrVal : ''
+      }
     });
     localStorage.setItem('kcn_orders', JSON.stringify(orders));
 
-    // ---- MAJ STOCK: soustraire kantite achte yo ----
+    // Décrémenter stock
     lines.forEach(l=>{
       const remain = getStock(l.id) - l.qty;
       setStock(l.id, remain);
     });
 
-    // netwaye panie a
+    // Reset panier
     state.cart = {};
     state.options = {};
     saveCart();
 
-    // mete ajou vizyèl
     renderCart();
     renderProducts();
 
-    // memorize pou reçu
     window.KCN_PAY_METHOD = payMethod;
     window.KCN_PAY_METHOD_LABEL = payMethodLabel;
 
@@ -994,7 +1321,6 @@
   document.getElementById('kcnClose2').addEventListener('click', closePayModal);
   payModal.addEventListener('click', (e)=>{ if(e.target===payModal){ closePayModal(); } });
 
-  // Preuve (inchangé)
   document.getElementById('kcnSaveProof').addEventListener('click', async ()=>{
     const file = kcnProof.files?.[0];
     if(!file){ alert('Choisis un fichier (image ou PDF).'); return; }
@@ -1026,6 +1352,20 @@
     const summaryHTML = document.getElementById('kcnSummary').innerHTML;
     const method = window.KCN_PAY_METHOD_LABEL || '—';
 
+    const nameVal  = (custName.value||'').trim();
+    const phoneVal = (custPhone.value||'').trim();
+    const emailVal = (custEmail.value||'').trim();
+    const addrVal  = (custAddr.value||'').trim();
+
+    const clientHTML = `
+      <div class="meta" style="margin:8px 0 10px">
+        <div><b>Client :</b> ${nameVal||'—'}</div>
+        <div><b>Tel :</b> ${phoneVal||'—'}</div>
+        <div><b>Email :</b> ${emailVal||'—'}</div>
+        <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
+        ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
+      </div>`;
+
     const win = window.open('', '_blank');
     win.document.write(`
       <!doctype html><html lang="fr"><meta charset="utf-8">
@@ -1042,6 +1382,7 @@
           <h1>KOLTIZ Club de Natation</h1>
           <div class="meta">Reçu provisoire – Commande ${id}</div>
           <div class="meta">Mode de paiement : <b>${method}</b></div>
+          ${clientHTML}
           <hr>
           ${summaryHTML}
           <div class="tot"><span>Total</span><strong>${total}</strong></div>
@@ -1055,9 +1396,10 @@
 
   /* ===================== Init ===================== */
   function init(){
+    loadCustomer();
     renderProducts();
     renderCart();
-    // si pa gen overrides anrejistre deja, init ak stock de base
+    custAddrWrap.style.display = state.delivery ? 'block' : 'none';
     if(Object.keys(STOCK_OVERRIDES).length===0){
       const map = {};
       INVENTORY.forEach(p=>{ map[p.id] = p.stock|0; });
@@ -1066,6 +1408,118 @@
     }
   }
   init();
+
+  /* ===== FAB Admin : affichage secret + navigation ===== */
+  (function(){
+    const ADMIN_URL = './boutique-admin.html';
+    const fab = document.getElementById('fabShopAdmin');
+    const hotspot = document.getElementById('shopAdminHotspot');
+
+    function showFab(){ fab.style.display = 'grid'; }
+    function goAdmin(){
+      try{ sessionStorage.removeItem('kcn_shop_admin_ok'); }catch(e){}
+      window.location.href = ADMIN_URL;
+    }
+
+    // Raccourci clavier: Shift + Alt + S
+    window.addEventListener('keydown', (e)=>{
+      if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
+        e.preventDefault(); showFab();
+      }
+    });
+
+    // Appui long (1.2s) coin bas-droit
+    let pressT=null;
+    hotspot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
+    ['pointerup','pointerleave','pointercancel'].forEach(evt=>{
+      hotspot.addEventListener(evt, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
+    });
+
+    // Double-clic sur le titre du hero
+    const h1 = document.querySelector('.hero h1');
+    if(h1){ h1.addEventListener('dblclick', showFab); }
+
+    fab.addEventListener('click', goAdmin);
+  })();
 </script>
+
+<!-- ==== OUVERTURE ADMIN DISCRÈTE (fallback) ==== -->
+<button id="kcnAdmin" class="btn alt"
+        style="position:fixed;bottom:16px;right:16px;display:none;z-index:9999">
+  Admin
+</button>
+<script>
+(function(){
+  const ADMIN_CODE = 'KCN@2025#Admin';
+  const ADMIN_URL  = './boutique-admin.html';
+  const FLAG       = 'kcn_shop_admin_ok';
+  function openGate(){
+    const v = prompt('Code admin :');
+    if (v === ADMIN_CODE) { sessionStorage.setItem(FLAG,'1'); location.href = ADMIN_URL; }
+    else if (v !== null) { alert('Code incorrect'); }
+  }
+  const btn = document.getElementById('kcnAdmin');
+  document.addEventListener('keydown', (e)=>{
+    const k = String(e.key).toLowerCase();
+    if (e.ctrlKey && e.altKey && k === 'a') btn.style.display = 'inline-flex';
+    if (e.key === 'escape') btn.style.display = 'none';
+  });
+  btn.addEventListener('click', openGate);
+})();
+</script>
+
+<!-- === FAB Admin (discret) — DROP-IN === -->
+<div id="kcnHotspot2" style="position:fixed;right:0;bottom:0;width:68px;height:68px;z-index:99998;background:transparent;"></div>
+<button id="kcnFabAdmin2" type="button" title="Espace admin"
+  style="position:fixed;right:18px;bottom:18px;width:56px;height:56px;display:none;place-items:center;
+         border-radius:999px;border:2px solid #0066cc;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,.15);
+         z-index:99999;cursor:pointer;font-size:22px;line-height:1;">🛡️</button>
+
+<script>
+(function(){
+  const ADMIN_URL  = './boutique-admin.html';
+  const ADMIN_CODE = 'KCN@2025#Admin';
+  const FLAG       = 'kcn_shop_admin_ok';
+
+  const fab = document.getElementById('kcnFabAdmin2');
+  const hot = document.getElementById('kcnHotspot2');
+
+  function showFab(){ fab.style.display = 'grid'; }
+  function hideFab(){ fab.style.display = 'none'; }
+
+  function openGate(){
+    const v = prompt('Code admin :');
+    if (v === ADMIN_CODE) {
+      try{ sessionStorage.setItem(FLAG,'1'); }catch(e){}
+      location.href = ADMIN_URL;
+    } else if (v !== null) {
+      alert('Code incorrect');
+    }
+  }
+
+  // Clic sur le FAB → accès admin
+  fab.addEventListener('click', openGate);
+
+  // Raccourci clavier : Shift + Alt + S → affiche le FAB
+  window.addEventListener('keydown', (e)=>{
+    if (e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
+      e.preventDefault(); showFab();
+    }
+    if (e.key === 'Escape') hideFab();
+  });
+
+  // Appui long (1.2s) dans le coin bas-droit → affiche le FAB
+  let pressT=null;
+  hot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>{
+    hot.addEventListener(ev, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
+  });
+
+  // Double-clic sur le titre du hero (si présent) → affiche le FAB
+  const h1 = document.querySelector('.hero h1');
+  if (h1) h1.addEventListener('dblclick', showFab);
+})();
+</script>
+
 </body>
 </html>
