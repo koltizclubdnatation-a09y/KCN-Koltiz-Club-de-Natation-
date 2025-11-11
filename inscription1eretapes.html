@@ -116,7 +116,13 @@
 
     <!-- Bouton retour simple -->
     <div style="max-width:1200px;margin:12px auto 0;padding:0 16px">
-      <button type="button" class="btn outline" onclick="history.back()" aria-label="Retour">← Retour</button>
+      <button
+        type="button"
+        class="btn outline"
+        onclick="window.location.href='./index.html'"
+        aria-label="Retour">
+        ← Retour
+      </button>
     </div>
 
     <div class="grid" role="region" aria-label="Formulaire et récapitulatif">
@@ -763,78 +769,78 @@
     $('#rcX').addEventListener('click', closeReceiptModal);
     $('#rcClose').addEventListener('click', closeReceiptModal);
 
-  function downloadReceipt() {
-  const node = document.getElementById('receiptCard');
-  // Récupérer le texte de watermark actuel
-  const wm = document.querySelector('#rcWM span')?.textContent || '';
+    function downloadReceipt() {
+      const node = document.getElementById('receiptCard');
+      // Récupérer le texte de watermark actuel
+      const wm = document.querySelector('#rcWM span')?.textContent || '';
 
-  const w = window.open('', 'PRINT', 'height=900,width=900');
-  if (!w) {
-    alert("Autorisez les fenêtres popup pour imprimer / télécharger le reçu.");
-    return;
-  }
+      const w = window.open('', 'PRINT', 'height=900,width=900');
+      if (!w) {
+        alert("Autorisez les fenêtres popup pour imprimer / télécharger le reçu.");
+        return;
+      }
 
-  w.document.write(`<!doctype html><html><head><title>Reçu KCN</title>
-    <meta charset='utf-8'>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-      body{
-        font-family:Montserrat,Arial,sans-serif;
-        padding:20px;
-        color:#0f172a;
-        background:#ffffff;
-      }
-      .eco-message{
-        color:#2d5c8a;
-        margin:4px 0 12px;
-        font-size:.98em;
-        line-height:1.5;
-      }
-      .receipt-actions,
-      .receipt-close{
-        display:none !important;
-      }
-      .receipt-card{
-        box-shadow:none !important;
-        border:0 !important;
-        padding:0 !important;
-      }
-      table {width:100%;border-collapse:collapse;}
-      th,td {border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left;}
-      th {color:#0b4573;}
-      .wm{
-        position:absolute;
-        inset:0;
-        display:grid;
-        place-items:center;
-        pointer-events:none;
-        z-index:0;
-      }
-      .wm span{
-        font-size:92px;
-        font-weight:900;
-        letter-spacing:4px;
-        color:#0f172a;
-        opacity:.09;
-        transform:rotate(-20deg);
-        text-transform:uppercase;
-      }
-    </style>
-  </head><body>
-  <div class="wm"><span>${wm}</span></div>
-  <h2>Reçu KCN / KOLTIZ Club de Natation</h2>
-  <div class="eco-message">
-    Pour éviter les déchets d'emballage excessifs, nous n'incluons pas de reçus papier. Cependant, vous pouvez toujours en imprimer un pour vos archives.
-  </div>
-  `);
-  w.document.write(node.outerHTML);
-  w.document.write('</body></html>');
+      w.document.write(`<!doctype html><html><head><title>Reçu KCN</title>
+        <meta charset='utf-8'>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+          body{
+            font-family:Montserrat,Arial,sans-serif;
+            padding:20px;
+            color:#0f172a;
+            background:#ffffff;
+          }
+          .eco-message{
+            color:#2d5c8a;
+            margin:4px 0 12px;
+            font-size:.98em;
+            line-height:1.5;
+          }
+          .receipt-actions,
+          .receipt-close{
+            display:none !important;
+          }
+          .receipt-card{
+            box-shadow:none !important;
+            border:0 !important;
+            padding:0 !important;
+          }
+          table {width:100%;border-collapse:collapse;}
+          th,td {border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left;}
+          th {color:#0b4573;}
+          .wm{
+            position:absolute;
+            inset:0;
+            display:grid;
+            place-items:center;
+            pointer-events:none;
+            z-index:0;
+          }
+          .wm span{
+            font-size:92px;
+            font-weight:900;
+            letter-spacing:4px;
+            color:#0f172a;
+            opacity:.09;
+            transform:rotate(-20deg);
+            text-transform:uppercase;
+          }
+        </style>
+      </head><body>
+      <div class="wm"><span>${wm}</span></div>
+      <h2>Reçu KCN / KOLTIZ Club de Natation</h2>
+      <div class="eco-message">
+        Pour éviter les déchets d'emballage excessifs, nous n'incluons pas de reçus papier. Cependant, vous pouvez toujours en imprimer un pour vos archives.
+      </div>
+      `);
+      w.document.write(node.outerHTML);
+      w.document.write('</body></html>');
 
-  w.document.close();
-  w.focus();
-  w.print();
-}
-  // Sur mobile, le navigateur gère la fermeture (bouton retour)
+      w.document.close();
+      w.focus();
+      w.print();
+    }
+    // Sur mobile, le navigateur gère la fermeture (bouton retour)
 
     $('#rcDownload').addEventListener('click', downloadReceipt);
 
