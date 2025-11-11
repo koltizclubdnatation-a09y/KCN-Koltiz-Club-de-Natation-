@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>KCN — Admin Inscriptions & Paiements</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <!-- Librairie PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root{
       --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
@@ -142,6 +145,8 @@
         <strong id="dNo">Reçu</strong>
         <div class="act">
           <button class="btn" id="dPrint">Télécharger/Imprimer</button>
+          <!-- Bouton PDF + partage -->
+          <button type="button" class="btn" id="dPdf">Télécharger PDF + Partager</button>
           <button class="btn warn" id="dPaid">Marquer PAYÉ</button>
           <button class="btn ghost" id="dClose">Fermer</button>
         </div>
@@ -151,69 +156,51 @@
   </div>
 
 <script>
-/* ===================== PARAMÈTRES ===================== */
-const STORAGE_KEY = 'kcn_receipts'; // ⚠️ doit matcher la page d'inscription
-const ADMIN_PASS  = 'KCN-ADMIN';    // 🔐 change-moi !
+const STORAGE_KEY = 'kcn_receipts';
+const ADMIN_PASS  = 'KCN-ADMIN';
 
-/* ===================== OUTILS ===================== */
 const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const safeParse = (x, f=[])=>{try{return JSON.parse(x||'[]')}catch{ return f }};
-const fmt = (n)=> new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(n);
-const fmtMoney = (v, cur)=> (cur==='USD'?'$ ':'') + fmt(v) + (cur==='HTG'?' HTG':'');
-function loadList(){ return safeParse(localStorage.getItem(STORAGE_KEY), []); }
-function saveList(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
-function download(filename, text){
-  const a = document.createElement('a');
-  a.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(text));
-  a.setAttribute('download', filename);
-  a.style.display='none'; document.body.appendChild(a); a.click(); a.remove();
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+// Outils formatting
+function fmt(n) {
+  return new Intl.NumberFormat('fr-FR', {maximumFractionDigits: 2}).format(n)
+    .replace(/\u202F|\u00A0/g, ' ');
 }
-function csvEscape(s){
-  if(s==null) return '';
-  const str = String(s).replace(/"/g,'""');
-  return /[",;\n]/.test(str) ? `"${str}"` : str;
+function fmtMoney(v, cur) {
+  return (cur === 'USD' ? '$ ' : '') + fmt(v) + (cur === 'HTG' ? ' HTG' : '');
 }
-function statusBadge(s){
-  const cls = (s||'').toUpperCase()==='PAYÉ' ? 'paid' :
-              (s||'').includes('PREUVE') || (s||'').includes('VÉRIF') ? 'pending' : 'await';
-  return `<span class="badge ${cls}">${s||'—'}</span>`;
+function csvEscape(s) {
+  if (s==null) return '';
+  s = String(s).replace(/"/g, '""');
+  return (/[",;\n]/.test(s) ? `"${s}"` : s);
 }
-function htmlRows(rows, currency, rate){
-  return (rows||[]).map(r=>{
-    const vHTG = Number(r.amt||0);
-    const v = currency==='USD' ? (rate>0 ? vHTG/rate : vHTG) : vHTG;
-    return `<tr><td>${r.label}</td><td>${r.qty||1}</td><td class="money" style="text-align:right">${fmtMoney(v, currency)}</td></tr>`;
-  }).join('');
-}
-function guessMonth(rows){
-  const r = (rows||[]).find(x=>/Mois:\s*/i.test(x.label||''));
-  if(!r) return '—';
-  const m = r.label.match(/Mois:\s*([A-Za-zÀ-ÿ]+)/i);
-  return m ? m[1] : '—';
-}
-function fileIsPDF(dataUrl){
-  return typeof dataUrl === 'string' && dataUrl.startsWith('data:application/pdf');
+function safeParse(x, f = []) {
+  try { return JSON.parse(x || '[]'); } catch { return f; }
 }
 
-/* ===================== ÉTAT ===================== */
+// État
 let DATA = [];
 let SELECTED = new Set();
 let CUR = null;
 
-/* ===================== RENDU TABLE ===================== */
-function render(){
-  const q = $('#q').value.trim().toLowerCase();
-  const fStatus = $('#fStatus').value;
-  const fMethod = $('#fMethod').value;
-  const sort = $('#sort').value;
+// Chargement depuis le localstorage
+function loadList() { return safeParse(localStorage.getItem(STORAGE_KEY), []); }
+function saveList(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+// Affichage et interactions
+function render() {
+  const q = $('#q')?.value.trim().toLowerCase() ?? '';
+  const fStatus = $('#fStatus')?.value ?? '';
+  const fMethod = $('#fMethod')?.value ?? '';
+  const sort = $('#sort')?.value ?? '';
 
   let list = [...DATA];
 
-  // Filtres
-  list = list.filter(x=>{
-    const okS = !fStatus || (x.status||'').toUpperCase()===fStatus.toUpperCase();
-    const okM = !fMethod || (x.method||'')===fMethod;
+  // Filtres statut / méthode
+  list = list.filter(x => {
+    const okS = !fStatus || (x.status||'').toUpperCase() === fStatus.toUpperCase();
+    const okM = !fMethod || (x.method||'') === fMethod;
     return okS && okM;
   });
 
@@ -231,19 +218,20 @@ function render(){
 
   // Tri
   list.sort((a,b)=>{
+    const aId = Number(a.id)||0, bId = Number(b.id)||0;
     switch(sort){
-      case 'date_asc':  return (a.id||0) - (b.id||0);
+      case 'date_asc':  return aId-bId;
       case 'name_asc':  return (a.name||'').localeCompare(b.name||'');
       case 'name_desc': return (b.name||'').localeCompare(a.name||'');
-      case 'tot_asc':   return (a.tot||0) - (b.tot||0);
-      case 'tot_desc':  return (b.tot||0) - (a.tot||0);
-      case 'date_desc':
-      default:          return (b.id||0) - (a.id||0);
+      case 'tot_asc':   return (a.tot||0)-(b.tot||0);
+      case 'tot_desc':  return (b.tot||0)-(a.tot||0);
+      default:
+      case 'date_desc': return bId-aId;
     }
   });
 
-  // Table
-  const table = list.length ? `
+  // Affichage table
+  const tableHtml = list.length ? `
     <table aria-label="Liste des reçus">
       <thead>
         <tr>
@@ -262,18 +250,17 @@ function render(){
       <tbody>
         ${list.map(x=>{
           const rate = Number(x.rate||0);
-          const cur  = x.currency||'HTG';
-          const totDisp = (cur==='USD' && rate>0) ? x.tot/rate : x.tot;
+          const cur = x.currency||'HTG';
+          const totDisp = cur==='USD' && rate>0 ? x.tot/rate : x.tot;
           const month = guessMonth(x.rows);
-          const checked = SELECTED.has(x.id) ? 'checked' : '';
-          const methodLabel = (x.method||'-').toUpperCase();
+          const checked = SELECTED.has(String(x.id)) ? 'checked' : '';
           return `
           <tr data-id="${x.id}">
             <td><input type="checkbox" class="chk" ${checked}></td>
             <td><a href="#" class="open" title="Voir le reçu">${x.no||'—'}</a></td>
             <td>${x.date||'—'}</td>
             <td>${x.name||'—'}<div class="mini">${x.email||''}</div></td>
-            <td>${methodLabel}</td>
+            <td>${(x.method||'-').toUpperCase()}</td>
             <td>${cur}</td>
             <td class="money" style="text-align:right">${fmtMoney(totDisp, cur)}</td>
             <td>${month}</td>
@@ -288,85 +275,97 @@ function render(){
         }).join('')}
       </tbody>
     </table>
-  ` : `<div class="empty">Aucun reçu trouvé. Dès qu’un formulaire est validé, il apparaît ici.</div>`;
-
-  $('#tableWrap').innerHTML = table;
+  ` : `<div class="empty">Aucun reçu trouvé.</div>`;
+  $('#tableWrap').innerHTML = tableHtml;
   $('#count').textContent = `${list.length} reçu(x) affiché(s) • ${DATA.length} au total`;
 
-  // Événements de ligne
+  // Sélection globale
   $('#chkAll')?.addEventListener('change', (e)=>{
-    const rows = $$('#tableWrap tbody tr');
-    rows.forEach(r=>{
-      const id = r.dataset.id;
-      r.querySelector('.chk').checked = e.target.checked;
+    $$('tbody .chk').forEach(ch=>{
+      ch.checked = e.target.checked;
+      const id = ch.closest('tr').dataset.id;
       if(e.target.checked) SELECTED.add(id); else SELECTED.delete(id);
     });
   });
 
-  $$('#tableWrap .chk').forEach(ch=>{
+  // Sélection individuelle
+  $$('tbody .chk').forEach(ch=>{
     ch.addEventListener('change', (e)=>{
       const id = e.target.closest('tr').dataset.id;
       if(e.target.checked) SELECTED.add(id); else SELECTED.delete(id);
     });
   });
 
-  $$('#tableWrap .open').forEach(btn=>{
+  // Ouverture Drawer/détail
+  $$('tbody .open').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       e.preventDefault();
-      const id = e.target.closest('tr').dataset.id;
-      openDrawer(id);
+      openDrawer(btn.closest('tr').dataset.id);
     });
   });
 
-  $$('#tableWrap .setPaid').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.closest('tr').dataset.id; setStatus(id,'PAYÉ');
-    });
+  // Actions sur ligne
+  $$('tbody .setPaid').forEach(btn=>{
+    btn.addEventListener('click', ()=>setStatus(btn.closest('tr').dataset.id,'PAYÉ'));
   });
-  $$('#tableWrap .setWait').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.closest('tr').dataset.id; setStatus(id,'EN ATTENTE');
-    });
+  $$('tbody .setWait').forEach(btn=>{
+    btn.addEventListener('click', ()=>setStatus(btn.closest('tr').dataset.id,'EN ATTENTE'));
   });
-  $$('#tableWrap .del').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.closest('tr').dataset.id; delOne(id);
-    });
+  $$('tbody .del').forEach(btn=>{
+    btn.addEventListener('click', ()=>delOne(btn.closest('tr').dataset.id));
   });
 }
+// Helper pour le mois
+function guessMonth(rows){
+  const r = (rows||[]).find(x=>/Mois:\s*/i.test(x.label||''));
+  if(!r) return '—';
+  const m = r.label.match(/Mois:\s*([A-Za-zÀ-ÿ]+)/i);
+  return m ? m[1] : '—';
+}
+// Helper filigrane/statut
+function statusBadge(s){
+  const cls = (s||'').toUpperCase()==='PAYÉ' ? 'paid'
+            : (s||'').includes('PREUVE') || (s||'').includes('VÉRIF') ? 'pending' : 'await';
+  return `<span class="badge ${cls}">${s||'—'}</span>`;
+}
 
-/* ===================== DÉTAIL (DRAWER) ===================== */
+// Drawer/détail
 function openDrawer(id){
-  CUR = DATA.find(x=>x.id===id);
-  if(!CUR) return;
+  CUR = DATA.find(x => String(x.id) === String(id));
+  if (!CUR) return;
   $('#dNo').textContent = CUR.no || 'Reçu';
-  const cur = CUR.currency||'HTG';
-  const rate = Number(CUR.rate||0);
+  const cur = CUR.currency || 'HTG', rate = Number(CUR.rate || 0);
 
-  const rowsHTML = htmlRows(CUR.rows, cur, rate);
+  const rowsHTML = (CUR.rows||[]).map(r=>{
+    const vHTG = Number(r.amt||0), v = cur==='USD' ? (rate>0 ? vHTG/rate : vHTG) : vHTG;
+    return `<tr><td>${r.label}</td><td>${r.qty||1}</td><td class="money" style="text-align:right">${fmtMoney(v, cur)}</td></tr>`;
+  }).join('');
   const subDisp = cur==='USD' && rate>0 ? CUR.sub/rate : CUR.sub;
   const feeDisp = cur==='USD' && rate>0 ? CUR.fee/rate : CUR.fee;
   const totDisp = cur==='USD' && rate>0 ? CUR.tot/rate : CUR.tot;
 
-  const proofBox = (()=>{
-    if(!CUR.proof) return '<div class="mini">Aucune preuve fournie.</div>';
-    const parts = [];
-    parts.push(`<div><strong>Réf:</strong> ${CUR.proof.ref||'—'}</div>`);
-    parts.push(`<div><strong>N° / Compte:</strong> ${CUR.proof.phone||'—'}</div>`);
-    parts.push(`<div><strong>Date/heure:</strong> ${CUR.proof.when||'—'}</div>`);
+  let proofBox = '';
+  if(!CUR.proof) {
+    proofBox = '<div class="mini">Aucune preuve fournie.</div>';
+  } else {
+    const p = CUR.proof;
     let media = '';
-    if(CUR.proof.fileData){
-      if(fileIsPDF(CUR.proof.fileData)){
-        media = `<a class="file" href="${CUR.proof.fileData}" target="_blank" rel="noopener">📄 Ouvrir la preuve (PDF)</a>`;
-      }else{
-        media = `<img src="${CUR.proof.fileData}" alt="Preuve de paiement">`;
+    if(p.fileData) {
+      if(p.fileData.startsWith('data:application/pdf')) {
+        media = `<a class="file" href="${p.fileData}" target="_blank" rel="noopener">📄 Ouvrir la preuve (PDF)</a>`;
+      } else {
+        media = `<img src="${p.fileData}" alt="Preuve de paiement">`;
       }
-    }else if(CUR.proof.fileName){
-      media = `<div class="file">Fichier: ${CUR.proof.fileName}</div>`;
+    } else if(p.fileName){
+      media = `<div class="file">Fichier: ${p.fileName}</div>`;
     }
-    return `<div class="proof">${parts.join('')}<div style="margin-top:8px">${media}</div></div>`;
-  })();
-
+    proofBox = `<div class="proof">
+      <div><strong>Réf:</strong> ${p.ref||'—'}</div>
+      <div><strong>N° / Compte:</strong> ${p.phone||'—'}</div>
+      <div><strong>Date/heure:</strong> ${p.when||'—'}</div>
+      <div style="margin-top:8px">${media}</div>
+    </div>`;
+  }
   $('#dBody').innerHTML = `
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
       ${statusBadge(CUR.status)}
@@ -376,7 +375,6 @@ function openDrawer(id){
     <div class="kv"><div><strong>Date</strong></div><div>${CUR.date||'—'}</div></div>
     <div class="kv"><div><strong>Nom</strong></div><div>${CUR.name||'—'}</div></div>
     <div class="kv"><div><strong>Email</strong></div><div>${CUR.email||'—'}</div></div>
-
     <h3 style="margin:10px 0;color:#0b4573">Détail</h3>
     <table>
       <thead><tr><th>Description</th><th>Qté</th><th style="text-align:right">Montant</th></tr></thead>
@@ -389,92 +387,82 @@ function openDrawer(id){
         <tr><th>Total</th><th style="text-align:right" class="money">${fmtMoney(totDisp, cur)}</th></tr>
       </table>
     </div>
-
     <h3 style="margin:14px 0;color:#0b4573">Preuve</h3>
     ${proofBox}
     <p class="mini" style="margin-top:10px">
-      Filigrane/Statut automatique : <em>EN ATTENTE — PREUVE À VALIDER</em> si paiement en ligne sans preuve, 
-      <em>EN ATTENTE — VÉRIF VIREMENT</em> si virement avec preuve, etc.
-    </p>
-  `;
-
+      Filigrane : automatique selon statut et preuve.
+    </p>`;
   $('#drawer').classList.add('show');
 }
 function closeDrawer(){ $('#drawer').classList.remove('show'); CUR=null; }
-
 $('#dClose').addEventListener('click', closeDrawer);
 $('#drawerMask').addEventListener('click', closeDrawer);
 
-$('#dPaid').addEventListener('click', ()=>{
-  if(!CUR) return;
-  setStatus(CUR.id,'PAYÉ', true);
-  openDrawer(CUR.id);
-});
-
-$('#dPrint').addEventListener('click', ()=>{
-  if(!CUR) return;
-  printReceipt(CUR);
-});
-
-/* ===================== ACTIONS ===================== */
+// Statut
 function setStatus(id, status, silent){
-  const i = DATA.findIndex(x=>x.id===id);
-  if(i<0) return;
+  const i = DATA.findIndex(x => String(x.id) === String(id));
+  if (i < 0) return;
   DATA[i].status = status;
   saveList(DATA);
-  if(!silent) alert('Statut mis à jour.');
+  if (!silent) alert('Statut mis à jour.');
   render();
 }
-function delOne(id){
-  if(!confirm('Supprimer ce reçu ?')) return;
-  DATA = DATA.filter(x=>x.id!==id);
+
+// Suppression
+function delOne(id) {
+  if (!confirm('Supprimer ce reçu ?')) return;
+  DATA = DATA.filter(x => String(x.id) !== String(id));
   saveList(DATA);
-  SELECTED.delete(id);
+  SELECTED.delete(String(id));
   render();
 }
-function markPaidSelected(){
-  if(SELECTED.size===0) return alert('Sélection vide.');
-  DATA = DATA.map(x=> SELECTED.has(x.id) ? {...x, status:'PAYÉ'} : x);
+
+// Boutons sélection multiple
+function markPaidSelected() {
+  if (SELECTED.size === 0) return alert('Sélection vide.');
+  DATA = DATA.map(x => SELECTED.has(String(x.id)) ? {...x, status:'PAYÉ'} : x);
   saveList(DATA); render(); alert('Sélection marquée PAYÉ.');
 }
 function deleteSelected(){
-  if(SELECTED.size===0) return alert('Sélection vide.');
-  if(!confirm('Supprimer tous les reçus sélectionnés ?')) return;
-  DATA = DATA.filter(x=>!SELECTED.has(x.id));
+  if (SELECTED.size === 0) return alert('Sélection vide.');
+  if (!confirm('Supprimer tous les reçus sélectionnés ?')) return;
+  DATA = DATA.filter(x => !SELECTED.has(String(x.id)));
   saveList(DATA); SELECTED.clear(); render();
 }
 
-/* ===================== EXPORT CSV ===================== */
-function exportCSV(){
+// Export CSV (suppose que la fonction download existe déjà dans ton projet)
+function exportCSV() {
   const head = [
-    'id','no','date','name','email','method','currency','rate','sub_HTG','fee_HTG','tot_HTG','status','proof_ref','proof_phone','proof_when','proof_file'
+    'id','no','date','name','email','method','currency','rate',
+    'sub_HTG','fee_HTG','tot_HTG','status','proof_ref','proof_phone','proof_when','proof_file'
   ];
   const rows = DATA.map(x=>[
-    x.id, x.no, x.date, x.name, x.email, x.method, x.currency, x.rate, x.sub, x.fee, x.tot, x.status,
+    x.id, x.no, x.date, x.name, x.email, x.method, x.currency, x.rate,
+    x.sub, x.fee, x.tot, x.status,
     x.proof?.ref||'', x.proof?.phone||'', x.proof?.when||'', x.proof?.file||x.proof?.fileName||''
   ]);
   const csv = [head.map(csvEscape).join(','), ...rows.map(r=>r.map(csvEscape).join(','))].join('\n');
   download('kcn_receipts.csv', csv);
 }
 
-/* ===================== IMPRESSION (HTML minimal) ===================== */
-function printReceipt(d){
-  const cur = d.currency||'HTG';
-  const rate = Number(d.rate||0);
+// Impression navigateur (avec texte écologique)
+function printReceipt(d) {
+  const cur = d.currency||'HTG', rate = Number(d.rate||0);
   const subDisp = cur==='USD' && rate>0 ? d.sub/rate : d.sub;
   const feeDisp = cur==='USD' && rate>0 ? d.fee/rate : d.fee;
   const totDisp = cur==='USD' && rate>0 ? d.tot/rate : d.tot;
-  const wm = (()=>{
+  // Watermark
+  const wm = (() => {
     const s = (d.status||'').toUpperCase();
-    if(s==='PAYÉ') return '';
+    if(s === 'PAYÉ') return '';
     const proofOk = d.proof && d.proof.ref && d.proof.phone && d.proof.when && (d.proof.fileData || d.proof.fileName);
     if(['moncash','natcash','bank'].includes(d.method) && !proofOk) return 'EN ATTENTE — PREUVE À VALIDER';
     if(d.method==='bank' && proofOk) return 'EN ATTENTE — VÉRIF VIREMENT';
     return 'EN ATTENTE';
   })();
 
-  const w = window.open('', 'PRINT', 'height=900,width=900');
-  w.document.write(`<!doctype html><html><head><title>${d.no||'Reçu KCN'}</title>
+  const win = window.open('', 'PRINT', 'height=900,width=900');
+  win.document.write(`<!doctype html><html><head><title>${d.no||'Reçu KCN'}</title>
     <meta charset="utf-8">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -487,11 +475,16 @@ function printReceipt(d){
       .wm{position:fixed; inset:0; display:${wm?'grid':'none'}; place-items:center; pointer-events:none; z-index:0;}
       .wm span{font-size:92px; font-weight:900; letter-spacing:4px; color:#0f172a; opacity:.09; transform:rotate(-20deg); text-transform:uppercase;}
     </style>
-  </head><body>`);
-  w.document.write(`
+    </head><body>`);
+  win.document.write(`
     <div class="wm"><span>${wm}</span></div>
     <h2>Reçu KCN / KOLTIZ Club de Natation</h2>
-    <div style="display:flex;gap:8px;align-items:center;margin:6px 0">${statusBadge(d.status)}<span class="chip">${(d.method||'-').toUpperCase()} • ${cur}</span></div>
+    <div style="color:#2d5c8a;margin:4px 0 10px;font-size:.98em">
+      Pour éviter les déchets d'emballage excessifs, nous n'incluons pas de reçus papier. Cependant, vous pouvez toujours en imprimer un pour vos archives.
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin:6px 0">
+      ${statusBadge(d.status)}<span class="chip">${(d.method||'-').toUpperCase()} • ${cur}</span>
+    </div>
     <div style="display:flex;flex-wrap:wrap;gap:12px;margin:8px 0">
       <div><strong>N°:</strong> ${d.no||'—'}</div>
       <div><strong>Date:</strong> ${d.date||'—'}</div>
@@ -499,7 +492,12 @@ function printReceipt(d){
       <div><strong>Email:</strong> ${d.email||'—'}</div>
     </div>
     <table><thead><tr><th>Description</th><th>Qté</th><th>Montant</th></tr></thead>
-      <tbody>${htmlRows(d.rows, cur, rate)}</tbody>
+      <tbody>
+      ${(d.rows||[]).map(r=>{
+        const vHTG = Number(r.amt||0), v = cur==='USD' ? (rate>0 ? vHTG/rate : vHTG) : vHTG;
+        return `<tr><td>${r.label}</td><td>${r.qty||1}</td><td style="text-align:right">${fmtMoney(v, cur)}</td></tr>`;
+      }).join('')}
+      </tbody>
     </table>
     <div style="display:flex;justify-content:flex-end;margin-top:10px">
       <table>
@@ -508,48 +506,185 @@ function printReceipt(d){
         <tr><th>Total</th><th style="text-align:right">${fmtMoney(totDisp, cur)}</th></tr>
       </table>
     </div>
-    <p style="margin-top:12px"><em>Merci pour votre confiance !</em><br><strong>Therese Redgie Marc</strong> — Secrétaire administrative - KCN</p>
-  `);
-  w.document.write(`</body></html>`);
-  w.document.close(); w.focus(); w.print(); w.close();
+    <p style="margin-top:12px">
+      <em>Merci pour votre confiance !</em><br>
+      <strong>Therese Redgie Marc</strong> — Secrétaire administrative - KCN
+    </p>
+    </body></html>`);
+  win.document.close(); 
+  win.focus();
+  if (!/Mobi|Android/i.test(navigator.userAgent)) setTimeout(()=>win.close(), 1500);
 }
 
-/* ===================== INIT ===================== */
+// Boutons drawer
+$('#dPaid').addEventListener('click', ()=>{
+  if(!CUR) return;
+  setStatus(CUR.id,'PAYÉ', true);
+  openDrawer(CUR.id);
+});
+$('#dPrint').addEventListener('click', ()=>{
+  if(!CUR) return;
+  printReceipt(CUR);
+});
+
+// Bouton PDF + partage (WhatsApp / Email)
+document.getElementById('dPdf').addEventListener('click', async function() {
+  // Récupération des données en drawer
+  const status = document.querySelector('#dBody .badge')?.textContent || '-';
+  const no = document.getElementById('dNo')?.textContent || '-';
+  const name = document.querySelector('#dBody .kv:nth-child(4) div:last-child')?.textContent || '-';
+  const email = document.querySelector('#dBody .kv:nth-child(5) div:last-child')?.textContent || '-';
+  const date = document.querySelector('#dBody .kv:nth-child(3) div:last-child')?.textContent || '-';
+  const methodChip = document.querySelector('#dBody .chip')?.textContent || '-';
+  const totRow = Array.from(document.querySelectorAll('#dBody th.money'))?.pop()?.textContent || '-';
+
+  // Items facturés:
+  let itemsText = '';
+  document.querySelectorAll('#dBody tbody tr').forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    itemsText += `${tds[0]?.textContent} x${tds[1]?.textContent}: ${tds[2]?.textContent}\n`;
+  });
+
+  // --- LOGO ---
+  const logoUrl = "./folder3/imaj10"; // à adapter!
+  async function loadLogo(){
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.crossOrigin = "Anonymous";
+      img.src = logoUrl;
+      img.onload = function() {
+        const cnv = document.createElement('canvas');
+        cnv.width = img.width; cnv.height = img.height;
+        cnv.getContext('2d').drawImage(img,0,0);
+        resolve(cnv.toDataURL('image/png'));
+      };
+      img.onerror = function(){ resolve(null); };
+    });
+  }
+  const logoData = await loadLogo();
+
+  // --- PDF ---
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({orientation: 'portrait', unit: 'mm', format: 'a4'});
+  let y = 18;
+
+  // Decor/logo
+  if (logoData) doc.addImage(logoData, 'PNG', 18, y-10, 24, 24);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.text("Reçu KCN / KOLTIZ Club de Natation", 48, y);
+  doc.setDrawColor(0,102,204);doc.setLineWidth(1);
+  doc.line(18, y+3, 190, y+3); 
+  y += 10;
+
+  // Texte écologique dans le PDF
+  doc.setFontSize(9);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(30,64,130);
+  const ecoLines = doc.splitTextToSize(
+    "Pour éviter les déchets d'emballage excessifs, nous n'incluons pas de reçus papier. Cependant, vous pouvez toujours en imprimer un pour vos archives.",
+    170
+  );
+  doc.text(ecoLines, 20, y);
+  y += ecoLines.length * 4 + 6;
+
+  // Infos principales
+  doc.setFontSize(12); 
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(30,64,130);
+  doc.text(`Statut: ${status}`, 20, y); y+=8;
+  doc.text(`N° de reçu: ${no}`, 20, y); y+=8;
+  doc.text(`Date: ${date}`, 20, y); y+=8;
+  doc.text(`Nom: ${name}`, 20, y); y+=8;
+  doc.text(`Email: ${email}`, 20, y); y+=8;
+  doc.text(`Mode: ${methodChip}`, 20, y); y+=10;
+
+  doc.setFont('helvetica','bold'); 
+  doc.setFontSize(13); 
+  doc.setTextColor(255,152,0); // orange
+  doc.text("Éléments facturés :", 20, y); 
+  y += 7;
+  doc.setFont('helvetica','normal'); 
+  doc.setFontSize(11); 
+  doc.setTextColor(20,30,50);
+
+  itemsText.split('\n').forEach(line => { 
+    if (line.trim()) { 
+      doc.text(line, 20, y); 
+      y+=6; 
+    } 
+  });
+
+  y+=4;
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold'); 
+  doc.setTextColor(31,64,130);
+  doc.text(`Total: ${totRow}`, 20, y); 
+  y+=10;
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(90,110,140);
+  doc.text("Merci pour votre confiance !", 20, y); 
+  y+=6;
+  doc.text("Therese Redgie Marc — Secrétaire administrative • KCN", 20, y);
+
+  // --- Génère PDF ---
+  const fileName = `Recu_${no.replace(/\s+/g,'')}.pdf`;
+  doc.save(fileName);
+
+  // --- ENVOI WHATSAPP/EMAIL ---
+  const pdfBlob = doc.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+
+  // WhatsApp : message + lien
+  const summary = encodeURIComponent(
+    `Reçu KCN / KOLTIZ\nN°: ${no}\nNom: ${name}\nTotal: ${totRow}\n\nTélécharge le PDF : `
+  );
+  const wappUrl = "https://wa.me/?text=" + summary + encodeURIComponent(pdfUrl);
+
+  // Email
+  const subject = encodeURIComponent(`Reçu KCN pour ${name}`);
+  const body =
+    encodeURIComponent(`Bonjour,\n\nVous trouverez ci-joint votre reçu pour le paiement au KCN.\nTotal: ${totRow}\nLien: ${pdfUrl}\n\nMerci, l'équipe KCN`);
+  const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
+
+  setTimeout(() => {
+    if (confirm("Partager le reçu PDF par WhatsApp ? (Sinon validez pour Email)")) {
+      window.open(wappUrl, "_blank");
+    } else {
+      window.open(mailtoUrl, "_blank");
+    }
+  }, 600);
+});
+
+// Init/reload
 function init(){
   DATA = loadList();
   SELECTED = new Set();
-  ['q','fStatus','fMethod','sort'].forEach(id=> $('#'+id).addEventListener('input', render));
+  ['q','fStatus','fMethod','sort'].forEach(id=>$('#'+id).addEventListener('input', render));
   $('#markPaidSel').addEventListener('click', markPaidSelected);
   $('#deleteSel').addEventListener('click', deleteSelected);
   $('#exportCsv').addEventListener('click', exportCSV);
   render();
 }
 
-
-/* force le prompt à chaque chargement */
+// Gate d'accès
 try{ sessionStorage.removeItem('kcn_admin_ok'); }catch(e){}
-
-
-/* ===================== GATE D'ACCÈS ===================== */
 (function gate(){
   const passOK = sessionStorage.getItem('kcn_admin_ok')==='1';
   if(passOK){ $('#gate').style.display='none'; $('#app').style.display='block'; init(); return; }
-  $('#gate').style.display='block';
-  $('#app').style.display='none';
-
+  $('#gate').style.display='block'; $('#app').style.display='none';
   function tryEnter(){
-    const v = $('#gateInput').value;
-    if(v===ADMIN_PASS){
+    if($('#gateInput').value===ADMIN_PASS){
       sessionStorage.setItem('kcn_admin_ok','1');
-      $('#gate').style.display='none'; $('#app').style.display='block';
-      init();
-    }else{
-      alert('Code incorrect.');
-    }
+      $('#gate').style.display='none'; $('#app').style.display='block'; init();
+    } else alert('Code incorrect.');
   }
   $('#gateBtn').addEventListener('click', tryEnter);
   $('#gateInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') tryEnter(); });
 })();
 </script>
+
 </body>
 </html>
