@@ -290,18 +290,25 @@
                 </div>
               </div>
 
-              <!-- Montant libre -->
-              <div class="product" data-key="custom">
+
+              <!-- DON pour le projet piscine éducative KCN -->
+              <div class="product" data-key="don">
                 <div class="left">
-                  <input type="checkbox" id="custom">
-                  <label for="custom">Montant additionnel</label>
+                  <input type="checkbox" id="don">
+                  <label for="don">💙 Soutenir le projet piscine éducative</label>
                 </div>
                 <div>
-                  <input id="customAmount" type="text" inputmode="decimal" placeholder="0" style="width:140px;text-align:right" aria-label="Montant additionnel (HTG)">
+                  <input id="donAmount" type="text" inputmode="decimal" placeholder="250" style="width:140px;text-align:right" aria-label="Montant du don (HTG)">
                   HTG
+                  
                 </div>
               </div>
-              <p class="mini">Tarifs matériel : Bonnet petit 1350 HTG — Bonnet gros 2025 HTG — Lunettes petites 1350 HTG — Lunettes grosses 2025 HTG — Brassards 2025 HTG.</p>
+
+              <p class="mini" style="margin-top:8px">
+                <strong>Option solidaire (100 % facultatif)</strong> :  à partir de <strong>250 HTG</strong>, si vous le souhaitez, vous pouvez ajouter un don pour soutenir
+                notre projet de piscine éducative KCN. Il s’agit d’un projet pédagogique conçu et porté
+                <strong>uniquement par KOLTIZ Club de Natation (KCN)</strong>.
+              </p>
             </div>
           </div>
 
@@ -575,8 +582,12 @@
         if(key==='custom'){
           const raw = ($('#customAmount').value||'').trim();
           const val = Math.max(0, parseDecSafe(raw,0));
-          if(raw && !isFinite(val)) { /* sécurité */ }
           amt = val;
+        } else if(key==='don'){
+          const raw = ($('#donAmount').value||'').trim();
+          const val = Math.max(0, parseDecSafe(raw,0));
+          // Don pris en compte uniquement si >= 250 HTG
+          if(val >= 250) amt = val;
         } else if(key==='month'){
           amt = adjustedMonthPrice();
         } else {
@@ -647,7 +658,7 @@
     });
     rateInput.addEventListener('input', compute);
 
-    ['grpCount','month','custom','customAmount','reg','bonnetp','bonnetg','lunettesp','lunettesg','brassards'].forEach(id=>{
+    ['grpCount','month','custom','customAmount','reg','bonnetp','bonnetg','lunettesp','lunettesg','brassards','don','donAmount'].forEach(id=>{
       const el = document.getElementById(id);
       if(el) el.addEventListener(el.type==='checkbox' ? 'change' : 'input', ()=>{ updateMonthDisplay(); compute(); });
     });
@@ -873,6 +884,15 @@
         if(key==='custom'){
           const raw = ($('#customAmount').value||'').replace(',','.');
           amt = Math.max(0, parseDecSafe(raw,0));
+        }else if(key==='don'){
+          const raw = ($('#donAmount').value||'').replace(',','.');
+          const val = Math.max(0, parseDecSafe(raw,0));
+          if(val >= 250){
+            amt = val;
+            label = 'Don — Projet piscine éducative KCN';
+          } else {
+            return; // don ignoré si < 250
+          }
         }else if(key==='month'){
           unit = adjustedMonthPrice();
           amt = unit;
