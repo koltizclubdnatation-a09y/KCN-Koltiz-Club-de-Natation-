@@ -1,1704 +1,754 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>KCN — Boutique matériel & packs</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KCN — Admin (Commandes & Stock)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- PDF + rendu HTML -->
+<!-- PDF + rendu HTML (compat mobile/desktop) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-+Kv6C8xQyC6s2xN2YohQy2Kz3e0t8xO+eVUP0r4m5fKp+0lXrEmsSoiqKTwqBfN1I3oL2kPG1f3W7CzqEJf2WQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5lH8b2Jw4jyZzqH2Z0c4XHkJm9e0cQYw7I4oFQ2i7x9k5n7mYqv7t3TT0e1H1wI0Y1nYk1DkZgJm1iY2b4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <style>
-  :root{
-    --brand:#0066cc;--accent:#00bcd4;--sun:#ff9800;
-    --ink:#0f172a;--muted:#475569;--line:#e5e7eb;
-    --card:#ffffff;--page:#f7f9fc;--radius:16px;
-    --shadow:0 18px 48px rgba(2,6,23,.12);
-    --ok:#16a34a; --warn:#f59e0b; --low:#fb923c; --out:#ef4444;
-    --okbg:rgba(22,163,74,.08); --warnbg:rgba(245,158,11,.10);
-    --lowbg:rgba(251,146,60,.12); --outbg:rgba(239,68,68,.10)
-  }
+  :root{--brand:#0066cc;--line:#e5e7eb;--ink:#0f172a;--card:#fff;--page:#f7f9fc}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6}
-  a{color:var(--brand);text-decoration:none}
-  img{max-width:100%;height:auto;display:block}
+  body{font-family:Montserrat,Arial,sans-serif;background:var(--page);color:var(--ink)}
+  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+  h1{color:var(--brand);margin-bottom:12px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .tabbtn{background:#fff;color:#0066cc;border:2px solid #0066cc;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .tabbtn.active{background:#0066cc;color:#fff}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  button,.btn{background:#0066cc;color:#fff;border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .btn.alt{background:#fff;color:#0066cc;border:2px solid #0066cc}
+  .btn.ghost{background:#fff;color:#475569;border:2px dashed #cbd5e1}
+  .list{display:grid;gap:12px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .lines{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+  .tag{display:inline-block;background:#eaf3ff;color:#0b4573;border:1px solid #cfe1ff;border-radius:999px;padding:3px 8px;font-size:.85rem;margin-right:6px}
+  .muted{color:#475569}
+  .thumb{max-width:160px;max-height:120px;border-radius:8px;border:1px solid var(--line)}
+  input,select,textarea{padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-family:inherit}
 
-  .wrap{max-width:1200px;margin:28px auto 60px;padding:0 16px}
-  header.hero{position:relative;border-radius:20px;overflow:hidden;background:
-    linear-gradient(180deg,rgba(0,102,204,.16),rgba(0,188,212,.12)),
-    url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
-    min-height:220px;display:grid;place-items:center;margin-bottom:18px}
-  .hero .card{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);padding:22px;border-radius:18px;box-shadow:var(--shadow);text-align:center;border:1px solid rgba(255,255,255,.65);width:min(92%,860px)}
-  .hero h1{color:var(--brand);font-size:1.9rem;margin-bottom:6px}
-  .hero p{color:#111827}
+  .panel{display:none}
+  .panel.active{display:block}
 
-  .toolbar{display:grid;gap:12px;grid-template-columns:1fr;align-items:end;margin:16px 0}
-  @media(min-width:840px){.toolbar{grid-template-columns:2fr 1fr 1fr 1fr}}
-  label{font-weight:700;color:#0b4573;display:block;margin:4px 0}
-  input[type="text"],select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
-  input[type="email"], input[type="tel"], textarea{
-    width:100%; padding:10px 12px; border-radius:12px;
-    border:1px solid var(--line); background:#fff
-  }
-  textarea{ min-height:86px; resize:vertical }
+  /* Badges stock */
+  .kcn-tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.78rem;border:1px solid #e5e7eb;background:#f8fafc}
+  .kcn-tag.red{background:#ffe4e6;border-color:#fecdd3;color:#9f1239}
+  .kcn-tag.orange{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+  .kcn-tag.green{background:#ecfdf5;border-color:#bbf7d0;color:#065f46}
 
-  .layout{display:grid;gap:22px;grid-template-columns:1fr}
-  @media(min-width:980px){.layout{grid-template-columns:1fr 340px}}
+  /* Porte discrète */
+  #gate{position:fixed;inset:0;display:grid;place-items:center;background:rgba(2,6,23,.85);z-index:9999}
+  #gate .box{background:#fff;border:1px solid #e5e7eb;border-radius:14px;max-width:420px;width:min(92vw,420px);padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  #gate h2{margin:0 0 6px 0;color:#0b4573}
+  #gate .mini{font-size:.9rem;color:#475569;margin-bottom:10px}
+  #gate .row{gap:8px;justify-content:flex-end}
+  #gate .hint{color:#64748b;font-size:.85rem;margin-top:8px}
+  #gate .err{color:#b91c1c;font-weight:700;display:none}
+  #mask{filter:blur(10px);pointer-events:none;user-select:none}
 
-  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  .product-card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
-  .product-card .bd{padding:12px 14px}
-  .product-card h3{color:#0b4573;margin-bottom:6px;font-size:1.05rem}
-  .price{font-weight:800;color:#111827}
-  .tag{display:inline-block;background:rgba(0,102,204,.08);border:1px solid rgba(0,102,204,.18);color:#0b4573;border-radius:999px;padding:4px 8px;font-size:.8rem;margin-right:6px}
-  .btn{background:linear-gradient(90deg,var(--sun),#ffc107);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)}
-  .btn.alt{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
-  .btn[disabled]{opacity:.55;cursor:not-allowed}
-
-  .thumb{height:180px;object-fit:cover}
-  .inline-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
-  .qty{display:flex;gap:6px;align-items:center}
-  .qty input{width:56px;padding:6px 8px;border-radius:10px;border:1px solid var(--line)}
-
-  /* Stock badges */
-  .stock{display:inline-block;border-radius:999px;padding:4px 10px;font-size:.78rem;border:1px solid}
-  .stock.ok{color:var(--ok);background:var(--okbg);border-color:rgba(22,163,74,.3)}
-  .stock.warn{color:var(--warn);background:var(--warnbg);border-color:rgba(245,158,11,.35)}
-  .stock.low{color:var(--low);background:var(--lowbg);border-color:rgba(251,146,60,.35)}
-  .stock.out{color:var(--out);background:var(--outbg);border-color:rgba(239,68,68,.35)}
-
-  .side{position:sticky;top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
-  .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
-  .row.total{border-top:1px dashed var(--line);padding-top:10px;margin-top:8px;font-weight:800}
-  .muted{color:#64748b}
-  .mini{font-size:.86rem;color:#475569}
-  .actions{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-
-  .footer-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-
-  .promo{margin:10px 0 18px;background:linear-gradient(90deg,rgba(255,152,0,.12),rgba(0,102,204,.08));border:1px dashed var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px}
-  .promo strong{color:#0b4573}
-
-  .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(2,6,23,.7);z-index:998}
-  .modal.open{display:grid;animation:fade .2s ease}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  .sheet{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);max-width:900px;width:min(96vw,900px);padding:16px}
-  .sheet-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
-  .sheet-head h3{margin:0;color:#0b4573}
-  .close{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
-  .product-content{display:grid;gap:16px;grid-template-columns:1fr}
-  @media(min-width:860px){.product-content{grid-template-columns:1.2fr .8fr}}
-
-  /* ✅ Viewer : affiche toute l'image */
-  .viewer{
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:8px;
-    background:#000;
-  }
-  .viewer img{
-    width:100%;
-    max-height:420px;
-    object-fit:contain;
-    border-radius:10px;
-  }
-  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .thumbs img{
-    width:84px;
-    height:64px;
-    object-fit:contain;
-    border-radius:8px;
-    border:2px solid transparent;
-    cursor:pointer;
-  }
-  .thumbs img[aria-current="true"]{border-color:var(--brand)}
-  .pd-actions{display:grid;gap:10px}
-  .pd-price{font-size:1.3rem;font-weight:800}
-  .pd-qty{display:flex;align-items:center;gap:10px}
-
-  .kcn-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(2,6,23,.7);z-index:999}
-  .kcn-modal.open{display:grid;animation:kcnFade .2s ease}
-  @keyframes kcnFade{from{opacity:0}to{opacity:1}}
-  .kcn-sheet{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);max-width:720px;width:min(96vw,720px);padding:18px}
-  .kcn-head{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #e5e7eb;padding-bottom:10px;margin-bottom:12px}
-  .kcn-head h3{Margin:0;color:#0b4573}
-  .kcn-close{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;cursor:pointer}
-  .kcn-row{display:grid;gap:10px;margin:10px 0}
-  .kcn-tabs{display:flex;gap:6px;flex-wrap:wrap}
-  .kcn-tab{border:1px solid #e5e7eb;background:#f8fafc;border-radius:10px;padding:8px 12px;cursor:pointer}
-  .kcn-tab.active{border-color:#0066cc;background:#eaf3ff}
-  .kcn-pane{display:none}
-  .kcn-pane.active{display:block}
-  .kcn-box{border:1px dashed #e5e7eb;border-radius:12px;padding:12px;background:#fbfdff}
-  .kcn-cols{display:grid;gap:12px;grid-template-columns:1fr}
-  @media(min-width:720px){.kcn-cols{grid-template-columns:1fr 1fr}}
-  .kcn-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
-  .kcn-btn{background:linear-gradient(90deg,#ff9800,#ffc107);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)}
-  .kcn-btn.alt{background:#fff;color:#0066cc;border:2px solid #0066cc;box-shadow:none}
-  .kcn-mini{font-size:.9rem;color:#475569}
-  .kcn-copy{border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;background:#fff;cursor:pointer}
-  .kcn-ok{color:#16a34a;font-weight:700}
-
-  /* ====== FAB Admin (discret) ====== */
-  .fab-admin{
-    position:fixed; right:18px; bottom:18px;
-    width:54px; height:54px; display:none; place-items:center;
-    border-radius:999px; border:2px solid #0066cc; background:#fff;
-    box-shadow:0 12px 30px rgba(0,0,0,.15); cursor:pointer; z-index:9999;
-  }
-  .fab-admin span{font-size:22px; line-height:1}
-  .fab-admin:hover{transform:translateY(-2px)}
-  #shopAdminHotspot{
-    position:fixed; right:0; bottom:0; width:68px; height:68px;
-    z-index:9998; background:transparent;
-  }
-
-  /* ====== ZOOM IMAGE PRODUIT (lightbox) ====== */
-  .zoom-modal{
-    position:fixed;
-    inset:0;
-    display:none;
-    place-items:center;
-    background:rgba(0,0,0,.9);
-    z-index:1000;
-  }
-  .zoom-modal.open{
-    display:grid;
-    animation:fade .2s ease;
-  }
-  .zoom-inner{
-    position:relative;
-    max-width:96vw;
-    max-height:96vh;
-  }
-  .zoom-inner img{
-    max-width:100%;
-    max-height:96vh;
-    object-fit:contain;
-    border-radius:12px;
-    box-shadow:0 18px 48px rgba(0,0,0,.6);
-  }
-  .zoom-close{
-    position:absolute;
-    top:-14px;
-    right:-14px;
-    border-radius:999px;
-    border:none;
-    width:32px;
-    height:32px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#ffffff;
-    cursor:pointer;
-    font-size:18px;
-    box-shadow:0 10px 26px rgba(0,0,0,.4);
-  }
-
-  /* Mobile: make KCN modal content scroll nicely and provide a prominent download CTA */
-  @media(max-width:720px){
-    .kcn-sheet{ max-height:80vh; overflow:auto; padding-bottom:80px; } /* room for floating CTA */
-    /* Floating mobile download button (hidden by default; shown when modal open via sibling selector) */
-    #kcnReceiptMobile{
-      display:none;
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:14px;
-      z-index:10002;
-      padding:12px 18px;
-      border-radius:999px;
-      box-shadow:0 12px 30px rgba(0,0,0,.25);
-      font-weight:800;
-      background:linear-gradient(90deg,#ff9800,#ffc107);
-      color:#fff;
-      border:none;
-      font-size:15px;
-      min-width:200px;
-      text-align:center;
-    }
-    /* Show when modal is open and button follows the modal in DOM (general sibling) */
-    .kcn-modal.open ~ #kcnReceiptMobile { display:block; }
-  }
-  @media(min-width:721px){
-    #kcnReceiptMobile{ display:none !important; }
-  }
-
+  /* Flottants */
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hero">
-    <div class="card">
-      <h1>Magasin KCN — Matériel & Packs</h1>
-      <p>Choisissez votre équipement. Ajoutez au panier, puis réglez par virement / MonCash / NatCash / Espèces (0 frais plateforme). Reçu provisoire inclus.</p>
+
+<!-- === Porte discrète === -->
+<div id="gate" aria-modal="true" role="dialog">
+  <div class="box">
+    <h2>Accès administration</h2>
+    <div class="mini">Zone réservée. Entrez le code pour continuer.</div>
+    <label for="gateCode" class="muted" style="display:block;margin-bottom:6px">Code</label>
+    <input id="gateCode" type="password" placeholder="••••••" autocomplete="off" style="width:100%;margin-bottom:10px">
+    <div class="row">
+      <button class="btn alt" id="gateCancel">Annuler</button>
+      <button class="btn" id="gateOk">Entrer</button>
     </div>
-  </header>
-
-  <div class="promo" role="status" aria-live="polite">
-    <span>🎉</span> <strong>Promo week-end : −10% sur les packs</strong> (automatique) — limité dans le temps.
-  </div>
-
-  <!-- Toolbar -->
-  <section class="toolbar" aria-label="Filtres boutique">
-    <div>
-      <label for="q">Recherche</label>
-      <input id="q" type="text" placeholder="bonnet, lunettes, brassards, tenue enfant garçon, tenue enfant fille, tenue de bain homme/femme, palme de natation, tuba, bouchon d'oreille, pince-nez, pull buoy, élastique, planche, anneau, ballon piscine, masque tuba…">
-    </div>
-    <div>
-      <label for="cat">Catégorie</label>
-      <select id="cat">
-        <option value="">Toutes</option>
-        <option value="bonnets">Bonnets</option>
-        <option value="lunettes">Lunettes</option>
-        <option value="brassards">Brassards</option>
-        <option value="frite-spagettie">Frite/Spagettie</option>
-        <option value="gilet">Gilet</option>
-        <option value="masque-tuba">Masque-Tuba</option>
-        <option value="planche">Planche</option>
-        <option value="pince-nez-bouchons">Pince-nez & bouchons</option>
-        <option value="packs">Packs</option>
-      </select>
-    </div>
-    <div>
-      <label for="currency">Devise</label>
-      <select id="currency">
-        <option value="HTG" selected>HTG</option>
-        <option value="USD">USD</option>
-      </select>
-    </div>
-    <div id="rateWrap" style="display:none">
-      <label for="rate">Taux USD ↔ HTG</label>
-      <input id="rate" type="text" inputmode="decimal" placeholder="ex: 130">
-    </div>
-  </section>
-
-  <section class="layout">
-    <!-- Products -->
-    <main>
-      <div id="grid" class="grid" aria-live="polite"></div>
-    </main>
-
-    <!-- Cart / Récap + Coordonnées -->
-    <aside class="side" aria-label="Panier">
-      <h3 style="color:#0b4573;margin-bottom:6px">Votre panier</h3>
-      <div id="cartList" class="mini">Aucun article pour l’instant.</div>
-      <div class="row"><span class="muted">Sous-total</span><strong id="sub">0 HTG</strong></div>
-      <div class="row"><span class="muted">Remise</span><strong id="disc">—</strong></div>
-      <div class="row total"><span>Total estimé</span><strong id="tot">0 HTG</strong></div>
-
-      <div class="actions">
-        <!-- ✅ Coordonnées client -->
-        <h4 style="color:#0b4573;margin:4px 0 2px">Coordonnées client</h4>
-        <label class="mini" for="custName">Nom complet</label>
-        <input id="custName" type="text" placeholder="Prénom NOM" autocomplete="name" required>
-
-        <label class="mini" for="custPhone">Téléphone / WhatsApp</label>
-        <input id="custPhone" type="tel" inputmode="tel" placeholder="+509…" required pattern="^[0-9+()\\s-]{8,}$">
-
-        <label class="mini" for="custEmail">E-mail</label>
-        <input id="custEmail" type="email" placeholder="ex: nom@domaine.com" autocomplete="email" required>
-
-        <div class="mini" style="margin-top:6px">Mode de paiement</div>
-        <label class="mini"><input type="radio" name="shopPay" value="bank" data-fee-pct="0" data-fee-fixed="0" checked> Virement bancaire (0%)</label>
-        <label class="mini"><input type="radio" name="shopPay" value="moncash" data-fee-pct="0.03" data-fee-fixed="0"> MonCash (+3%)</label>
-        <label class="mini"><input type="radio" name="shopPay" value="natcash" data-fee-pct="0.03" data-fee-fixed="0"> NatCash (+3%)</label>
-        <label class="mini"><input type="radio" name="shopPay" value="cash" data-fee-pct="0" data-fee-fixed="0"> Espèces (0%)</label>
-
-        <!-- Livraison locale -->
-        <div class="row" style="margin-top:8px">
-          <label class="mini" style="display:flex;align-items:center;gap:8px">
-            <input type="checkbox" id="deliverOpt"> Livraison locale (zones proches) +500 HTG
-          </label>
-          <strong id="delivery">0 HTG</strong>
-        </div>
-
-        <!-- Adresse de livraison (affichée seulement si cochée) -->
-        <div id="custAddrWrap" style="display:none">
-          <label class="mini" for="custAddr">Adresse de livraison</label>
-          <textarea id="custAddr" placeholder="Quartier, repères, personne à joindre…"></textarea>
-        </div>
-
-        <div class="row"><span class="muted">Frais paiement</span><strong id="fee">0 HTG</strong></div>
-        <div class="row total"><span>Total avec frais</span><strong id="gt">0 HTG</strong></div>
-
-        <!-- 🎯 Bloc Contribution Projet Piscine (intégré au panier) -->
-        <div style="border-top:1px dashed var(--line);padding-top:10px;margin-top:10px">
-          <h4 style="color:#0066cc;font-size:.95rem;margin:0 0 6px">💙 Soutenir le projet piscine</h4>
-          <p style="font-size:.85rem;color:#475569;margin:4px 0">Chaque contribution aide à concrétiser notre piscine éducative !</p>
-          <form id="kcnFundFormCart" style="display:flex;gap:6px;margin:6px 0">
-            <input type="number" id="kcnFundAmountCart" min="250" step="50" placeholder="250 HTG" style="flex:1;padding:6px 8px;border-radius:8px;border:1px solid var(--line);font-size:.9rem">
-            <button class="btn" type="submit" style="padding:6px 12px;font-size:.9rem;white-space:nowrap">Ajouter</button>
-          </form>
-          <div style="font-size:.8rem;color:#64748b;margin-top:4px">Montant min: 250 HTG</div>
-        </div>
-
-        <button class="btn" id="checkout">Procéder au paiement</button>
-        <button class="btn alt" id="clearCart">Vider le panier</button>
-        <p class="mini">Le magasin est <strong>indépendant</strong> de l’inscription. Promo, devise, frais et livraison s’appliquent ici.</p>
-      </div>
-    </aside>
-  </section>
-
-  <div class="footer-cta footer-cta--shop">
-    <a class="btn alt" href="./index.html">← Retour à l'acceuil</a>
-    <a class="btn" href="./contactez-nous.html">Contacter KCN</a>
+    <div class="err" id="gateErr">Code incorrect.</div>
+    <div class="hint">Astuce : <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> rouvre la porte.</div>
   </div>
 </div>
 
-<!-- ===== Modal Détail Produit ===== -->
-<div class="modal" id="pdModal" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <h3 id="pdTitle">Détail produit</h3>
-      <button class="close" id="pdClose">Fermer ✕</button>
-    </div>
-    <div class="product-content">
-      <div class="viewer">
-        <img id="pdMain" src="" alt="">
-        <div class="thumbs" id="pdThumbs"></div>
+<!-- === Contenu admin (flouté tant que non déverrouillé) === -->
+<div id="mask">
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Admin KCN — Commandes & Stock (localStorage)</h1>
+      <div style="display:flex;gap:8px">
+        <button class="btn ghost" id="btnLogout" title="Verrouiller l'admin">Verrouiller</button>
+        <a class="btn alt" href="./boutique-kcn.html">← Retour boutique</a>
       </div>
-      <div class="pd-actions">
-        <div class="pd-price" id="pdPrice">—</div>
-        <div id="pdTags"></div>
-        <div id="pdColors"></div>
-        <div id="pdSizes"></div>
-        <div id="pdStock" class="mini"></div>
+    </div>
 
-        <div class="pd-qty">
-          <label for="pdQty"><strong>Quantité</strong></label>
-          <input id="pdQty" type="number" value="1" min="1" style="width:72px;padding:6px 8px;border:1px solid var(--line);border-radius:10px">
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" id="pdAdd">Ajouter au panier</button>
-          <button class="btn alt" id="pdBack">Fermer</button>
-        </div>
-        <div class="mini" id="pdDesc"></div>
-      </div>
+    <!-- Onglets -->
+    <div class="tabs">
+      <button class="tabbtn active" data-tab="orders">Commandes</button>
+      <button class="tabbtn" data-tab="stock">Stock</button>
     </div>
+
+    <!-- ===== Panel Commandes ===== -->
+    <section id="panel-orders" class="panel active" aria-labelledby="tab-orders">
+      <div class="tools">
+        <button id="refresh">Actualiser</button>
+        <button id="export" class="btn alt">Exporter CSV</button>
+        <button id="applySales" class="btn">Appliquer ventes → stock</button>
+        <button id="clear" class="btn alt">Vider toutes les commandes</button>
+      </div>
+      <div id="count" class="muted"></div>
+      <div id="list" class="list"></div>
+    </section>
+
+    <!-- ===== Panel Stock ===== -->
+    <section id="panel-stock" class="panel" aria-labelledby="tab-stock">
+      <div class="tools">
+        <button id="kcnStockShowAll" class="btn alt">Afficher / Actualiser</button>
+        <button id="kcnStockSave" class="btn">Enregistrer</button>
+        <button id="kcnStockExport" class="btn alt">Exporter JSON</button>
+        <button id="kcnStockImportBtn" class="btn alt">Importer catalogue</button>
+        <button id="kcnStockReset" class="btn alt">Réinitialiser</button>
+      </div>
+
+      <div class="muted" style="margin:6px 0 10px 0">
+        <strong>Légende :</strong>
+        <span class="kcn-tag green">En stock</span>
+        <span class="kcn-tag orange">Stock limité</span>
+        <span class="kcn-tag orange">Stock critique</span>
+        <span class="kcn-tag red">Rupture</span>
+      </div>
+
+      <div class="muted" style="margin:6px 0 10px 0">
+        Seuils :
+        <label><b>Critique</b> ≤
+          <input id="kcnThLow" type="number" min="1" value="5" style="width:60px">
+        </label> ·
+        <label><b>Limité</b> ≤
+          <input id="kcnThMid" type="number" min="2" value="10" style="width:60px">
+        </label>
+        <span class="muted">— 0 = Rupture</span>
+      </div>
+
+      <div style="overflow:auto;border:1px solid #e5e7eb;border-radius:12px;background:#fff">
+        <table id="kcnStockTable" style="width:100%;border-collapse:collapse">
+          <thead style="background:#f8fafc">
+            <tr>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">ID produit</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Nom</th>
+              <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb;white-space:nowrap">Stock</th>
+              <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb">Statut</th>
+              <th style="text-align:center;padding:10px;border-bottom:1px solid #e5e7eb">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="kcnStockBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Dialog d'import -->
+      <dialog id="kcnStockImportDialog">
+        <h3 style="margin:0 0 10px 0;color:#0b4573">Importer un catalogue</h3>
+        <p class="muted">Format JSON : <code>[{"id":"bonnet-p","name":"Bonnet (petit)","stock":12}, ...]</code></p>
+        <textarea id="kcnStockImportText" rows="10" style="width:100%"></textarea>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button id="kcnStockImportCancel" class="btn alt">Annuler</button>
+          <button id="kcnStockImportApply" class="btn">Importer</button>
+        </div>
+      </dialog>
+    </section>
   </div>
 </div>
-
-<!-- ===== Modal Zoom Image Produit ===== -->
-<div class="zoom-modal" id="zoomModal" aria-hidden="true">
-  <div class="zoom-inner">
-    <img id="zoomImg" src="" alt="">
-    <button class="zoom-close" id="zoomClose" aria-label="Fermer l’image">✕</button>
-  </div>
-</div>
-
-<!-- ===== Modal Paiement ===== -->
-<div class="kcn-modal" id="payModal" aria-hidden="true">
-  <div class="kcn-sheet" role="dialog" aria-modal="true" aria-labelledby="kcnPayTitle">
-    <div class="kcn-head">
-      <h3 id="kcnPayTitle">Instructions de paiement (0 frais plateforme)</h3>
-      <button class="kcn-close" id="kcnClose">Fermer ✕</button>
-    </div>
-
-    <div class="kcn-row">
-      <div class="kcn-mini"><strong>N° commande :</strong> <span id="kcnOrderId"></span></div>
-      <div class="kcn-mini"><strong>Total à régler :</strong> <span id="kcnOrderTotal"></span></div>
-    </div>
-
-    <div class="kcn-tabs" role="tablist">
-      <button class="kcn-tab active" data-tab="bank" role="tab" aria-selected="true">Virement bancaire</button>
-      <button class="kcn-tab" data-tab="moncash" role="tab">MonCash</button>
-      <button class="kcn-tab" data-tab="natcash" role="tab">NatCash</button>
-      <button class="kcn-tab" data-tab="cash" role="tab">Espèces</button>
-    </div>
-
-    <div class="kcn-row">
-      <div class="kcn-pane active" id="pane-bank" role="tabpanel">
-        <div class="kcn-box">
-          <div><strong>Banque :</strong> UNIBANK</div>
-          <div><strong>Intitulé :</strong> KOLTIZ</div>
-          <div><strong>Compte :</strong> 601-1621-1795621 (HTG)</div>
-          <div><strong>Compte :</strong> 601-1622-1795619 (USD)</div>
-          <div class="kcn-actions">
-            <button class="kcn-copy" data-copy="UNIBANK - KOLTIZ - 601-1621-1795621 / 601-1622-1795619">Copier</button>
-            <span class="kcn-mini">Libellé à mettre : <b id="kcnLabel1"></b></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="kcn-pane" id="pane-moncash" role="tabpanel">
-        <div class="kcn-box">
-          <div><strong>MonCash :</strong> +509 36 98 52 21</div>
-          <div><strong>Nom :</strong> KOLTIZ Club</div>
-          <div class="kcn-actions">
-            <button class="kcn-copy" data-copy="+50936985221">Copier numéro</button>
-            <a class="kcn-btn alt" id="kcnWhatsApp" target="_blank" rel="noopener">WhatsApp (pré-rempli)</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="kcn-pane" id="pane-natcash" role="tabpanel">
-        <div class="kcn-box">
-          <div><strong>NatCash :</strong> +509 55 49 72 37</div>
-          <div><strong>Nom :</strong> KOLTIZ Club</div>
-          <div class="kcn-actions">
-            <button class="kcn-copy" data-copy="+50955497237">Copier numéro</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="kcn-pane" id="pane-cash" role="tabpanel">
-        <div class="kcn-box">
-          <div><strong>Paiement en espèces</strong></div>
-          <div class="kcn-mini">
-            Réglez le montant <b>au comptoir KCN</b> (ou <b>à la livraison</b> si cochée).
-            Munissez-vous du <b>n° de commande</b> ci-dessous.
-          </div>
-          <div class="kcn-actions">
-            N° à annoncer : <b id="kcnLabel2"></b>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="kcn-cols">
-      <div>
-        <h4 style="margin:6px 0;color:#0b4573">Récapitulatif panier</h4>
-        <div class="kcn-box" id="kcnSummary"></div>
-      </div>
-      <div>
-        <h4 style="margin:6px 0;color:#0b4573">Preuve de paiement obligatoire</h4>
-        <div class="kcn-box" id="kcnProofWrap">
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <input type="file" id="kcnProof" accept="image/*,application/pdf">
-            <button class="kcn-btn alt" id="kcnSaveProof">Enregistrer preuve </button>
-            <span id="kcnProofOk" class="kcn-ok" style="display:none">Enregistrée ✓</span>
-          </div>
-          <p class="kcn-mini" style="margin-top:8px">Après paiement, téléverse la capture/attestation. Un reçu définitif sera émis après vérification.</p>
-        </div>
-
-        <div class="kcn-actions">
-          <button class="kcn-btn" id="kcnReceipt">Télécharger le reçu (provisoire)</button>
-          <button class="kcn-btn alt" id="kcnClose2">OK</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- ===== Hotspot + FAB Admin (boutique) ===== -->
-<div id="shopAdminHotspot" aria-hidden="true"></div>
-<button type="button" id="fabShopAdmin" class="fab-admin" title="Espace admin boutique" aria-label="Aller à l’admin boutique">
-  <span>🛡️</span>
-</button>
 
 <script>
-  /* ===================== Données Produits (AVEC STOCK) ===================== */
-  const INVENTORY = [
-   
-    /* Bonnets */
-    { id:'bonnet-g', cat:'bonnets', name:'Bonnet (gros) #110', priceHTG:2900, stock:0,
-      imgs:['./boutique-kcn/bonnet3/23.png','./boutique-kcn/bonnet3/24.png','./boutique-kcn/bonnet3/25.png','./boutique-kcn/bonnet3/28.jpeg','./boutique-kcn/bonnet3/29.jpeg','./boutique-kcn/bonnet3/30.jpeg'],
-      desc:"Bonnets de bain pour hommes et femme - Très grands bonnets de bain - Bonnet en silicone imperméable - Tresses en dreadlocks Extensions de cheveux afro,  Accessoires de plage, de piscine.",
-      tags:['adulte','cheveux volumineux'], colors:['bleu','violet','noir','rose','blanc'] },
-
-    { id:'bonnet-enfant', cat:'bonnets', name:'Bonnet Enfant unisexe #210', priceHTG:2025, stock:5,
-      imgs:['./boutique-kcn/bonnet-enfant/9.png','./boutique-kcn/bonnet-enfant/2.png','./boutique-kcn/bonnet-enfant/3.png','./boutique-kcn/bonnet-enfant/4.png','./boutique-kcn/bonnet-enfant/5.png','./boutique-kcn/bonnet-enfant/6.png','./boutique-kcn/bonnet-enfant/7.png','./boutique-kcn/bonnet-enfant/8.png','./boutique-kcn/bonnet-enfant/1.png'],
-      desc:"1pc Bonnet de Natation Cartoon Vibrant pour Jeunes - Protégeant les Oreilles en Couleurs Mélangées - Parfait pour les Activités de Piscine & le Bain.",
-      tags:['enfant','confort'], colors:['bleu-requin','bleu-clair','bleu-mickey','blanc-poisson','blanc-canard','rose-saumon-fraise','rose-chat','vert','violet-canard','noir','bleu-pale'] },
-
-    { id:'bonnets-enfant', cat:'bonnets', name:'Bonnet pour enfant #310', priceHTG:3052, stock:5,
-      imgs:['./boutique-kcn/enfant2/1.png','./boutique-kcn/enfant2/2.png','./boutique-kcn/enfant2/3.png','./boutique-kcn/enfant2/4.png','./boutique-kcn/enfant2/5.png'],
-      desc:"Bonnet de natation (filles & garçons).",
-      tags:['fille','garçon'], colors:['bleu-turquoise','rose-sirène','rose-licorne','bleu-ciel'] },
-
-    { id:'bonnet-adulte', cat:'bonnets', name:'Bonnet pour adulte #410', priceHTG:2025, stock:5,
-      imgs:['./boutique-kcn/adulte-bonnet/1.png','./boutique-kcn/adulte-bonnet/2.png','./boutique-kcn/adulte-bonnet/3.png','./boutique-kcn/adulte-bonnet/4.png','./boutique-kcn/adulte-bonnet/5.png','./boutique-kcn/adulte-bonnet/6.png','./boutique-kcn/adulte-bonnet/7.png','./boutique-kcn/adulte-bonnet/8.png','./boutique-kcn/adulte-bonnet/9.png'],
-      desc:"Bonnet adulte unisexe.",
-      tags:['confort','adulte'], colors:['bleu','blanc','rose','vert','violet','noir','bleu-pale'] },
-
-    { id:'bonnet-de-bain', cat:'bonnets', name:'Bonnet de bain #510', priceHTG:3500, stock:10,
-      imgs:['./boutique-kcn/bonnet-de-bain2/1.png','./boutique-kcn/bonnet-de-bain2/2.png','./boutique-kcn/bonnet-de-bain2/3.png','./boutique-kcn/bonnet-de-bain2/4.png','./boutique-kcn/bonnet-de-bain2/5.png','./boutique-kcn/bonnet-de-bain2/6.png','./boutique-kcn/bonnet-de-bain2/7.png'],
-      desc:"Bonnets de Natation Imperméables et Cache-Oreilles, Couleur Unie pour Hommes et Femmes, Adaptés aux Cheveux Longs et Courts, Design Ergonomique 3D, Protection des Oreilles, Confortable, Bonnet de Douche.",
-      tags:['sport','nautique'], colors:['rouge','bleu','blanc','rose','turquoise','noir','gris'] },
-
-    { id:'bonnets', cat:'bonnets', name:'Bonnet de bain #610', priceHTG:3500, stock:25,
-      imgs:['./boutique-kcn/bonnet1-tout-monde/5.png','./boutique-kcn/bonnet1-tout-monde/2.png','./boutique-kcn/bonnet1-tout-monde/3.png','./boutique-kcn/bonnet1-tout-monde/4.png','./boutique-kcn/bonnet1-tout-monde/1.png'],
-      desc:"Bonnets de natation en silicone, couvre-oreilles imperméables unisexe, accessoires de natation, fournitures de sports nautiques, conception ajustée, silicone de haute qualité, spéciaux pour les nageurs compétitifs, essentiels de la piscine, bonnets de natation imperméables de qualité supérieure.",
-      tags:['sport','nautique'], colors:['bleu-pale','blanc','rose','jaune','noir'] },
-
-    /* Lunettes */
-    { id:'lunettes-e', cat:'lunettes', name:'Lunettes (Enfant) #710', priceHTG:2000, stock:20,
-      imgs:['./boutique-kcn/lunettes-enfant/1.png','./boutique-kcn/lunettes-enfant/2.png','./boutique-kcn/lunettes-enfant/3.png','./boutique-kcn/lunettes-enfant/4.png','./boutique-kcn/lunettes-enfant/5.png','./boutique-kcn/lunettes-enfant/7.png'],
-      desc:'Antibuée, 3–14 ans.',
-      tags:['débutant','enfant','confort'], colors:['bleu','bleu-ciel','multi-color'] },
-
-    { id:'lunettes-g', cat:'lunettes', name:'Lunettes (avec bouchon oreille) #810', priceHTG:2700, stock:0,
-      imgs:['./boutique-kcn/lunettes-pro/1.png','./boutique-kcn/lunettes-pro/2.png','./boutique-kcn/lunettes-pro/3.png','./boutique-kcn/lunettes-pro/4.png','./boutique-kcn/lunettes-pro/5.png','./boutique-kcn/lunettes-pro/6.png'],
-      desc:'Monture adulte silicone, anti-buée.',
-      tags:['confort','homme'], colorChooserHTML:true, colors:['bleu-ciel','bleu','noir','gris'] },
-
-    { id:'lunettes-de-natation', cat:'lunettes', name:'Lunettes de natation #910', priceHTG:3500, stock:2,
-      imgs:['./boutique-kcn/lunettes-suv/1.png','./boutique-kcn/lunettes-suv/2.png','./boutique-kcn/lunettes-suv/3.png','./boutique-kcn/lunettes-suv/4.png','./boutique-kcn/lunettes-suv/5.png','./boutique-kcn/lunettes-suv/6.png'],
-      desc:"Protection UV pro, réglables.",
-      tags:['adultes','unisexe'], colors:['bleu','noir'] },
-
-    { id:'lunettes', cat:'lunettes', name:'Lunettes de natation #1000', priceHTG:3500, stock:24,
-      imgs:['./boutique-kcn/lunette2-14-ans/4.png','./boutique-kcn/lunette2-14-ans/2.png','./boutique-kcn/lunette2-14-ans/3.png','./boutique-kcn/lunette2-14-ans/1.png'],
-      desc:"Paire de Lunettes de Natation Anti-Buée pour Adultes, Hommes & Femmes - Protection UV, Design Étanche avec Sangles en Silicone Réglables et 6 Options de Couleurs (Monture Blanche), Accessoires de Piscine, Tenue de Bain Élégante, Équipement Sécurisé.",
-      tags:['adultes','unisexe'], colors:['bleu','noir','rouge','transparent-rouge','transparent-bleu','transparent-rose','orange','violet','vert'] },
-
-    /* Brassards */
-    { id:'brassards', cat:'brassards', name:'Brassards #1110', priceHTG:3000, stock:12,
-      imgs:['./boutique-kcn/brassard/br1.png','./boutique-kcn/brassard/br2.png','./boutique-kcn/brassard/br3.png','./boutique-kcn/brassard/br4.png','./boutique-kcn/brassard/br5.png','./boutique-kcn/brassard/br6.png'],
-      desc:'Brassards gonflables (enfants & adultes).',
-      tags:['sécurité','enfant'], colors:['jaune','orange','rose','bleu'] },
-
-    /* Frite / spagettie */
-    { id:'frite-spagettie', cat:'frite-spagettie', name:'Frite/Spagettie #1120', priceHTG:5000, stock:4,
-      imgs:['./boutique-kcn/Frite/16.png','./boutique-kcn/Frite/14.png'],
-      desc:'Frite en mousse (enfants & adultes).',
-      tags:['flexible','économie'], colors:['jaune','vert','rouge','violet','bleu'] },
-
-    /* pull-buoy */
-    { id:'pull-buoy', cat:'pull-buoy', name:'Pull-buoy #1130', priceHTG:1500, stock:2,
-      imgs:['./boutique-kcn/pull-buoy/1.png','./boutique-kcn/pull-buoy/2.png'],
-      desc:'Styles de flotteurs de formation de natation pour adultes, flotteurs de formation de natation.',
-      tags:['flexible','économie'], colors:['bleu'] },
-
-    /* tenu kids boy */
-    { id:'tenu-enfant-garcon', cat:'tenu-enfant-garcon', name:'Tenu-enfant-garcon #1140', priceHTG:1500, stock:2,
-      imgs:['./boutique-kcn/tenugarcon1a3ans/1.png','./boutique-kcn/tenugarcon1a3ans/2.png','./boutique-kcn/tenugarcon1a3ans/3.png','./boutique-kcn/tenugarcon1a3ans/4.png'],
-      desc:'Maillot de Bain Printemps-Été pour garcon à Motif requin - Vacances Plage etc...',
-      tags:['Maillot de Bain','Printemps-Été'],
-      colors:['bleu'],
-      sizes:['1-2 ans','2-3 ans','3-4 ans'] },
-
-    /* pince-nez */
-    { id:'pince-nez', cat:'pince-nez', name:'Pince-nez #1150', priceHTG:1400, stock:20,
-      imgs:['./boutique-kcn/pince-nez/1.png','./boutique-kcn/pince-nez/2.png','./boutique-kcn/pince-nez/3.png','./boutique-kcn/pince-nez/4.png'],
-      desc:'Paire Pinces à Nez en Silicone Colorées - Bouchons Réutilisables pour Natation et Plongée.',
-      tags:['flexible','économie'], colors:['bleu','vert','rouge','rose','orange','noir','transparent','jaune'] },
-
-    /* tenue fille 8 a 10 ans  */
-    { id:'tenue-fille', cat:'tenue-fille', name:'Tenue fille #1160', priceHTG:1400, stock:0,
-      imgs:['./boutique-kcn/tenuefille8ans-10/4.png','./boutique-kcn/tenuefille8ans-10/2.png','./boutique-kcn/tenuefille8ans-10/3.png','./boutique-kcn/tenuefille8ans-10/4.png'],
-      desc:'Tenue de bain fille 8 à 10 ans.',
-      tags:['tenue de bain','fille'],
-      colors:['bleu','vert','rouge','rose','orange','noir','transparent','jaune'],
-      sizes:['8 ans','9 ans','10 ans'] },
-
-    /* tenue fille 7 a 12 ans  */
-    { id:'tenue', cat:'tenue', name:'Tenue fille #1170', priceHTG:1400, stock:0,
-      imgs:['./boutique-kcn/te-fi-En/1.png','./boutique-kcn/te-fi-En/2.png','./boutique-kcn/te-fi-En/3.png','./boutique-kcn/te-fi-En/4.png'],
-      desc:'Maillot de bain une pièce, style conservateur, pour filles 7 à 12 ans.',
-      tags:['tenue de bain','fille'],
-      colors:['noir'],
-      sizes:['7-8 ans','9-10 ans','11-12 ans'] },
-
-   /* tenue garçon  */
-    { id:'tenue-garçon', cat:'tenue-garçon', name:'Tenue garçon #1180', priceHTG:1400, stock:0,
-      imgs:['./boutique-kcn/te-gar-en3/1.png','./boutique-kcn/te-gar-en3/3.jpeg','./boutique-kcn/te-gar-en3/4.png','./boutique-kcn/te-gar-en3/5.png','./boutique-kcn/te-gar-en3/6.jpeg','./boutique-kcn/te-gar-en3/15.png','./boutique-kcn/te-gar-en3/33.png'],
-      desc:'Maillot de bain pour bébé garçon Joli maillot de bain une pièce en tissu tricoté motif requin, tenue de loisirs élégante adaptée à la natation, aux vacances et aux escapades estivales, vacances, voyages, détente, été, vacances.',
-      tags:['tenue de bain','garçon'],
-      colors:['noir'],
-      sizes:['7-8 ans','9-10 ans','11-12 ans'] },
-
-    /* Gilet de sauvetage */
-    { id:'gilet', cat:'gilet', name:'Gilet de sauvetage gonflable #1190', priceHTG:1960, stock:5,
-      imgs:['./boutique-kcn/gilet/1.png','./boutique-kcn/gilet/2.png','./boutique-kcn/gilet/3.png','./boutique-kcn/gilet/4.png'],
-      desc:"Gilet de natation gonflable - anneaux de sécurité orange vif, jaune et bleu pour fêtes en piscine, matériau PVC résistant, facile à gonfler et dégonfler.",
-      tags:['sécurité'], colors:['bleu-S','bleu-M','bleu-L','orange-S','orange-M','orange-L','jaune-S','jaune-M','jaune-L'] },
-
-    /* Masque + Tuba */
-    { id:'masque-tuba', cat:'masque-tuba', name:'Masque-Tuba #2000', priceHTG:4050, stock:6,
-      imgs:['./boutique-kcn/masque-tuba/17.png','./boutique-kcn/masque-tuba/19.png','./boutique-kcn/masque-tuba/20.png','./boutique-kcn/masque-tuba/21.png','./boutique-kcn/masque-tuba/22.png'],
-      desc:'Lunettes de plongée pour adultes, masque de snorkeling étanche et anti-buée avec verre trempé, angle panoramique 180°, tube de ventilation prolongé, idéal pour la baignade et le tourisme.',
-      tags:['unisexe','plongée'], pack:['masque-tuba'], colors:['rouge','rose','blanc','jaune','noir'] },
-
-    /* Planche */
-    { id:'planche', cat:'planche', name:'Planche de natation #2010', priceHTG:1100, stock:6,
-      imgs:['./boutique-kcn/planche/01.png','./boutique-kcn/planche/1.png','./boutique-kcn/planche/2.png','./boutique-kcn/planche/3.png','./boutique-kcn/planche/4.png','./boutique-kcn/planche/5.png'],
-      desc:'Équipement de flotteurs d’aide d’été pour adultes et débutants, accessoires de natation, flotteurs de piscine, design ludique, construction robuste.',
-      tags:['entrainement'], colors:['bleu','rose','orange','jaune','vert'] },
-
-    /* Articles additionnels … */
-    { id:'colan-1', cat:'colan', name:'Collant/homme #2020', priceHTG:1800, stock:0,
-      imgs:['./boutique-kcn/colan-1/1.png','./boutique-kcn/colan-1/2.png','./boutique-kcn/colan-1/3.png','./boutique-kcn/colan-1/4.png','./boutique-kcn/colan-1/5.png'],
-      desc:'Collant / caleçon bain — modèle 1.',
-      tags:['tenue','bain'], colors:['Noir avec une finition bleue','Noir avec une finition rouge'] },
-
-    { id:'colan-2', cat:'colan', name:'Collant/homme #2030', priceHTG:2000, stock:6,
-      imgs:['./boutique-kcn/colan-2/1.png','./boutique-kcn/colan-2/2.png','./boutique-kcn/colan-2/3.png','./boutique-kcn/colan-2/4.png','./boutique-kcn/colan-2/5.png','./boutique-kcn/colan-2/6.png'],
-      desc:'Collant / caleçon bain — modèle 2.',
-      tags:['tenue','bain'], colors:['noir','gris'] },
-
-    { id:'sac-gonflable', cat:'colis', name:'Mini sac gonflable #2040', priceHTG:2500, stock:4,
-      imgs:['./boutique-kcn/sac-gonflable/1.png','./boutique-kcn/sac-gonflable/2.png','./boutique-kcn/sac-gonflable/3.png'],
-      desc:'Mini sac gonflable de sécurité / rangement étanche (pratique pour la plage et la piscine).',
-      tags:['accessoire','sac'], colors:['bleu','rose'] },
-
-    { id:'tenue-adu-fi1', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2050', priceHTG:4200, stock:5,
-      imgs:['./boutique-kcn/tenue-adu-fi1/1.png','./boutique-kcn/tenue-adu-fi1/2.png','./boutique-kcn/tenue-adu-fi1/3.png','./boutique-kcn/tenue-adu-fi1/4.png'],
-      desc:'Tenue de bain pour adulte femme - modèle 1.',
-      tags:['tenue de bain','femme'], colors:['rose','noir'] },
-
-    { id:'tenue-adu-fi2', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2060', priceHTG:4200, stock:5,
-      imgs:['./boutique-kcn/tenue-adu-fi2/1.png','./boutique-kcn/tenue-adu-fi2/2.png','./boutique-kcn/tenue-adu-fi2/3.png','./boutique-kcn/tenue-adu-fi2/5.png'],
-      desc:'Tenue de bain pour adulte femme - modèle 2.',
-      tags:['tenue de bain','femme'], colors:['bleu','noir'] },
-
-    { id:'tenue-adu-fi3', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2070', priceHTG:4200, stock:5,
-      imgs:['./boutique-kcn/tenue-adu-fi3/1.png','./boutique-kcn/tenue-adu-fi3/2.png','./boutique-kcn/tenue-adu-fi3/3.png','./boutique-kcn/tenue-adu-fi3/4.png','./boutique-kcn/tenue-adu-fi3/5.png'],
-      desc:'Tenue de bain pour adulte femme - modèle 3.',
-      tags:['tenue de bain','femme'], colors:['violet','noir'] },
-
-    { id:'tenue-fi-en1', cat:'tenue-fille', name:'Tenue fille modèle #2080', priceHTG:1400, stock:6,
-      imgs:['./boutique-kcn/tenue-fi-en1/1.png','./boutique-kcn/tenue-fi-en1/2.png','./boutique-kcn/tenue-fi-en1/3.png','./boutique-kcn/tenue-fi-en1/4.png','./boutique-kcn/tenue-fi-en1/5.png'],
-      desc:'Tenue fille, modèle A (divers tailles).',
-      tags:['tenue de bain','fille'], colors:['rose','bleu'] },
-
-    { id:'tenue-fi-en2', cat:'tenue-fille', name:'Tenue fille modèle #2090', priceHTG:1400, stock:6,
-      imgs:['./boutique-kcn/tenue-fi-en2/1.png','./boutique-kcn/tenue-fi-en2/2.png','./boutique-kcn/tenue-fi-en2/3.png','./boutique-kcn/tenue-fi-en2/4.png','./boutique-kcn/tenue-fi-en2/5.png'],
-      desc:'Tenue fille, modèle B (divers tailles).',
-      tags:['tenue de bain','fille'], colors:['vert','bleu'] },
-
-    { id:'tenue-gar-en1', cat:'tenue-garcon', name:'Tenue garçon modèle #2100', priceHTG:1500, stock:6,
-      imgs:['./boutique-kcn/tenue-gar-en1/1.png','./boutique-kcn/tenue-gar-en1/2.png','./boutique-kcn/tenue-gar-en1/3.png','./boutique-kcn/tenue-gar-en1/4.png','./boutique-kcn/tenue-gar-en1/5.png','./boutique-kcn/tenue-gar-en1/6.png'],
-      desc:'Tenue garçon, modèle A (tailles enfants).',
-      tags:['tenue de bain','garçon'], colors:['bleu','jaune'] },
-
-    /* Corde-élastique */
-    { id:'corde-élastique', cat:'corde-élastique', name:'corde-élastique #2110', priceHTG:2100, stock:2,
-      imgs:['./boutique-kcn/corde-naje/1.png','./boutique-kcn/corde-naje/2.png','./boutique-kcn/corde-naje/3.png','./boutique-kcn/corde-naje/4.png'],
-      desc:'Équipement de renforcement musculaire avec résistance à la natation, corde élastique, ceinture de natation, bande de renforcement musculaire avec force de tractage.',
-      tags:['entrainement'], colors:[ 'jaune','noir'] },
-
-    /* Pince-nez & bouchons */
-    { id:'pince-nez-bouchons', cat:'pince-nez-bouchons', name:'Pince-nez & bouchons d’oreilles #2120', priceHTG:1120, stock:2,
-      imgs:['./boutique-kcn/bouchon-pince-nez/2.png','./boutique-kcn/bouchon-pince-nez/1.png','./boutique-kcn/bouchon-pince-nez/3.png','./boutique-kcn/bouchon-pince-nez/4.png','./boutique-kcn/bouchon-pince-nez/5.png','./boutique-kcn/bouchon-pince-nez/6.png'],
-      desc:"Ensemble de pince à nez de natation et de bouchons d'oreille en silicone, fournitures de sports aquatiques en plein air.",
-      tags:['accessoires'], colors:['bleu','rose','noir'] },
-
-    { id:'te-fil-en', cat:'tenue-fille', name:'Tenue fille modèle #2130', priceHTG:1460, stock:5,
-      imgs:['./boutique-kcn/te-fil-en/1.png','./boutique-kcn/te-fil-en/2.png', './boutique-kcn/te-fil-en/3.png','./boutique-kcn/te-fil-en/4.png', './boutique-kcn/te-fil-en/5.png', './boutique-kcn/te-fil-en/6.png','./boutique-kcn/te-fil-en/7.png'],
-      desc:'Maillot de Bain Une Pièce Fermeture Éclair Dos Nu pour Filles - Maillot de Bain Compétition à Changement Rapide avec Jambes Courtes, Sans Manches pour Entraînement, Plage et Piscine, Lavable en Machine (Adolescentes) - Maillot de Bain Sportif Ajusté.',
-      tags:['tenue de bain','fille'],
-      colors:['bleu-marin','noir']
-    },
-    { id:'brassard-', cat:'brassards', name:'Brassards modèle #2140', priceHTG:2000, stock:10,
-      imgs:['./boutique-kcn/brassard-/1.png','./boutique-kcn/brassard-/2.png','./boutique-kcn/brassard-/2 (2).png','./boutique-kcn/brassard-/4.png','./boutique-kcn/brassard-/5.png'],
-      desc:'Bestway, 1 Paire de Brassards Gonflables…',
-      tags:['sécurité','enfant'],
-      colors:['jaune']
-    }
-  ];
-
-  /* ===================== Config & État ===================== */
-  const COURSE_ITEMS = [
-    {id:'reg', name:"Frais d'inscription", priceHTG:1500},
-    {id:'month', name:'Mois 1', priceHTG:6500},
-    // ✅ Don piscine en HTG (prix=1 HTG, qty = montant donné)
-    {id:'don-piscine', name:'Don Piscine Éducative — KCN (HTG)', priceHTG:1}
-  ];
-
-  // Promo packs (bandeau) + règle supplémentaire "À partir de 4 articles, le 5ᵉ à moitié prix"
-  const PROMO = { active:false, rate:0.10, appliesTo:'packs' };
-  const DELIVERY_HTG = 500;
-
-  const state = { q:'', cat:'', currency:'HTG', rate:null, cart:{}, delivery:false };
-  state.options = {};
-
-  try{ state.cart = JSON.parse(localStorage.getItem('kcn_cart')||'{}'); }catch{ state.cart = {}; }
-
-  const STOCK_KEY = 'kcn_stock';
-  let STOCK_OVERRIDES = {};
-  try{ STOCK_OVERRIDES = JSON.parse(localStorage.getItem(STOCK_KEY)||'{}'); }catch{ STOCK_OVERRIDES = {}; }
-
-  function getStock(id){ const base = (INVENTORY.find(p=>p.id===id)?.stock ?? 0); const cur = STOCK_OVERRIDES[id]; return Number.isFinite(cur)?cur:base; }
-  function setStock(id, qty){ STOCK_OVERRIDES[id] = Math.max(0, qty|0); localStorage.setItem(STOCK_KEY, JSON.stringify(STOCK_OVERRIDES)); }
-
-  /* ===================== Helpers ===================== */
-  const fmt = (v,cur) => (cur==='USD'?'$ ':'')+
-    new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(v)+
-    (cur==='HTG'?' HTG':'');
-
-  function viewPrice(htg){
-    if(state.currency==='USD'){
-      const r = parseFloat((elRate.value||'').replace(',','.'));
-      return (r>0) ? htg/r : NaN;
-    }
-    return htg;
-  }
-
-  function stockLabelAndClass(stock){
-    if (stock <= 0) return { label: 'rupture',  cls: 'out'  };
-    if (stock <= 2) return { label: 'critique', cls: 'warn' };
-    if (stock <= 5) return { label: 'limité',   cls: 'low'  };
-    return              { label: 'en stock',    cls: 'ok'   };
-  }
-
-  /* ===================== Rendu Produits ===================== */
-  const elQ = document.getElementById('q');
-  const elCat = document.getElementById('cat');
-  const elCur = document.getElementById('currency');
-  const elRateWrap = document.getElementById('rateWrap');
-  const elRate = document.getElementById('rate');
-  const grid = document.getElementById('grid');
-  const cartList = document.getElementById('cartList');
-  const sub = document.getElementById('sub');
-  const disc = document.getElementById('disc');
-  const tot = document.getElementById('tot');
-  const fee = document.getElementById('fee');
-  const gt  = document.getElementById('gt');
-  const delivery = document.getElementById('delivery');
-  const deliverOpt = document.getElementById('deliverOpt');
-
-  // ✅ Coordonnées client
-  const custName = document.getElementById('custName');
-  const custPhone = document.getElementById('custPhone');
-  const custEmail = document.getElementById('custEmail');
-  const custAddr = document.getElementById('custAddr');
-  const custAddrWrap = document.getElementById('custAddrWrap');
-
-  function renderProducts(){
-    const q = state.q.trim().toLowerCase();
-    const cat = state.cat;
-
-    grid.innerHTML='';
-    const pool = INVENTORY.filter(p=>{
-      const okCat = !cat || p.cat===cat;
-      const okQ = !q || p.name.toLowerCase().includes(q) || (p.tags||[]).some(t=>t.toLowerCase().includes(q));
-      return okCat && okQ;
-    });
-
-    if(pool.length===0){
-      grid.innerHTML = '<p class="mini">Aucun article ne correspond à votre recherche.</p>';
-      return;
-    }
-
-    pool.forEach(p=>{
-      const price = viewPrice(p.priceHTG);
-      const priceTxt = isNaN(price)?'—':fmt(price,state.currency);
-      const card = document.createElement('article');
-      card.className='product-card';
-      const firstImg = (p.imgs && p.imgs[0]) ? p.imgs[0] : '';
-      const currentStock = getStock(p.id);
-      const {label, cls} = stockLabelAndClass(currentStock);
-      const stockBadge = label ? `<span class="stock ${cls}">${label}</span>` : '';
-      const disabled = currentStock<=0 ? 'disabled' : '';
-
-      card.innerHTML = `
-        <img src="${firstImg}" alt="${p.name}" class="thumb" loading="lazy" data-view="${p.id}">
-        <div class="bd">
-          <h3>${p.name}</h3>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;gap:8px;flex-wrap:wrap">
-            <div>${(p.tags||[]).slice(0,2).map(t=>`<span class='tag'>${t}</span>`).join('')}</div>
-            <div class="price">${priceTxt}</div>
-          </div>
-          <div style="margin:6px 0">${stockBadge}</div>
-          <div class="inline-actions">
-            <div class="qty"><small class="muted">Qté</small> <input type="number" min="1" value="1" data-qty-for="${p.id}"></div>
-            <div style="display:flex;gap:8px">
-              <button class="btn alt" data-view="${p.id}">Voir</button>
-              <button class="btn" data-add="${p.id}" ${disabled} title="${currentStock<=0?'rupture':''}">Ajouter</button>
-            </div>
-          </div>
-        </div>`;
-      grid.appendChild(card);
-    });
-  }
-
-  /* ===================== Calcul Panier ===================== */
-  function computeCartBase(){
-    // totalHTG : somme brute
-    // discountHTG : cumul remises (packs promo + promo quantité "5ᵉ à moitié prix")
-    let totalHTG = 0, discountHTG = 0;
-    const unitPrices = []; // pour calcul quantité-based promo
-
-    Object.entries(state.cart).forEach(([id,qty])=>{
-      const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
-      if(!item) return;
-      const line = item.priceHTG * qty;
-      totalHTG += line;
-
-      // Promo packs (existant: -10% sur cat 'packs')
-      if(PROMO.active && item.cat === PROMO.appliesTo){
-        discountHTG += line * PROMO.rate;
-      }
-
-      // Préparer liste d'unités éligibles à la promo "5ᵉ à moitié prix".
-      // Exclure donations (id starting with 'don') et autres éléments non produits.
-      if(!String(id).startsWith('don')){
-        for(let i=0;i<qty;i++){
-          unitPrices.push(item.priceHTG);
-        }
-      }
-    });
-
-    // Règle : "à partir de 4 articles, le 5ᵉ à moitié prix"
-    // Interprétation : pour chaque groupe de 5 unités (toutes catégories produits/packs, sauf donations),
-    // appliquer une remise = 50% du prix de l'unité la moins chère (par groupe).
-    // Ici on trie les unités par prix ascendant et on applique la moitié sur les plus petites unités (conservateur côté boutique).
-    unitPrices.sort((a,b)=>a-b);
-    const groups = Math.floor(unitPrices.length / 5);
-    for(let g=0; g<groups; g++){
-      const cheapest = unitPrices[g];
-      if(typeof cheapest === 'number' && isFinite(cheapest)){
-        discountHTG += Math.round(cheapest * 0.5);
-      }
-    }
-
-    return { totalHTG, discountHTG, netHTG: totalHTG - discountHTG };
-  }
-
-  function getSelectedPay(){
-    const r = document.querySelector('input[name="shopPay"]:checked');
-    if(!r) return {pct:0,fix:0};
-    return {pct: parseFloat(r.dataset.feePct||'0'), fix: parseFloat(r.dataset.feeFixed||'0')};
-  }
-
-  function updateFeesAndGrandTotal(){
-    const { netHTG } = computeCartBase();
-    const pay = getSelectedPay();
-    const feeHTG = (netHTG * (pay.pct||0)) + (pay.fix||0);
-    const deliveryHTG = state.delivery ? DELIVERY_HTG : 0;
-    const gtHTG  = netHTG + feeHTG + deliveryHTG;
-
-    const vFee = viewPrice(feeHTG);
-    const vGT  = viewPrice(gtHTG);
-    const vDel = viewPrice(deliveryHTG);
-
-    fee.textContent = isNaN(vFee)?'—':fmt(vFee, state.currency);
-    gt.textContent  = isNaN(vGT)?'—':fmt(vGT, state.currency);
-    delivery.textContent = isNaN(vDel)?'—':fmt(vDel, state.currency);
-  }
-
-  function computeCart(){
-    const { totalHTG, discountHTG, netHTG } = computeCartBase();
-    const vSub = viewPrice(totalHTG);
-    const vDisc = viewPrice(discountHTG);
-    const vTot = viewPrice(netHTG);
-    sub.textContent = isNaN(vSub)?'—':fmt(vSub,state.currency);
-    disc.textContent = (discountHTG>0) ? ('– '+fmt(vDisc,state.currency)) : '—';
-    tot.textContent = isNaN(vTot)?'—':fmt(vTot,state.currency);
-    updateFeesAndGrandTotal();
-  }
-
-  function renderCart(){
-    const ids = Object.keys(state.cart);
-    if(ids.length===0){ cartList.textContent='Aucun article pour l’instant.'; computeCart(); return; }
-    const ul = document.createElement('div');
-    ids.forEach(id=>{
-      const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
-      if(!item) return;
-      const qty = state.cart[id];
-      const priceEach = viewPrice(item.priceHTG);
-      const opt = state.options[id] || {};
-      let label = item.name;
-      if(opt.color && opt.size){
-        label += ` – Couleur: ${opt.color} – Taille: ${opt.size}`;
-      }else if(opt.color){
-        label += ` – Couleur: ${opt.color}`;
-      }else if(opt.size){
-        label += ` – Taille: ${opt.size}`;
-      }
-      const line = document.createElement('div');
-      line.className='row';
-      line.innerHTML = `<span>${label} × ${qty}</span><strong>${isNaN(priceEach)?'—':fmt(priceEach*qty,state.currency)}</strong>`;
-      ul.appendChild(line);
-    });
-    cartList.innerHTML=''; cartList.appendChild(ul);
-    computeCart();
-  }
-
-  function saveCart(){ localStorage.setItem('kcn_cart', JSON.stringify(state.cart)); }
-
-  /* ===================== Coordonnées client: save/load ===================== */
-  function saveCustomer(){
-    const data = {
-      name: (custName.value||'').trim(),
-      phone: (custPhone.value||'').trim(),
-      email: (custEmail.value||'').trim(),
-      addr: (custAddr.value||'').trim()
-    };
-    localStorage.setItem('kcn_customer', JSON.stringify(data));
-  }
-  function loadCustomer(){
-    try{
-      const c = JSON.parse(localStorage.getItem('kcn_customer')||'null');
-      if(!c) return;
-      if(c.name) custName.value = c.name;
-      if(c.phone) custPhone.value = c.phone;
-      if(c.email) custEmail.value = c.email;
-      if(c.addr) custAddr.value = c.addr;
-    }catch{}
-  }
-  ;[custName, custPhone, custEmail, custAddr].forEach(el=>{
-    if(el) el.addEventListener('input', saveCustomer);
-  });
-
-  /* ===================== Écouteurs ===================== */
-  elQ.addEventListener('input', e=>{ state.q=e.target.value; renderProducts(); });
-  elCat.addEventListener('change', e=>{ state.cat=e.target.value; renderProducts(); });
-  elCur.addEventListener('change', e=>{
-    state.currency=e.target.value; elRateWrap.style.display = state.currency==='USD' ? 'block' : 'none';
-    renderProducts(); renderCart();
-  });
-  elRate.addEventListener('input', ()=>{ renderProducts(); renderCart(); });
-
-  document.addEventListener('change', (e)=>{
-    if(e.target.name==='shopPay'){ updateFeesAndGrandTotal(); }
-  });
-
-  deliverOpt.addEventListener('change', ()=>{
-    state.delivery = deliverOpt.checked;
-    custAddrWrap.style.display = state.delivery ? 'block' : 'none';
-    updateFeesAndGrandTotal();
-  });
-
-  // ✅ Bouton "Vider le panier" : vide immédiatement sans confirmation
-  document.getElementById('clearCart').addEventListener('click', () => {
-    state.cart = {};
-    state.options = {};
-    saveCart();
-    renderCart();
-    grid.querySelectorAll('input[data-qty-for]').forEach(input => { input.value = 1; });
-    renderProducts();
-  });
-
-  // Délégation sur la grille
-  grid.addEventListener('click', (e)=>{
-    const addId = e.target.getAttribute('data-add');
-    const viewId = e.target.getAttribute('data-view');
-
-    if(addId){
-      const stockLeft = getStock(addId);
-      const cartQty   = state.cart[addId] || 0;
-
-      if (stockLeft <= cartQty){
-        alert("Quantité maximum atteinte dans le panier");
-        return;
-      }
-
-      const qtyInput = grid.querySelector(`input[data-qty-for="${addId}"]`);
-      let qtyToAdd = Math.max(1, parseInt(qtyInput?.value || '1', 10) || 1);
-      let newQty   = cartQty + qtyToAdd;
-
-      if (newQty > stockLeft){
-        qtyToAdd = stockLeft - cartQty;
-        newQty   = stockLeft;
-        alert(`Reste disponible : ${stockLeft - cartQty}`);
-      }
-
-      state.cart[addId] = newQty;
-      if (qtyInput) qtyInput.value = newQty;
-
-      saveCart();
-      renderCart();
-    }
-
-    if(viewId){ openProductModal(viewId); }
-  });
-
-  /* ===================== Modal Produit ===================== */
-  const pdModal = document.getElementById('pdModal');
-  const pdClose = document.getElementById('pdClose');
-  const pdBack  = document.getElementById('pdBack');
-  const pdMain  = document.getElementById('pdMain');
-  const pdTitle = document.getElementById('pdTitle');
-  const pdPrice = document.getElementById('pdPrice');
-  const pdTags  = document.getElementById('pdTags');
-  const pdDesc  = document.getElementById('pdDesc');
-  const pdThumbs= document.getElementById('pdThumbs');
-  const pdQty   = document.getElementById('pdQty');
-  const pdAdd   = document.getElementById('pdAdd');
-  const pdColors = document.getElementById('pdColors');
-  const pdSizes = document.getElementById('pdSizes');
-  const pdStock = document.getElementById('pdStock');
-
-  let currentPdId = null;
-
-  // Zoom image (lightbox)
-  const zoomModal = document.getElementById('zoomModal');
-  const zoomImg   = document.getElementById('zoomImg');
-  const zoomClose = document.getElementById('zoomClose');
-
-  function colorChooserHTML(colors){
-    if(!colors || !colors.length) return '';
-    return `
-      <div>
-        <div style="font-weight:700;color:#0b4573;margin:4px 0">Couleur</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pdColorWrap">
-          ${colors.map((c,i)=>`
-            <label class="mini" style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 10px;border-radius:10px;cursor:pointer">
-              <input type="radio" name="pdColor" value="${c}" ${i===0?'checked':''}>
-              <span>${c}</span>
-            </label>
-          `).join('')}
-        </div>
-      </div>`;
-  }
-
-  function sizeChooserHTML(sizes){
-    if(!sizes || !sizes.length) return '';
-    return `
-      <div>
-        <div style="font-weight:700;color:#0b4573;margin:4px 0">Taille</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pdSizeWrap">
-          ${sizes.map((s,i)=>`
-            <label class="mini" style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 10px;border-radius:10px;cursor:pointer">
-              <input type="radio" name="pdSize" value="${s}" ${i===0?'checked':''}>
-              <span>${s}</span>
-            </label>
-          `).join('')}
-        </div>
-      </div>`;
-  }
-
-  function getSelectedSize(){ const r = document.querySelector('input[name="pdSize"]:checked'); return r ? r.value : null; }
-  function getSelectedColor(){ const r = document.querySelector('input[name="pdColor"]:checked'); return r ? r.value : null; }
-
-  function openZoom(src, alt){
-    if(!src) return;
-    zoomImg.src = src; zoomImg.alt = alt || '';
-    zoomModal.classList.add('open'); zoomModal.setAttribute('aria-hidden','false');
-  }
-  function closeZoom(){ zoomModal.classList.remove('open'); zoomModal.setAttribute('aria-hidden','true'); }
-
-  pdMain.addEventListener('click', ()=>{ if(!pdMain.src) return; openZoom(pdMain.src, pdMain.alt); });
-  zoomClose.addEventListener('click', closeZoom);
-  zoomModal.addEventListener('click', (e)=>{ if(e.target === zoomModal) closeZoom(); });
-  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ closeZoom(); } });
-
-  function openProductModal(id){
-    const p = INVENTORY.find(x=>x.id===id);
-    if(!p) return;
-    currentPdId = id;
-    pdTitle.textContent = p.name;
-    pdDesc.textContent = p.desc || '';
-    const v = viewPrice(p.priceHTG);
-    pdPrice.textContent = isNaN(v)?'—':fmt(v,state.currency);
-
-    const images = p.imgs && p.imgs.length ? p.imgs : [''];
-    pdMain.src = images[0]||'';
-    pdMain.alt = p.name;
-    pdThumbs.innerHTML = images.map((src,i)=>`<img src="${src}" alt="vignette ${i+1}" ${i===0?'aria-current="true"':''}>`).join('');
-    pdTags.innerHTML = (p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join(' ');
-
-    pdColors.innerHTML = colorChooserHTML(p.colors);
-    pdSizes.innerHTML  = sizeChooserHTML(p.sizes);
-
-    const s = getStock(p.id);
-    const {label, cls} = stockLabelAndClass(s);
-    pdStock.innerHTML = label ? `<span class="stock ${cls}">${label}</span>` : '';
-    pdAdd.disabled = s<=0;
-    pdQty.max = Math.max(1, s);
-    pdQty.value = (s>0?1:0);
-
-    pdModal.classList.add('open');
-    pdModal.setAttribute('aria-hidden','false');
-  }
-
-  pdThumbs.addEventListener('click', (e)=>{
-    const img = e.target.closest('img');
-    if(!img) return;
-    pdThumbs.querySelectorAll('img').forEach(i=>i.removeAttribute('aria-current'));
-    img.setAttribute('aria-current','true');
-    pdMain.src = img.src;
-  });
-
-  function closePdModal(){
-    pdModal.classList.remove('open');
-    pdModal.setAttribute('aria-hidden','true');
-    currentPdId = null;
-    pdColors.innerHTML = '';
-    pdSizes.innerHTML = '';
-    pdStock.innerHTML = '';
-  }
-  pdClose.addEventListener('click', closePdModal);
-  pdBack.addEventListener('click', closePdModal);
-  pdModal.addEventListener('click', (e)=>{ if(e.target===pdModal) closePdModal(); });
-
-  pdAdd.addEventListener('click', ()=>{
-    if(!currentPdId) return;
-    let qtyToAdd = Math.max(1, parseInt(pdQty.value||'1',10)||1);
-    const s = getStock(currentPdId);
-    if(s <= 0){ alert('Rupture de stock'); return; }
-
-    const currentQty = state.cart[currentPdId] || 0;
-    let newQty = currentQty + qtyToAdd;
-    if(newQty > s){
-      alert(`Stock disponible : ${s}\nQuantité déjà dans le panier : ${currentQty}\nQuantité maximum ajoutée.`);
-      newQty = s;
-    }
-
-    const color = getSelectedColor();
-    const size  = getSelectedSize();
-    const opt = {};
-    if (color) opt.color = color;
-    if (size)  opt.size  = size;
-    if (Object.keys(opt).length){ state.options[currentPdId] = opt; }
-
-    state.cart[currentPdId] = newQty;
-    saveCart(); renderCart(); renderProducts(); closePdModal();
-  });
-
-  /* ===================== Modal Paiement (checkout) ===================== */
-  const payModal = document.getElementById('payModal');
-  const kcnClose = document.getElementById('kcnClose');
-  const kcnClose2 = document.getElementById('kcnClose2');
-  const kcnOrderId = document.getElementById('kcnOrderId');
-  const kcnOrderTotal = document.getElementById('kcnOrderTotal');
-  const kcnSummary = document.getElementById('kcnSummary');
-  const kcnLabel1 = document.getElementById('kcnLabel1');
-  const kcnLabel2 = document.getElementById('kcnLabel2');
-  const kcnWhatsApp = document.getElementById('kcnWhatsApp');
-  const kcnProof = document.getElementById('kcnProof');
-  const kcnEcoOpt = document.getElementById('kcnEcoOpt'); // nouvelle option
-
-  document.querySelectorAll('.kcn-tab').forEach(btn=>{
+  /* ===================== NAV TABS ===================== */
+  document.querySelectorAll('.tabbtn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.kcn-tab').forEach(b=>b.classList.remove('active'));
-      document.querySelectorAll('.kcn-pane').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
       btn.classList.add('active');
-      const id = btn.getAttribute('data-tab');
-      document.getElementById('pane-'+id).classList.add('active');
-      const proofWrap = document.getElementById('kcnProofWrap');
-      if (proofWrap) proofWrap.style.display = (id === 'cash') ? 'none' : 'block';
+      document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+      if(btn.dataset.tab==='orders'){ loadOrders(false); }
+      if(btn.dataset.tab==='stock'){ KCNStock.open(); }
     });
+  });
+
+  /* ===================== UTIL ===================== */
+  function fmt(v,cur){ return (isNaN(v)?'—':new Intl.NumberFormat('fr-FR').format(v)+(cur==='HTG'?' HTG':'')); }
+  function view(htg,currency){ return currency==='USD' ? NaN : htg; }
+  function qtySafe(n){ return Math.max(0, parseInt(n||'0',10)||0); }
+
+  /* ===================== PANEL COMMANDES ===================== */
+  const list = document.getElementById('list');
+  const count= document.getElementById('count');
+
+  document.getElementById('refresh').onclick = ()=> loadOrders(false);
+  document.getElementById('applySales').onclick = ()=> applyNewSalesToStock();
+  document.getElementById('clear').onclick = ()=>{
+    if(confirm('Supprimer TOUTES les commandes ?')){
+      localStorage.removeItem('kcn_orders'); loadOrders(false);
+    }
+  };
+
+  document.getElementById('export').onclick = ()=>{
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    if(!orders.length){ alert('Rien à exporter.'); return; }
+    const rows = [['id','createdAt','currency','grandHTG','status','deliveryStatus','stockApplied','lines']];
+    orders.forEach(o=>{
+      rows.push([o.id,o.createdAt,o.currency,o.grandHTG,o.status||'',o.deliveryStatus||'', o.stockApplied? 'yes':'no', (o.lines||[]).map(l=>`${l.name}x${l.qty}`).join(' | ')]);
+    });
+    const csv = rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='kcn_orders.csv'; a.click(); URL.revokeObjectURL(url);
+  };
+
+  // 🔁 ICI : quand on change Statut / Livraison / Paiement vérifié,
+  // on enregistre ET on re-render pour avoir directement le "2e modèle"
+  document.addEventListener('change', (e)=>{
+    if(e.target.matches('select[data-id]')){
+      const id  = e.target.getAttribute('data-id');
+      const key = e.target.getAttribute('data-k');
+      const val = e.target.value;
+      const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+      const i = orders.findIndex(o=>o.id===id);
+      if(i>=0){
+        orders[i][key] = val;
+        localStorage.setItem('kcn_orders', JSON.stringify(orders));
+        // rechargement visuel → badges + bouton Reçu mis à jour
+        loadOrders(false);
+      }
+    }
   });
 
   document.addEventListener('click', (e)=>{
-    const t = e.target.closest('.kcn-copy');
-    if(!t) return;
-    const txt = t.getAttribute('data-copy') || '';
-    navigator.clipboard.writeText(txt).then(()=>{ t.textContent='Copié ✓'; setTimeout(()=>t.textContent='Copier',1200); });
-  });
+    const t = e.target;
 
-  document.getElementById('checkout').addEventListener('click', ()=>{
-    if (!Object.keys(state.cart||{}).length) { alert('Votre panier est vide.'); return; }
-
-    // ✅ Validation coordonnées
-    const nameVal  = (custName.value||'').trim();
-    const phoneVal = (custPhone.value||'').trim();
-    const emailVal = (custEmail.value||'').trim();
-    const addrVal  = (custAddr.value||'').trim();
-    const telOK = /^[0-9+()\s-]{8,}$/.test(phoneVal);
-    const mailOK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-
-    if(!nameVal){ alert("Merci d’indiquer le nom complet."); custName.focus(); return; }
-    if(!telOK){ alert("Numéro de téléphone invalide."); custPhone.focus(); return; }
-    if(!mailOK){ alert("Adresse e-mail invalide."); custEmail.focus(); return; }
-    if(state.delivery && !addrVal){ alert("Merci d’indiquer l’adresse de livraison."); custAddr.focus(); return; }
-    saveCustomer();
-
-    const payRadio = document.querySelector('input[name="shopPay"]:checked');
-    const payMethod = payRadio ? payRadio.value : 'bank';
-    const payMethodLabel = payRadio?.parentElement?.textContent.trim() || payMethod;
-
-    document.querySelectorAll('.kcn-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.kcn-pane').forEach(p=>p.classList.remove('active'));
-    document.querySelector(`.kcn-tab[data-tab="${payMethod}"]`)?.classList.add('active');
-    document.getElementById('pane-'+payMethod)?.classList.add('active');
-
-    const proofWrap = document.getElementById('kcnProofWrap');
-    if (proofWrap) { proofWrap.style.display = (payMethod === 'cash') ? 'none' : 'block'; }
-
-    const d = new Date();
-    const id = `KCN-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*9000+1000)}`;
-    kcnOrderId.textContent = id;
-    kcnLabel1.textContent = id;
-    kcnLabel2.textContent = id;
-
-    let totalHTG = 0, discountHTG = 0;
-    const ALL_ITEMS = [...INVENTORY, ...COURSE_ITEMS];
-    const lines = [];
-    Object.entries(state.cart).forEach(([pid,qty])=>{
-      const item = ALL_ITEMS.find(x=>x.id===pid);
-      if(!item) return;
-      // Don = pas de stock ; produits = on clip selon stock
-      const isProduct = INVENTORY.some(x=>x.id===pid);
-      const s = isProduct ? getStock(pid) : Infinity;
-      const finalQty = Math.min(qty, s);
-      if(finalQty<=0) return;
-      const lineHTG = item.priceHTG * finalQty;
-      totalHTG += lineHTG;
-      if (PROMO.active && item.cat==='packs') discountHTG += lineHTG * PROMO.rate;
-
-      const opt = state.options[pid] || {};
-      let nameWithOpt = item.name;
-      if(opt.color && opt.size){
-        nameWithOpt += ` – Couleur: ${opt.color} – Taille: ${opt.size}`;
-      }else if(opt.color){
-        nameWithOpt += ` – Couleur: ${opt.color}`;
-      }else if(opt.size){
-        nameWithOpt += ` – Taille: ${opt.size}`;
+    // supprimer commande
+    if(t.matches('button[data-del]')){
+      const id = t.getAttribute('data-del');
+      if(confirm('Supprimer cette commande ?')){
+        const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]').filter(o=>o.id!==id);
+        localStorage.setItem('kcn_orders', JSON.stringify(orders));
+        loadOrders(false);
       }
-
-      lines.push({id:pid, name:nameWithOpt, qty:finalQty, priceHTG:item.priceHTG, lineHTG});
-    });
-    // Appliquer la promo quantité "5ᵉ à moitié prix" ici aussi (même logique que computeCartBase)
-    const unitPrices = [];
-    lines.forEach(l=>{
-      if(!String(l.id).startsWith('don')){
-        for(let i=0;i<l.qty;i++) unitPrices.push(l.priceHTG);
-      }
-    });
-    unitPrices.sort((a,b)=>a-b);
-    const groups = Math.floor(unitPrices.length / 5);
-    for(let g=0; g<groups; g++){
-      const cheapest = unitPrices[g];
-      if(typeof cheapest === 'number' && isFinite(cheapest)){
-        discountHTG += Math.round(cheapest * 0.5);
-      }
+      return;
     }
 
-    const netHTG = totalHTG - discountHTG;
+    // reçu (provisoire / définitif)
+    if(t.matches('button[data-receipt]')){
+      const id = t.getAttribute('data-receipt');
+      generateReceipt(id);
+    }
+  });
 
-    const payCfg = getSelectedPay();
-    const feeHTG = netHTG * (payCfg.pct||0) + (payCfg.fix||0);
-    const deliveryHTG = state.delivery ? DELIVERY_HTG : 0;
-    const grandHTG = netHTG + feeHTG + deliveryHTG;
+  function loadOrders(applySales=false){
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    count.textContent = orders.length ? orders.length+' commande(s)' : 'Aucune commande';
+    list.innerHTML = '';
+    if(!orders.length){
+      list.innerHTML = '<div class="card muted">Aucune commande pour le moment.</div>';
+    } else {
+      orders.slice().reverse().forEach(o=>{
+        const card = document.createElement('div');
+        card.className='card';
+        const date = new Date(o.createdAt);
+        card.innerHTML = `
+          <div class="row">
+            <div>
+              <div><strong>${o.id}</strong></div>
+              <div class="muted">${date.toLocaleString()}</div>
+            </div>
+            <div>
+              <span class="tag">${o.status||'pending'}</span>
+              <span class="tag">${o.deliveryStatus||'retrait'}</span>
+              ${o.stockApplied ? '<span class="tag">stock appliqué</span>' : '<span class="tag">stock non appliqué</span>'}
+            </div>
+          </div>
+          <div class="lines">
+            ${(o.lines||[]).map(l=>`<div class="row"><span>${l.name} × ${l.qty}</span><strong>${fmt(view(l.lineHTG,o.currency),o.currency)}</strong></div>`).join('')}
+            <hr style="border:none;border-top:1px dashed #e5e7eb;margin:8px 0">
+            <div class="row"><span>Remise</span><strong>${o.discountHTG? '– '+fmt(view(o.discountHTG,o.currency),o.currency) : '—'}</strong></div>
+            <div class="row"><span>Frais paiement</span><strong>${fmt(view(o.feeHTG,o.currency),o.currency)}</strong></div>
+            <div class="row"><span>Livraison</span><strong>${fmt(view(o.deliveryHTG,o.currency),o.currency)}</strong></div>
+            <div class="row"><span><strong>Total</strong></span><strong>${fmt(view(o.grandHTG,o.currency),o.currency)}</strong></div>
+          </div>
+          <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <label>Statut:
+              <select data-id="${o.id}" data-k="status">
+                ${['pending','paid','cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            <label>Livraison:
+              <select data-id="${o.id}" data-k="deliveryStatus">
+                ${['retrait','à livrer','livrée'].map(s=>`<option ${o.deliveryStatus===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            <label>Paiement vérifié:
+              <select data-id="${o.id}" data-k="paymentVerified">
+                ${['non','oui'].map(s=>`<option ${o.paymentVerified===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </label>
+            ${o.proof ? `<a class="btn" href="${o.proof.data}" download="${o.id}-preuve">${o.proof.type?.includes('pdf')?'Télécharger PDF':'Télécharger image'}</a>` : '<span class="muted">Aucune preuve</span>'}
+            ${o.status === 'paid' ? 
+              `<button class="btn alt" data-receipt="${o.id}">${o.paymentVerified==='oui' ? 'Reçu définitif' : 'Reçu provisoire'}</button>` 
+              : ''}
+            <button class="btn alt" data-del="${o.id}">Supprimer</button>
+          </div>
+          ${o.proof && o.proof.type?.startsWith('image/') ? `<div style="margin-top:8px"><img class="thumb" src="${o.proof.data}" alt="preuve"></div>`:''}
+        `;
+        list.appendChild(card);
+      });
+    }
+    if(applySales) applyNewSalesToStock();
+  }
 
-    const vDisc = viewPrice(discountHTG);
-    const vFee  = viewPrice(feeHTG);
-    const vDel  = viewPrice(deliveryHTG);
-    const vNet  = viewPrice(netHTG);
-    const vGrand= viewPrice(grandHTG);
+  /* ===== Génération du reçu depuis l'admin — PDF + fallback (avec message écologique visible) ===== */
+  async function generateReceipt(id){
+    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    const o = orders.find(x=>x.id===id);
+    if(!o){ alert('Commande introuvable.'); return; }
 
-    kcnOrderTotal.textContent = isNaN(vGrand)?'—':fmt(vGrand, state.currency);
+    const method = o.payMethodLabel || o.payMethod || '—';
+    const isVerified = o.paymentVerified === 'oui';
 
-    kcnSummary.innerHTML = `
-      ${lines.map(l=>{
-        const v = viewPrice(l.lineHTG);
-        return `<div style="display:flex;justify-content:space-between;padding:4px 0">
-          <span>${l.name} × ${l.qty}</span>
-          <strong>${isNaN(v)?'—':fmt(v,state.currency)}</strong>
-        </div>`;
-      }).join('')}
+    const customer = o.customer || {};
+    const nameVal  = customer.name  || '';
+    const phoneVal = customer.phone || '';
+    const emailVal = customer.email || '';
+    const addrVal  = customer.addr  || '';
+    const hasDelivery = (o.deliveryStatus && o.deliveryStatus !== 'retrait');
+
+    // Format des lignes + totaux (on réutilise ta logique “view / fmt” du fichier)
+    const linesHTML = (o.lines||[]).map(l=>{
+      const v = view(l.lineHTG, o.currency);
+      return `<div style="display:flex;justify-content:space-between;padding:4px 0">
+        <span>${l.name} × ${l.qty}</span>
+        <strong>${fmt(v,o.currency)}</strong>
+      </div>`;
+    }).join('');
+
+    const vDisc  = view(o.discountHTG||0, o.currency);
+    const vFee   = view(o.feeHTG||0, o.currency);
+    const vDel   = view(o.deliveryHTG||0, o.currency);
+    const vGrand = view(o.grandHTG||0, o.currency);
+    const vNet   = view(o.netHTG||0, o.currency);
+
+    const summaryHTML = `
+      ${linesHTML}
       <hr style="border:none;border-top:1px dashed #e5e7eb;margin:8px 0">
       <div style="display:flex;justify-content:space-between">
         <span>Remise packs</span>
-        <strong>${discountHTG>0 ? '– '+fmt(vDisc,state.currency) : '—'}</strong>
+        <strong>${o.discountHTG ? '– '+fmt(vDisc,o.currency) : '—'}</strong>
       </div>
       <div style="display:flex;justify-content:space-between">
         <span>Total net</span>
-        <strong>${isNaN(vNet)?'—':fmt(vNet,state.currency)}</strong>
+        <strong>${fmt(vNet,o.currency)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between">
         <span>Frais paiement</span>
-        <strong>${isNaN(vFee)?'—':fmt(vFee,state.currency)}</strong>
+        <strong>${fmt(vFee,o.currency)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between">
         <span>Livraison locale</span>
-        <strong>${isNaN(vDel)?'—':fmt(vDel,state.currency)}</strong>
+        <strong>${fmt(vDel,o.currency)}</strong>
       </div>
-      <div style="display:flex;justify-content:space-between;font-weight:800">
+      <div style="display:flex;justify-content:space-between;font-weight:800;margin-top:4px">
         <span>Total à régler</span>
-        <strong>${isNaN(vGrand)?'—':fmt(vGrand,state.currency)}</strong>
+        <strong>${fmt(vGrand,o.currency)}</strong>
       </div>
     `;
 
-    const msg = encodeURIComponent(
-      `Bonjour KCN, paiement commande ${id} pour un montant de ${kcnOrderTotal.textContent}.
-Nom: ${nameVal}
-Tel: ${phoneVal}
-Email: ${emailVal}
-${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
-    );
-    if (kcnWhatsApp) kcnWhatsApp.href = `https://wa.me/50936985221?text=${msg}`;
+    const clientHTML = `
+      <div class="meta" style="margin:8px 0 10px">
+        <div><b>Client :</b> ${nameVal||'—'}</div>
+        <div><b>Tel :</b> ${phoneVal||'—'}</div>
+        <div><b>Email :</b> ${emailVal||'—'}</div>
+        <div><b>Livraison :</b> ${hasDelivery ? 'Oui' : 'Non'}</div>
+        ${hasDelivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
+      </div>`;
 
-    // Enregistrer commande incluant client
-    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
-    orders.push({
-      id, createdAt: d.toISOString(),
-      currency: state.currency,
-      netHTG, feeHTG, deliveryHTG, grandHTG, discountHTG,
-      lines,
-      proof:null,
-      status:'pending',
-      deliveryStatus: (state.delivery ? 'à livrer' : 'retrait'),
-      payMethod,
-      payMethodLabel,
-      customer: {
-        name: nameVal, phone: phoneVal, email: emailVal, addr: state.delivery ? addrVal : ''
-      }
-    });
-    localStorage.setItem('kcn_orders', JSON.stringify(orders));
+    // ----- Bloc HTML autonome (utilisé pour PDF and fallback) -----
+    const root = document.createElement('div');
+    root.style.width = '700px';
+    root.style.padding = '18px';
+    root.style.border = '1px solid #e5e7eb';
+    root.style.borderRadius = '12px';
+    root.style.fontFamily = "Montserrat, Arial, sans-serif";
+    root.style.color = "#0f172a";
+    root.style.position = 'relative';
 
-    // Décrémenter stock uniquement pour les PRODUITS (pas pour le don)
-    lines.forEach(l=>{
-      if (INVENTORY.some(x=>x.id===l.id)){
-        const remain = getStock(l.id) - l.qty;
-        setStock(l.id, remain);
-      }
-    });
-
-    // Reset panier
-    state.cart = {};
-    state.options = {};
-    saveCart();
-
-    renderCart();
-    renderProducts();
-
-    window.KCN_PAY_METHOD = payMethod;
-    window.KCN_PAY_METHOD_LABEL = payMethodLabel;
-
-    payModal.classList.add('open');
-    payModal.setAttribute('aria-hidden','false');
-  });
-
-  function closePayModal(){
-    payModal.classList.remove('open');
-    payModal.setAttribute('aria-hidden','true');
-  }
-  document.getElementById('kcnClose').addEventListener('click', closePayModal);
-  document.getElementById('kcnClose2').addEventListener('click', closePayModal);
-  payModal.addEventListener('click', (e)=>{ if(e.target===payModal){ closePayModal(); } });
-
-  document.getElementById('kcnSaveProof').addEventListener('click', async ()=>{
-    const file = kcnProof.files?.[0];
-    if(!file){ alert('Choisis un fichier (image ou PDF).'); return; }
-    const id = document.getElementById('kcnOrderId').textContent.trim();
-    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
-    const idx = orders.findIndex(o=>o.id===id);
-    if(idx<0){ alert("Commande introuvable."); return; }
-    const b64 = await fileToDataURL(file);
-    orders[idx].proof = { name:file.name, type:file.type, data:b64, at:new Date().toISOString() };
-    localStorage.setItem('kcn_orders', JSON.stringify(orders));
-    document.getElementById('kcnProofOk').style.display = 'inline';
-    setTimeout(()=> document.getElementById('kcnProofOk').style.display='none', 2000);
-    kcnProof.value = '';
-    alert('Preuve enregistrée.');
-  });
-
-  function fileToDataURL(file){
-    return new Promise((resolve,reject)=>{
-      const r = new FileReader();
-      r.onload = ()=> resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-  }
-
-  // ---- Remplacement du handler "Télécharger le reçu" par un handler PDF+fallback HTML ----
-  document.getElementById('kcnReceipt').addEventListener('click', async ()=>{
-    try {
-      // --- 1) Récupère les infos depuis la modale --- 
-      const id     = document.getElementById('kcnOrderId').textContent.trim();
-      const total  = document.getElementById('kcnOrderTotal').textContent.trim();
-      const method = (window.KCN_PAY_METHOD_LABEL || '—');
-
-      // Coordonnées client (tes champs existants)
-      const nameVal  = (custName.value||'').trim();
-      const phoneVal = (custPhone.value||'').trim();
-      const emailVal = (custEmail.value||'').trim();
-      const addrVal  = (custAddr.value||'').trim();
-
-      // Résumé panier déjà rendu dans la modale
-      const summaryHTML = document.getElementById('kcnSummary').innerHTML;
-
-      // Option écologique choisie par l'utilisateur dans la modale
-      const ecoOpt = document.getElementById('kcnEcoOpt') ? document.getElementById('kcnEcoOpt').checked : true;
-      const ecoHTML = ecoOpt ? `
-        <p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4">
-             <strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. 
-
+    // Ecological message box (visible and prominent)
+    const ecoHTML = `
+      <div style="background:#eef9f3;border-left:6px solid #16a34a;padding:10px;border-radius:8px;margin-top:8px;margin-bottom:10px;color:#065f46">
+        <strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. 
         Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.
-        </p>
-      ` : '';
+      </div>`;
 
-      // --- 2) Construit un bloc HTML PROPRE et autonome (styles inline) ---
-      const receipt = document.createElement('div');
-      receipt.style.width = '700px';
-      receipt.style.padding = '18px';
-      receipt.style.border = '1px solid #e5e7eb';
-      receipt.style.borderRadius = '12px';
-      receipt.style.fontFamily = "Montserrat, Arial, sans-serif";
-      receipt.style.color = "#0f172a";
+    root.innerHTML = `
+      ${isVerified ? `
+        <div style="
+          position:absolute;top:50%;left:50%;
+          transform:translate(-50%,-50%) rotate(-25deg);
+          font-size:72px;font-weight:800;letter-spacing:2px;
+          color:rgba(21,128,61,0.15);text-transform:uppercase;
+          border:8px solid rgba(21,128,61,0.15);padding:8px;">
+          Payé
+        </div>` : ''}
 
-      receipt.innerHTML = `
-        <div style="margin-bottom:8px">
-          <h1 style="color:#0066cc;margin:0 0 4px 0;font-size:22px">KOLTIZ Club de Natation</h1>
-          <div style="color:#475569">Reçu provisoire — Commande <b>${id}</b></div>
-          <div style="color:#475569">Mode de paiement : <b>${method}</b></div>
-        </div>
-
-        <div style="margin:8px 0 10px;color:#475569">
-          <div><b>Client :</b> ${nameVal||'—'}</div>
-          <div><b>Tel :</b> ${phoneVal||'—'}</div>
-          <div><b>Email :</b> ${emailVal||'—'}</div>
-          <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
-          ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
-        </div>
-
-        <hr style="border:none;border-top:1px dashed #e5e7eb;margin:10px 0">
-
-        <div>${summaryHTML}</div>
-
-        <div style="display:flex;justify-content:space-between;font-weight:800;margin-top:12px">
-          <span>Total</span><strong>${total}</strong>
-        </div>
-
+      <div style="margin-bottom:8px">
+        <h1 style="color:#0066cc;margin:0 0 4px 0;font-size:22px">KOLTIZ Club de Natation</h1>
+        <div style="color:#475569">${isVerified ? 'Reçu' : 'Reçu provisoire'} — Commande <b>${o.id}</b></div>
+        <div style="color:#475569">Mode de paiement : <b>${method}</b></div>
         ${ecoHTML}
+      </div>
 
-        <p style="color:#475569;margin-top:10px;font-size:12px;line-height:1.5">
-          Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
-          Un reçu <b>définitif</b> sera émis après vérification de la preuve de paiement.
-        </p>
-      `;
+      ${clientHTML}
 
-      // --- 3) Génère le PDF avec jsPDF + html2canvas ---
+      <hr style="border:none;border-top:1px dashed #e5e7eb;margin:10px 0">
+
+      <div>${summaryHTML}</div>
+
+      <p style="color:#475569;margin-top:10px;font-size:12px;line-height:1.5">
+        Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
+        ${isVerified
+          ? 'PAIEMENT VÉRIFIÉ ET VALIDÉ PAR KCN.'
+          : 'Un reçu définitif sera émis après vérification de la preuve de paiement.'}
+      </p>
+    `;
+
+    // ----- PDF principal -----
+    try{
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit:'pt', format:'a4' });
-
-      // Ajuste l’échelle pour un rendu net sur mobile
-      await pdf.html(receipt, {
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      await pdf.html(root, {
         margin: 24,
         autoPaging: 'text',
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }
       });
-
-      // Télécharge le fichier (mobile/desktop) — nom lisible
-      pdf.save(`Recu-${id}.pdf`);
-
-    } catch (err) {
-      console.warn('PDF non supporté ou bloqué, fallback HTML…', err);
-
-      // --- 4) Fallback robuste : on télécharge un .html autonome ---
-      const id     = document.getElementById('kcnOrderId').textContent.trim();
-      const total  = document.getElementById('kcnOrderTotal').textContent.trim();
-      const method = (window.KCN_PAY_METHOD_LABEL || '—');
-      const nameVal  = (custName.value||'').trim();
-      const phoneVal = (custPhone.value||'').trim();
-      const emailVal = (custEmail.value||'').trim();
-      const addrVal  = (custAddr.value||'').trim();
-      const summaryHTML = document.getElementById('kcnSummary').innerHTML;
-      const ecoOpt = document.getElementById('kcnEcoOpt') ? document.getElementById('kcnEcoOpt').checked : true;
-      const ecoHTML = ecoOpt ? `<p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4">🌱 Nous protégeons la planète — KCN limite son impact environnemental (emballages responsables, gestes éco-responsables). Si vous le souhaitez, vous pouvez demander une version sans cette mention.</p>` : '';
-
+      pdf.save(`Recu-${o.id}.pdf`);
+    }catch(err){
+      console.warn('PDF bloqué ou non supporté, fallback HTML…', err);
+      // ----- Fallback HTML téléchargeable (avec message écologique visible) -----
       const html = `
 <!doctype html>
 <html lang="fr">
 <meta charset="utf-8">
-<title>Reçu ${id} – KCN</title>
+<title>Reçu ${o.id} – KCN</title>
 <style>
   body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
-  .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+  .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px;position:relative}
   h1{color:#0066cc;margin:0 0 8px 0}
   .meta{color:#475569}
-  .tot{display:flex;justify-content:space-between;font-weight:800;margin-top:10px}
+  .eco{background:#eef9f3;border-left:6px solid #16a34a;padding:10px;border-radius:8px;margin-top:8px;margin-bottom:10px;color:#065f46}
+  .paid-stamp{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(-25deg);
+    font-size:72px;font-weight:bold;
+    color:rgba(21,128,61,0.15);
+    text-transform:uppercase;
+    border:8px solid;padding:8px;white-space:nowrap
+  }
 </style>
 <body>
   <div class="sheet">
+    ${isVerified ? '<div class="paid-stamp">Payé</div>' : ''}
     <h1>KOLTIZ Club de Natation</h1>
-    <div class="meta">Reçu provisoire – Commande ${id}</div>
+    <div class="meta">${isVerified ? 'Reçu' : 'Reçu provisoire'} – Commande ${o.id}</div>
     <div class="meta">Mode de paiement : <b>${method}</b></div>
-    <div class="meta" style="margin:8px 0 10px">
-      <div><b>Client :</b> ${nameVal||'—'}</div>
-      <div><b>Tel :</b> ${phoneVal||'—'}</div>
-      <div><b>Email :</b> ${emailVal||'—'}</div>
-      <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
-      ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
-    </div>
+    <div class="eco"><strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.</div>
+    ${clientHTML}
     <hr>
     ${summaryHTML}
-    <div class="tot"><span>Total</span><strong>${total}</strong></div>
-    ${ecoHTML}
-    <p class="meta">Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>Un reçu définitif sera émis après vérification.</p>
+    <p class="meta" style="margin-top:10px">
+      Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
+      ${isVerified
+        ? 'PAIEMENT VÉRIFIÉ ET VALIDÉ PAR KCN.'
+        : 'Un reçu définitif sera émis après vérification de la preuve de paiement.'}
+    </p>
   </div>
 </body>
 </html>`;
-
       const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href = url;
-      a.download = `Recu-${id}.html`;
-      document.body.appendChild(a);
+      a.href = url; a.download = `Recu-${o.id}.html`;
       a.click();
-      a.remove();
       URL.revokeObjectURL(url);
     }
-  });
-
-  // Connect mobile floating button to the same handler so mobile users find it easily
-  const kcnReceiptMobileBtn = document.getElementById('kcnReceiptMobile');
-  if (kcnReceiptMobileBtn) {
-    kcnReceiptMobileBtn.addEventListener('click', ()=> {
-      // trigger existing handler programmatically
-      const mainBtn = document.getElementById('kcnReceipt');
-      if (mainBtn) mainBtn.click();
-    });
-    // Hide the floating button if modal is closed (robustness)
-    const observer = new MutationObserver(()=> {
-      const open = payModal.classList.contains('open');
-      // the CSS already shows/hides the button by sibling selector on small screens,
-      // but ensure it's hidden on other sizes or when modal closed.
-      if (!open) {
-        kcnReceiptMobileBtn.style.display = '';
-      } else {
-        // allow CSS to manage display; for some browsers we force block to ensure visibility on small screens
-        if (window.innerWidth <= 720) kcnReceiptMobileBtn.style.display = 'block';
-      }
-    });
-    observer.observe(payModal, { attributes: true, attributeFilter: ['class'] });
-    // Also update on resize
-    window.addEventListener('resize', ()=> {
-      if (window.innerWidth > 720) kcnReceiptMobileBtn.style.display = 'none';
-    });
   }
 
-  // Cache le bandeau si la promo est désactivée
-if (!PROMO.active) {
-  const pb = document.querySelector('.promo');
-  if (pb) pb.style.display = 'none';
-}
+  /* ===== Décrémenter le stock depuis commandes non appliquées ===== */
+  function normalizeLineName(name){ return String(name||'').split(' – Couleur')[0].trim(); }
+  function getCatalog(){
+    try{ return JSON.parse(localStorage.getItem('kcn_catalog')||'[]'); }catch{return []}
+  }
+  function setCatalog(c){ localStorage.setItem('kcn_catalog', JSON.stringify(c)); }
+  function getStockMap(){
+    try{ return JSON.parse(localStorage.getItem('kcn_stock')||'{}'); }catch{ return {}; }
+  }
+  function setStockMap(map){ localStorage.setItem('kcn_stock', JSON.stringify(map)); }
 
+  function applyNewSalesToStock(){
+    let orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+    if(!orders.length) return;
 
-  /* ===================== Init ===================== */
-  function init(){
-    loadCustomer();
-    renderProducts();
-    renderCart();
-    custAddrWrap.style.display = state.delivery ? 'block' : 'none';
-    if(Object.keys(STOCK_OVERRIDES).length===0){
-      const map = {};
-      INVENTORY.forEach(p=>{ map[p.id] = p.stock|0; });
-      localStorage.setItem(STOCK_KEY, JSON.stringify(map));
-      STOCK_OVERRIDES = map;
+    const catalog = getCatalog();
+    if(!catalog.length){
+      alert("Catalogue introuvable. Importez un catalogue dans l'onglet Stock.");
+      return;
+    }
+    const byName = {}; catalog.forEach(it=>{ byName[it.name] = it; });
+
+    const stock = getStockMap();
+    let changed = false;
+
+    orders.forEach(o=>{
+      if(o.stockApplied) return;
+      (o.lines||[]).forEach(l=>{
+        const base = normalizeLineName(l.name);
+        const item = byName[base];
+        if(!item) return;
+        const id = item.id;
+        const cur = Number.isFinite(stock[id]) ? stock[id] : (Number.isFinite(item.stock)? item.stock : 0);
+        const qty = Math.max(0, parseInt(l.qty||'0',10)||0);
+        const next = Math.max(0, cur - qty);
+        if(next !== cur){ stock[id] = next; changed = true; }
+      });
+      o.stockApplied = true;
+      changed = true;
+    });
+
+    if(changed){
+      setStockMap(stock);
+      localStorage.setItem('kcn_orders', JSON.stringify(orders));
+      if(document.querySelector('#panel-stock.panel.active')){ KCNStock.refresh(); }
+      loadOrders(false);
+      alert('Ventes appliquées au stock ✓');
     }
   }
-  init();
 
-  /* ===== FAB Admin : affichage secret + navigation ===== */
+  /* ===================== PANEL STOCK ===================== */
   (function(){
-    const ADMIN_URL = './boutique-admin.html';
-    const fab = document.getElementById('fabShopAdmin');
-    const hotspot = document.getElementById('shopAdminHotspot');
+    const TKEY = 'kcn_stock_thresholds';
+    const SKEY = 'kcn_stock';
+    const CKEY = 'kcn_catalog';
 
-    function showFab(){ fab.style.display = 'grid'; }
-    function goAdmin(){
-      try{ sessionStorage.removeItem('kcn_shop_admin_ok'); }catch(e){}
-      window.location.href = ADMIN_URL;
+    const elBody  = document.getElementById('kcnStockBody');
+    const elShow  = document.getElementById('kcnStockShowAll');
+    const elSave  = document.getElementById('kcnStockSave');
+    const elExport= document.getElementById('kcnStockExport');
+    const elReset = document.getElementById('kcnStockReset');
+    const elImpBtn= document.getElementById('kcnStockImportBtn');
+    const elDlg   = document.getElementById('kcnStockImportDialog');
+    const elImpTxt= document.getElementById('kcnStockImportText');
+    const elImpCancel = document.getElementById('kcnStockImportCancel');
+    const elImpApply  = document.getElementById('kcnStockImportApply');
+
+    const thLow = document.getElementById('kcnThLow'); // Critique (≤ low)
+    const thMid = document.getElementById('kcnThMid'); // Limité (≤ mid)
+
+    function loadThresholds(){
+      try{
+        const t = JSON.parse(localStorage.getItem(TKEY) || '{}');
+        if(Number.isFinite(t.low)) thLow.value = t.low;
+        if(Number.isFinite(t.mid)) thMid.value = t.mid;
+      }catch{}
+    }
+    function saveThresholds(){
+      const low = Math.max(1, parseInt(thLow.value||'5',10)||5);
+      const mid = Math.max(low+1, parseInt(thMid.value||'10',10)||10);
+      localStorage.setItem(TKEY, JSON.stringify({low, mid}));
+    }
+    function getThresholds(){
+      try{ return JSON.parse(localStorage.getItem(TKEY) || '{"low":5,"mid":10}'); }
+      catch{ return {low:5, mid:10}; }
     }
 
-    // Raccourci clavier: Shift + Alt + S
-    window.addEventListener('keydown', (e)=>{
-      if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
-        e.preventDefault(); showFab();
+    function getCatalogLocal(){
+      try{
+        const c = JSON.parse(localStorage.getItem(CKEY)||'[]');
+        return Array.isArray(c)?c:[]; 
+      }catch{return []}
+    }
+    function setCatalogLocal(catalog){ localStorage.setItem(CKEY, JSON.stringify(catalog)); }
+
+    function getStockMapLocal(){
+      try{ return JSON.parse(localStorage.getItem(SKEY)||'{}'); }catch{ return {}; }
+    }
+    function setStockMapLocal(map){ localStorage.setItem(SKEY, JSON.stringify(map)); }
+
+    function statusTag(qty){
+      const {low, mid} = getThresholds();
+      if(qty<=0) return '<span class="kcn-tag red">Rupture</span>';
+      if(qty<=low) return `<span class="kcn-tag orange">Critique</span>`;
+      if(qty<=mid) return '<span class="kcn-tag orange">Limité</span>';
+      return '<span class="kcn-tag green">En stock</span>';
+    }
+
+    function render(){
+      const catalog = getCatalogLocal();
+      if(!catalog.length){
+        elBody.innerHTML = `<tr><td colspan="5" style="padding:12px" class="muted">
+          Aucun catalogue détecté. Cliquez <b>Importer catalogue</b> et collez un JSON (id, name, stock).
+        </td></tr>`;
+        return;
       }
+      const map = getStockMapLocal();
+      elBody.innerHTML = catalog.map(item=>{
+        const q = (map[item.id] ?? item.stock) | 0;
+        return `<tr>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb"><code>${item.id}</code></td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.name||''}</td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center">
+            <input type="number" min="0" value="${q}" data-kcn-q="${item.id}" style="width:90px">
+          </td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center" data-kcn-status="${item.id}">
+            ${statusTag(q)}
+          </td>
+          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center">
+            <button class="btn alt" data-kcn-plus="${item.id}">+1</button>
+            <button class="btn alt" data-kcn-minus="${item.id}">-1</button>
+            <button class="btn alt" data-kcn-zero="${item.id}">0</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function attachEvents(){
+      elBody.addEventListener('input', (e)=>{
+        const id = e.target.getAttribute('data-kcn-q');
+        if(!id) return;
+        const v = qtySafe(e.target.value);
+        const statusCell = elBody.querySelector(`[data-kcn-status="${id}"]`);
+        if(statusCell) statusCell.innerHTML = statusTag(v);
+      });
+      elBody.addEventListener('click', (e)=>{
+        const plus = e.target.getAttribute('data-kcn-plus');
+        const minus= e.target.getAttribute('data-kcn-minus');
+        const zero = e.target.getAttribute('data-kcn-zero');
+        const id = plus || minus || zero;
+        if(!id) return;
+        const input = elBody.querySelector(`input[data-kcn-q="${id}"]`);
+        if(!input) return;
+        let v = qtySafe(input.value);
+        if(plus){ v = v+1; }
+        if(minus){ v = Math.max(0, v-1); }
+        if(zero){ v = 0; }
+        input.value = v;
+        const statusCell = elBody.querySelector(`[data-kcn-status="${id}"]`);
+        if(statusCell) statusCell.innerHTML = statusTag(v);
+      });
+
+      elSave.addEventListener('click', ()=>{
+        const inputs = elBody.querySelectorAll('input[data-kcn-q]');
+        const map = getStockMapLocal();
+        inputs.forEach(i=>{
+          const id = i.getAttribute('data-kcn-q');
+          const v  = qtySafe(i.value);
+          map[id] = v;
+        });
+        setStockMapLocal(map);
+        saveThresholds();
+        alert('Stock enregistré ✓');
+      });
+
+      elShow.addEventListener('click', ()=> render());
+
+      elExport.addEventListener('click', ()=>{
+        const data = { thresholds:getThresholds(), stock:getStockMapLocal(), catalog:getCatalogLocal() };
+        const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'kcn_stock_export.json';
+        a.click(); URL.revokeObjectURL(url);
+      });
+
+      elReset.addEventListener('click', ()=>{
+        if(!confirm('Réinitialiser le stock local ?')) return;
+        localStorage.removeItem(SKEY);
+        render();
+      });
+
+      elImpBtn.addEventListener('click', ()=> elDlg.showModal());
+      elImpCancel.addEventListener('click', ()=> elDlg.close());
+      elImpApply.addEventListener('click', ()=>{
+        try{
+          const arr = JSON.parse(elImpTxt.value||'[]');
+          if(!Array.isArray(arr)) throw new Error('Format invalide');
+          setCatalogLocal(arr.map(x=>({id:String(x.id), name:String(x.name||''), stock:qtySafe(x.stock)})));
+          elDlg.close(); elImpTxt.value = '';
+          render();
+        }catch(err){ alert('JSON invalide.'); }
+      });
+
+      thLow.addEventListener('change', saveThresholds);
+      thMid.addEventListener('change', saveThresholds);
+    }
+
+    window.KCNStock = {
+      open(){ loadThresholds(); render(); },
+      refresh(){ render(); }
+    };
+
+    attachEvents();
+  })();
+
+  /* ===================== Porte d'accès (APRÈS fonctions) ===================== */
+  (function gate(){
+    const ADMIN_FLAG = 'kcn_shop_admin_ok';
+    const ADMIN_CODE = 'KCN@2025#Admin'; // code admin
+    const gate = document.getElementById('gate');
+    const mask = document.getElementById('mask');
+    const input = document.getElementById('gateCode');
+    const ok = document.getElementById('gateOk');
+    const cancel = document.getElementById('gateCancel');
+    const err = document.getElementById('gateErr');
+    let tries = 0;
+
+    function unlock(){
+      sessionStorage.setItem(ADMIN_FLAG, '1');
+      gate.style.display='none';
+      mask.style.filter='none';
+      mask.style.pointerEvents='auto';
+      mask.style.userSelect='auto';
+      input.value='';
+      err.style.display='none';
+      loadOrders(true);
+    }
+    function lock(){
+      sessionStorage.removeItem(ADMIN_FLAG);
+      gate.style.display='grid';
+      mask.style.filter='blur(10px)';
+      mask.style.pointerEvents='none';
+      mask.style.userSelect='none';
+      input.focus();
+    }
+    function submit(){
+      const v = input.value.trim();
+      if(v===ADMIN_CODE){ unlock(); return; }
+      tries++;
+      err.style.display='block';
+      if(tries>=3){
+        ok.disabled = true; input.disabled = true;
+        err.textContent = 'Trop d’essais. Rechargez la page.';
+      }
+    }
+
+    document.getElementById('btnLogout').addEventListener('click', lock);
+    ok.addEventListener('click', submit);
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter') submit(); });
+    cancel.addEventListener('click', ()=>{ input.value=''; err.style.display='none'; });
+
+    // Raccourci pour rouvrir la porte
+    window.addEventListener('keydown', (e)=>{
+      if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){ lock(); }
     });
 
-    // Appui long (1.2s) coin bas-droit
-    let pressT=null;
-    hotspot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
-    ['pointerup','pointerleave','pointercancel'].forEach(evt=>{
-      hotspot.addEventListener(evt, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
-    });
-
-    // Double-clic sur le titre du hero
-    const h1 = document.querySelector('.hero h1');
-    if(h1){ h1.addEventListener('dblclick', showFab); }
-
-    fab.addEventListener('click', goAdmin);
+    if(sessionStorage.getItem(ADMIN_FLAG)==='1'){ unlock(); }
+    else{ lock(); }
   })();
 </script>
-
-<!-- ==== OUVERTURE ADMIN DISCRÈTE (fallback) ==== -->
-<button id="kcnAdmin" class="btn alt"
-        style="position:fixed;bottom:16px;right:16px;display:none;z-index:9999">
-  Admin
-</button>
-<script>
-(function(){
-  const ADMIN_CODE = 'KCN@2025#Admin';
-  const ADMIN_URL  = './boutique-admin.html';
-  const FLAG       = 'kcn_shop_admin_ok';
-  function openGate(){
-    const v = prompt('Code admin :');
-    if (v === ADMIN_CODE) { sessionStorage.setItem(FLAG,'1'); location.href = ADMIN_URL; }
-    else if (v !== null) { alert('Code incorrect'); }
-  }
-  const btn = document.getElementById('kcnAdmin');
-  document.addEventListener('keydown', (e)=>{
-    const k = String(e.key).toLowerCase();
-    if (e.ctrlKey && e.altKey && k === 'a') btn.style.display = 'inline-flex';
-    if (e.key === 'escape') btn.style.display = 'none';
-  });
-  btn.addEventListener('click', openGate);
-})();
-</script>
-
-<!-- === FAB Admin (discret) — DROP-IN === -->
-<div id="kcnHotspot2" style="position:fixed;right:0;bottom:0;width:68px;height:68px;z-index:99998;background:transparent;"></div>
-<button id="kcnFabAdmin2" type="button" title="Espace admin"
-  style="position:fixed;right:18px;bottom:18px;width:56px;height:56px;display:none;place-items:center;
-         border-radius:999px;border:2px solid #0066cc;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,.15);
-         z-index:99999;cursor:pointer;font-size:22px;line-height:1;">🛡️</button>
-
-<script>
-(function(){
-  const ADMIN_URL  = './boutique-admin.html';
-  const ADMIN_CODE = 'KCN@2025#Admin';
-  const FLAG       = 'kcn_shop_admin_ok';
-
-  const fab = document.getElementById('kcnFabAdmin2');
-  const hot = document.getElementById('kcnHotspot2');
-
-  function showFab(){ fab.style.display = 'grid'; }
-  function hideFab(){ fab.style.display = 'none'; }
-
-  function openGate(){
-    const v = prompt('Code admin :');
-    if (v === ADMIN_CODE) {
-      try{ sessionStorage.setItem(FLAG,'1'); }catch(e){}
-      location.href = ADMIN_URL;
-    } else if (v !== null) {
-      alert('Code incorrect');
-    }
-  }
-
-  fab.addEventListener('click', openGate);
-
-  window.addEventListener('keydown', (e)=>{
-    if (e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
-      e.preventDefault(); showFab();
-    }
-    if (e.key === 'Escape') hideFab();
-  });
-
-  let pressT=null;
-  hot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>{
-    hot.addEventListener(ev, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
-  });
-
-  const h1 = document.querySelector('.hero h1');
-  if (h1) h1.addEventListener('dblclick', showFab);
-})();
-</script>
-
-<!-- ===== Don Piscine — Ajout direct au panier ===== -->
-<script>
-/* Don: même logique que précédemment — quantité correspond au montant HTG (priceHTG=1) */
-const fundForm = document.getElementById('kcnFundFormCart');
-const fundInput = document.getElementById('kcnFundAmountCart');
-
-if (fundForm && fundInput){
-  fundForm.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const raw = parseFloat((fundInput.value||'').replace(',','.'));
-    if (!isFinite(raw) || raw < 250) { return; }
-    const amount = Math.round(raw); // HTG entier
-    state.cart['don-piscine'] = (state.cart['don-piscine'] || 0) + amount;
-    saveCart();
-    renderCart();
-    fundInput.value = '';
-  });
-}
-</script>
-
 </body>
 </html>
