@@ -52,9 +52,9 @@
     .drawer{position:fixed;inset:0;display:none}
     .drawer.show{display:block}
     .mask{position:absolute;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px)}
-    .sheet{position:absolute;right:0;top:0;height:100%;width:min(560px,92vw);background:#fff;border-left:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .sheet{position:absolute;right:0;top:0;height:100%;width:min(560px,92vw);background:#fff;border-left:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
     .sheet .head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-    .sheet .body{padding:16px;overflow:auto}
+    .sheet .body{padding:16px;overflow:auto;position:relative} /* position:relative to allow paid stamp overlay */
     .kv{display:grid;grid-template-columns:140px 1fr;gap:10px;margin:8px 0}
     .proof{margin-top:10px;border:1px dashed var(--line);border-radius:12px;padding:10px}
     .proof img{max-width:100%;border-radius:10px;display:block}
@@ -65,6 +65,24 @@
     .gate h3{color:#0b4573;margin-bottom:8px}
     .gate input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px}
     .gate .row{display:flex;gap:10px;margin-top:10px}
+
+    /* Paid stamp style (used in drawer overlay and fallback HTML) */
+    .paid-stamp {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%) rotate(-22deg);
+      font-size:72px;
+      font-weight:900;
+      letter-spacing:2px;
+      color: rgba(16,185,129,0.14);
+      text-transform:uppercase;
+      border:8px solid rgba(16,185,129,0.12);
+      padding:8px 16px;
+      pointer-events:none;
+      z-index:20;
+      white-space:nowrap;
+    }
   </style>
 </head>
 <body>
@@ -366,7 +384,12 @@ function openDrawer(id){
       <div style="margin-top:8px">${media}</div>
     </div>`;
   }
+
+  // Build the body HTML. If the status is 'PAYÉ', inject the big green stamp overlay into the drawer body.
+  const isPaid = (CUR.status||'').toString().trim().toUpperCase() === 'PAYÉ';
+
   $('#dBody').innerHTML = `
+    ${isPaid ? '<div class="paid-stamp">PAYÉ</div>' : ''}
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
       ${statusBadge(CUR.status)}
       <span class="chip">${(CUR.method||'-').toUpperCase()} • ${cur}</span>
@@ -431,6 +454,13 @@ function deleteSelected(){
 }
 
 // Export CSV (suppose que la fonction download existe déjà dans ton projet)
+function download(filename, content){
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
 function exportCSV() {
   const head = [
     'id','no','date','name','email','method','currency','rate',
@@ -445,21 +475,24 @@ function exportCSV() {
   download('kcn_receipts.csv', csv);
 }
 
-// Impression navigateur (avec texte écologique)
+// Impression navigateur (avec texte écologique) + big PAYÉ stamp when status is PAYÉ
 function printReceipt(d) {
+  const s = (d.status||'').toString().toUpperCase();
+  // Determine watermark: show PAYÉ in green when status is PAYÉ, otherwise show the pending stamp
+  let wm = '';
+  if (s === 'PAYÉ') {
+    wm = 'PAYÉ';
+  } else {
+    const proofOk = d.proof && d.proof.ref && d.proof.phone && d.proof.when && (d.proof.fileData || d.proof.fileName);
+    if(['MONCASH','NATCASH','BANK'].includes((d.method||'').toUpperCase()) && !proofOk) wm = 'EN ATTENTE — PREUVE À VALIDER';
+    else if((d.method||'').toLowerCase()==='bank' && proofOk) wm = 'EN ATTENTE — VÉRIF VIREMENT';
+    else wm = 'EN ATTENTE';
+  }
+
   const cur = d.currency||'HTG', rate = Number(d.rate||0);
   const subDisp = cur==='USD' && rate>0 ? d.sub/rate : d.sub;
   const feeDisp = cur==='USD' && rate>0 ? d.fee/rate : d.fee;
   const totDisp = cur==='USD' && rate>0 ? d.tot/rate : d.tot;
-  // Watermark
-  const wm = (() => {
-    const s = (d.status||'').toUpperCase();
-    if(s === 'PAYÉ') return '';
-    const proofOk = d.proof && d.proof.ref && d.proof.phone && d.proof.when && (d.proof.fileData || d.proof.fileName);
-    if(['moncash','natcash','bank'].includes(d.method) && !proofOk) return 'EN ATTENTE — PREUVE À VALIDER';
-    if(d.method==='bank' && proofOk) return 'EN ATTENTE — VÉRIF VIREMENT';
-    return 'EN ATTENTE';
-  })();
 
   const win = window.open('', 'PRINT', 'height=900,width=900');
   win.document.write(`<!doctype html><html><head><title>${d.no||'Reçu KCN'}</title>
@@ -473,7 +506,7 @@ function printReceipt(d) {
       th,td{border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left}
       th{color:#0b4573}
       .wm{position:fixed; inset:0; display:${wm?'grid':'none'}; place-items:center; pointer-events:none; z-index:0;}
-      .wm span{font-size:92px; font-weight:900; letter-spacing:4px; color:#0f172a; opacity:.09; transform:rotate(-20deg); text-transform:uppercase;}
+      .wm span{font-size:92px; font-weight:900; letter-spacing:4px; color:${s === 'PAYÉ' ? 'rgba(16,185,129,0.14)' : 'rgba(15,23,42,0.09)'}; transform:rotate(-20deg); text-transform:uppercase;}
     </style>
     </head><body>`);
   win.document.write(`
@@ -528,15 +561,14 @@ $('#dPrint').addEventListener('click', ()=>{
 });
 
 // Bouton PDF + partage (WhatsApp / Email)
+// Added big PAYÉ stamp in generated PDF and fallback HTML when status is PAYÉ
 document.getElementById('dPdf').addEventListener('click', async function() {
-  // Récupération des données en drawer
   const status = document.querySelector('#dBody .badge')?.textContent || '-';
   const no = document.getElementById('dNo')?.textContent || '-';
   const name = document.querySelector('#dBody .kv:nth-child(4) div:last-child')?.textContent || '-';
   const email = document.querySelector('#dBody .kv:nth-child(5) div:last-child')?.textContent || '-';
   const date = document.querySelector('#dBody .kv:nth-child(3) div:last-child')?.textContent || '-';
   const methodChip = document.querySelector('#dBody .chip')?.textContent || '-';
-  const totRow = Array.from(document.querySelectorAll('#dBody th.money'))?.pop()?.textContent || '-';
 
   // Items facturés:
   let itemsText = '';
@@ -545,7 +577,7 @@ document.getElementById('dPdf').addEventListener('click', async function() {
     itemsText += `${tds[0]?.textContent} x${tds[1]?.textContent}: ${tds[2]?.textContent}\n`;
   });
 
-  // --- LOGO ---
+  // --- LOGO --- (attempt, but optional)
   const logoUrl = "./folder3/imaj10"; // à adapter!
   async function loadLogo(){
     return new Promise((resolve) => {
@@ -588,6 +620,33 @@ document.getElementById('dPdf').addEventListener('click', async function() {
   doc.text(ecoLines, 20, y);
   y += ecoLines.length * 4 + 6;
 
+  // If paid, add big green stamp "PAYÉ" on the PDF (centered, rotated)
+  const isPaid = (status||'').toString().trim().toUpperCase() === 'PAYÉ';
+  if (isPaid) {
+    // semi-transparent effect by drawing the text with low opacity if supported
+    try {
+      // try to set opacity via internal GState (may not be available in some builds)
+      if (doc.setGState) {
+        doc.setGState({opacity:0.12});
+        doc.setFontSize(72);
+        doc.setTextColor(16,185,129);
+        // center-ish position
+        doc.text("PAYÉ", 105, 95, {angle:-22, align:'center'});
+        doc.setGState({opacity:1});
+      } else {
+        // fallback: normal text with subtle color
+        doc.setFontSize(48);
+        doc.setTextColor(16,185,129);
+        doc.text("PAYÉ", 105, 80, {angle:-20, align:'center'});
+      }
+    } catch (e) {
+      // fallback
+      doc.setFontSize(48);
+      doc.setTextColor(16,185,129);
+      doc.text("PAYÉ", 105, 80, {angle:-20, align:'center'});
+    }
+  }
+
   // Infos principales
   doc.setFontSize(12); 
   doc.setFont('helvetica','normal');
@@ -619,6 +678,11 @@ document.getElementById('dPdf').addEventListener('click', async function() {
   doc.setFontSize(12);
   doc.setFont('helvetica','bold'); 
   doc.setTextColor(31,64,130);
+  // totRow extraction: attempt to find the Total text in the drawer; fallback to empty
+  let totRow = '';
+  const totEl = document.querySelector('#dBody th.money');
+  if (totEl) totRow = totEl.textContent;
+  if (!totRow) totRow = '—';
   doc.text(`Total: ${totRow}`, 20, y); 
   y+=10;
 
