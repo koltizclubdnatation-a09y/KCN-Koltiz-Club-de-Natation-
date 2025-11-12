@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KCN — Admin (Commandes & Stock)</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- PDF + rendu HTML (compat mobile/desktop) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-+Kv6C8xQyC6s2xN2YohQy2Kz3e0t8xO+eVUP0r4m5fKp+0lXrEmsSoiqKTwqBfN1I3oL2kPG1f3W7CzqEJf2WQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5lH8b2Jw4jyZzqH2Z0c4XHkJm9e0cQYw7I4oFQ2i7x9k5n7mYqv7t3TT0e1H1wI0Y1nYk1DkZgJm1iY2b4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <style>
   :root{--brand:#0066cc;--line:#e5e7eb;--ink:#0f172a;--card:#fff;--page:#f7f9fc}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -75,7 +80,6 @@
       <h1>Admin KCN — Commandes & Stock (localStorage)</h1>
       <div style="display:flex;gap:8px">
         <button class="btn ghost" id="btnLogout" title="Verrouiller l'admin">Verrouiller</button>
-        <!-- lien retour boutique (garde le tien si le nom du fichier est différent) -->
         <a class="btn alt" href="./boutique-kcn.html">← Retour boutique</a>
       </div>
     </div>
@@ -300,8 +304,8 @@
     if(applySales) applyNewSalesToStock();
   }
 
-  /* ===== Génération du reçu depuis l'admin ===== */
-  function generateReceipt(id){
+  /* ===== Génération du reçu depuis l'admin — PDF + fallback (avec message écologique visible) ===== */
+  async function generateReceipt(id){
     const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
     const o = orders.find(x=>x.id===id);
     if(!o){ alert('Commande introuvable.'); return; }
@@ -316,6 +320,7 @@
     const addrVal  = customer.addr  || '';
     const hasDelivery = (o.deliveryStatus && o.deliveryStatus !== 'retrait');
 
+    // Format des lignes + totaux (on réutilise ta logique “view / fmt” du fichier)
     const linesHTML = (o.lines||[]).map(l=>{
       const v = view(l.lineHTG, o.currency);
       return `<div style="display:flex;justify-content:space-between;padding:4px 0">
@@ -324,11 +329,11 @@
       </div>`;
     }).join('');
 
-    const vDisc = view(o.discountHTG||0, o.currency);
-    const vFee  = view(o.feeHTG||0, o.currency);
-    const vDel  = view(o.deliveryHTG||0, o.currency);
-    const vGrand= view(o.grandHTG||0, o.currency);
-    const vNet  = view(o.netHTG||0, o.currency);
+    const vDisc  = view(o.discountHTG||0, o.currency);
+    const vFee   = view(o.feeHTG||0, o.currency);
+    const vDel   = view(o.deliveryHTG||0, o.currency);
+    const vGrand = view(o.grandHTG||0, o.currency);
+    const vNet   = view(o.netHTG||0, o.currency);
 
     const summaryHTML = `
       ${linesHTML}
@@ -364,46 +369,114 @@
         ${hasDelivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
       </div>`;
 
-    const win = window.open('', '_blank');
-    win.document.write(`
-      <!doctype html><html lang="fr"><meta charset="utf-8">
-      <title>Reçu ${o.id} – KCN</title>
-      <style>
-        body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
-        .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px;position:relative}
-        h1{color:#0066cc;margin:0 0 8px 0}
-        .meta{color:#475569}
-        .paid-stamp{
+    // ----- Bloc HTML autonome (utilisé pour PDF and fallback) -----
+    const root = document.createElement('div');
+    root.style.width = '700px';
+    root.style.padding = '18px';
+    root.style.border = '1px solid #e5e7eb';
+    root.style.borderRadius = '12px';
+    root.style.fontFamily = "Montserrat, Arial, sans-serif";
+    root.style.color = "#0f172a";
+    root.style.position = 'relative';
+
+    // Ecological message box (visible and prominent)
+    const ecoHTML = `
+      <div style="background:#eef9f3;border-left:6px solid #16a34a;padding:10px;border-radius:8px;margin-top:8px;margin-bottom:10px;color:#065f46">
+        <strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. 
+        Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.
+      </div>`;
+
+    root.innerHTML = `
+      ${isVerified ? `
+        <div style="
           position:absolute;top:50%;left:50%;
           transform:translate(-50%,-50%) rotate(-25deg);
-          font-size:72px;font-weight:bold;
-          color:rgba(21,128,61,0.15);
-          text-transform:uppercase;
-          pointer-events:none;
-          border:8px solid;padding:8px;
-          white-space:nowrap
-        }
-      </style>
-      <body>
-        <div class="sheet">
-          ${isVerified ? '<div class="paid-stamp">Payé</div>' : ''}
-          <h1>KOLTIZ Club de Natation</h1>
-          <div class="meta">${isVerified ? 'Reçu' : 'Reçu provisoire'} – Commande ${o.id}</div>
-          <div class="meta">Mode de paiement : <b>${method}</b></div>
-          ${clientHTML}
-          <hr>
-          ${summaryHTML}
-          <p class="meta" style="margin-top:10px">
-            Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
-            ${isVerified
-              ? 'PAIEMENT VÉRIFIÉ ET VALIDÉ PAR KCN.'
-              : 'Un reçu définitif sera émis après vérification du paiement.'}
-          </p>
-        </div>
-        <script>window.print();<\/script>
-      </body></html>
-    `);
-    win.document.close();
+          font-size:72px;font-weight:800;letter-spacing:2px;
+          color:rgba(21,128,61,0.15);text-transform:uppercase;
+          border:8px solid rgba(21,128,61,0.15);padding:8px;">
+          Payé
+        </div>` : ''}
+
+      <div style="margin-bottom:8px">
+        <h1 style="color:#0066cc;margin:0 0 4px 0;font-size:22px">KOLTIZ Club de Natation</h1>
+        <div style="color:#475569">${isVerified ? 'Reçu' : 'Reçu provisoire'} — Commande <b>${o.id}</b></div>
+        <div style="color:#475569">Mode de paiement : <b>${method}</b></div>
+        ${ecoHTML}
+      </div>
+
+      ${clientHTML}
+
+      <hr style="border:none;border-top:1px dashed #e5e7eb;margin:10px 0">
+
+      <div>${summaryHTML}</div>
+
+      <p style="color:#475569;margin-top:10px;font-size:12px;line-height:1.5">
+        Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
+        ${isVerified
+          ? 'PAIEMENT VÉRIFIÉ ET VALIDÉ PAR KCN.'
+          : 'Un reçu définitif sera émis après vérification de la preuve de paiement.'}
+      </p>
+    `;
+
+    // ----- PDF principal -----
+    try{
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      await pdf.html(root, {
+        margin: 24,
+        autoPaging: 'text',
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }
+      });
+      pdf.save(`Recu-${o.id}.pdf`);
+    }catch(err){
+      console.warn('PDF bloqué ou non supporté, fallback HTML…', err);
+      // ----- Fallback HTML téléchargeable (avec message écologique visible) -----
+      const html = `
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<title>Reçu ${o.id} – KCN</title>
+<style>
+  body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
+  .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px;position:relative}
+  h1{color:#0066cc;margin:0 0 8px 0}
+  .meta{color:#475569}
+  .eco{background:#eef9f3;border-left:6px solid #16a34a;padding:10px;border-radius:8px;margin-top:8px;margin-bottom:10px;color:#065f46}
+  .paid-stamp{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(-25deg);
+    font-size:72px;font-weight:bold;
+    color:rgba(21,128,61,0.15);
+    text-transform:uppercase;
+    border:8px solid;padding:8px;white-space:nowrap
+  }
+</style>
+<body>
+  <div class="sheet">
+    ${isVerified ? '<div class="paid-stamp">Payé</div>' : ''}
+    <h1>KOLTIZ Club de Natation</h1>
+    <div class="meta">${isVerified ? 'Reçu' : 'Reçu provisoire'} – Commande ${o.id}</div>
+    <div class="meta">Mode de paiement : <b>${method}</b></div>
+    <div class="eco"><strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.</div>
+    ${clientHTML}
+    <hr>
+    ${summaryHTML}
+    <p class="meta" style="margin-top:10px">
+      Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
+      ${isVerified
+        ? 'PAIEMENT VÉRIFIÉ ET VALIDÉ PAR KCN.'
+        : 'Un reçu définitif sera émis après vérification de la preuve de paiement.'}
+    </p>
+  </div>
+</body>
+</html>`;
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = `Recu-${o.id}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   }
 
   /* ===== Décrémenter le stock depuis commandes non appliquées ===== */
@@ -496,7 +569,7 @@
     function getCatalogLocal(){
       try{
         const c = JSON.parse(localStorage.getItem(CKEY)||'[]');
-        return Array.isArray(c)?c:[];
+        return Array.isArray(c)?c:[]; 
       }catch{return []}
     }
     function setCatalogLocal(catalog){ localStorage.setItem(CKEY, JSON.stringify(catalog)); }
