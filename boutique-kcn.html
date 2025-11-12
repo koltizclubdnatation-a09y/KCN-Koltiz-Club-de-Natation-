@@ -1364,23 +1364,8 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
   document.getElementById('kcnClose2').addEventListener('click', closePayModal);
   payModal.addEventListener('click', (e)=>{ if(e.target===payModal){ closePayModal(); } });
 
-  document.getElementById('kcnSaveProof').addEventListener('click', async ()=>{
-    const file = kcnProof.files?.[0];
-    if(!file){ alert('Choisis un fichier (image ou PDF).'); return; }
-    const id = document.getElementById('kcnOrderId').textContent.trim();
-    const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
-    const idx = orders.findIndex(o=>o.id===id);
-    if(idx<0){ alert("Commande introuvable."); return; }
-    const b64 = await fileToDataURL(file);
-    orders[idx].proof = { name:file.name, type:file.type, data:b64, at:new Date().toISOString() };
-    localStorage.setItem('kcn_orders', JSON.stringify(orders));
-    document.getElementById('kcnProofOk').style.display = 'inline';
-    setTimeout(()=> document.getElementById('kcnProofOk').style.display='none', 2000);
-    kcnProof.value = '';
-    alert('Preuve enregistrée.');
-  });
-
-  function fileToDataURL(file){
+  // --- Replacement: new helpers for reading & compressing images ---
+  function readFileAsDataURL(file){
     return new Promise((resolve,reject)=>{
       const r = new FileReader();
       r.onload = ()=> resolve(r.result);
@@ -1388,6 +1373,67 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
       r.readAsDataURL(file);
     });
   }
+
+  async function compressImageToDataURL(file, maxDim=1280, quality=0.72){
+    const src = await readFileAsDataURL(file);
+    return new Promise((resolve)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let {width:w, height:h} = img;
+        if(!w || !h){ resolve(src); return; }
+
+        const scale = Math.min(1, maxDim / Math.max(w,h));
+        const nw = Math.max(1, Math.round(w*scale));
+        const nh = Math.max(1, Math.round(h*scale));
+
+        const canvas = document.createElement('canvas');
+        canvas.width = nw; canvas.height = nh;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, nw, nh);
+
+        // export JPEG compressé
+        const out = canvas.toDataURL('image/jpeg', quality);
+        resolve(out || src);
+      };
+      img.onerror = ()=> resolve(src);
+      img.src = src;
+    });
+  }
+
+  // ---- Replacement: improved save proof handler that compresses images before saving ----
+  document.getElementById('kcnSaveProof').addEventListener('click', async ()=>{
+    try{
+      const file = kcnProof.files?.[0];
+      if(!file){ alert('Choisis un fichier (image ou PDF).'); return; }
+
+      const id = document.getElementById('kcnOrderId').textContent.trim();
+      const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
+      const idx = orders.findIndex(o=>o.id===id);
+      if(idx<0){ alert("Commande introuvable."); return; }
+
+      // ⬇️ si image: on compresse; sinon: on prend tel quel
+      const isImg = /^image\//i.test(file.type);
+      const b64 = isImg
+        ? await compressImageToDataURL(file, 1280, 0.72)   // max 1280px, ~72%
+        : await readFileAsDataURL(file);
+
+      orders[idx].proof = {
+        name:file.name,
+        type:file.type,
+        data:b64,
+        at:new Date().toISOString()
+      };
+      localStorage.setItem('kcn_orders', JSON.stringify(orders));
+
+      document.getElementById('kcnProofOk').style.display = 'inline';
+      setTimeout(()=> document.getElementById('kcnProofOk').style.display='none', 2000);
+      kcnProof.value = '';
+      alert('Preuve enregistrée.');
+    }catch(err){
+      console.error(err);
+      alert("Impossible d’enregistrer la preuve. Réduis la taille du fichier et réessaie.");
+    }
+  });
 
   // ---- Remplacement du handler "Télécharger le reçu" par un handler PDF+fallback HTML ----
   document.getElementById('kcnReceipt').addEventListener('click', async ()=>{
