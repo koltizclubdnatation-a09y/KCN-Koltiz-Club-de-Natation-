@@ -219,6 +219,11 @@
       min-width:200px;
       text-align:center;
     }
+    @media(max-width:720px){
+  /* Cache le bouton de la modale en mobile pour éviter le doublon */
+  .kcn-actions #kcnReceipt { display:none; }
+}
+
     /* Show when modal is open and button follows the modal in DOM (general sibling) */
     .kcn-modal.open ~ #kcnReceiptMobile { display:block; }
   }
@@ -483,6 +488,9 @@
 
   </div>
 </div>
+
+<!-- Floating mobile receipt CTA (helps mobile users find download) -->
+<button id="kcnReceiptMobile" aria-label="Télécharger le reçu (provisoire)">Télécharger le reçu</button>
 
 <!-- ===== Hotspot + FAB Admin (boutique) ===== -->
 <div id="shopAdminHotspot" aria-hidden="true"></div>
