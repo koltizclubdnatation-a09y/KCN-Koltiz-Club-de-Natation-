@@ -123,7 +123,7 @@
   @keyframes kcnFade{from{opacity:0}to{opacity:1}}
   .kcn-sheet{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);max-width:720px;width:min(96vw,720px);padding:18px}
   .kcn-head{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #e5e7eb;padding-bottom:10px;margin-bottom:12px}
-  .kcn-head h3{margin:0;color:#0b4573}
+  .kcn-head h3{Margin:0;color:#0b4573}
   .kcn-close{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:6px 10px;cursor:pointer}
   .kcn-row{display:grid;gap:10px;margin:10px 0}
   .kcn-tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -195,6 +195,35 @@
     cursor:pointer;
     font-size:18px;
     box-shadow:0 10px 26px rgba(0,0,0,.4);
+  }
+
+  /* Mobile: make KCN modal content scroll nicely and provide a prominent download CTA */
+  @media(max-width:720px){
+    .kcn-sheet{ max-height:80vh; overflow:auto; padding-bottom:80px; } /* room for floating CTA */
+    /* Floating mobile download button (hidden by default; shown when modal open via sibling selector) */
+    #kcnReceiptMobile{
+      display:none;
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:14px;
+      z-index:10002;
+      padding:12px 18px;
+      border-radius:999px;
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+      font-weight:800;
+      background:linear-gradient(90deg,#ff9800,#ffc107);
+      color:#fff;
+      border:none;
+      font-size:15px;
+      min-width:200px;
+      text-align:center;
+    }
+    /* Show when modal is open and button follows the modal in DOM (general sibling) */
+    .kcn-modal.open ~ #kcnReceiptMobile { display:block; }
+  }
+  @media(min-width:721px){
+    #kcnReceiptMobile{ display:none !important; }
   }
 
 </style>
@@ -454,6 +483,9 @@
 
   </div>
 </div>
+
+<!-- Floating mobile receipt CTA (helps mobile users find download) -->
+<button id="kcnReceiptMobile" aria-label="Télécharger le reçu (provisoire)">Télécharger le reçu</button>
 
 <!-- ===== Hotspot + FAB Admin (boutique) ===== -->
 <div id="shopAdminHotspot" aria-hidden="true"></div>
@@ -1124,6 +1156,7 @@
   const kcnLabel2 = document.getElementById('kcnLabel2');
   const kcnWhatsApp = document.getElementById('kcnWhatsApp');
   const kcnProof = document.getElementById('kcnProof');
+  const kcnEcoOpt = document.getElementById('kcnEcoOpt'); // nouvelle option
 
   document.querySelectorAll('.kcn-tab').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -1354,7 +1387,7 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
   // ---- Remplacement du handler "Télécharger le reçu" par un handler PDF+fallback HTML ----
   document.getElementById('kcnReceipt').addEventListener('click', async ()=>{
     try {
-      // --- 1) Récupère les infos depuis la modale ---
+      // --- 1) Récupère les infos depuis la modale --- 
       const id     = document.getElementById('kcnOrderId').textContent.trim();
       const total  = document.getElementById('kcnOrderTotal').textContent.trim();
       const method = (window.KCN_PAY_METHOD_LABEL || '—');
@@ -1367,6 +1400,16 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
 
       // Résumé panier déjà rendu dans la modale
       const summaryHTML = document.getElementById('kcnSummary').innerHTML;
+
+      // Option écologique choisie par l'utilisateur dans la modale
+      const ecoOpt = document.getElementById('kcnEcoOpt') ? document.getElementById('kcnEcoOpt').checked : true;
+      const ecoHTML = ecoOpt ? `
+        <p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4">
+             <strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. 
+
+        Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.
+        </p>
+      ` : '';
 
       // --- 2) Construit un bloc HTML PROPRE et autonome (styles inline) ---
       const receipt = document.createElement('div');
@@ -1400,6 +1443,8 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
           <span>Total</span><strong>${total}</strong>
         </div>
 
+        ${ecoHTML}
+
         <p style="color:#475569;margin-top:10px;font-size:12px;line-height:1.5">
           Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
           Un reçu <b>définitif</b> sera émis après vérification de la preuve de paiement.
@@ -1432,6 +1477,8 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
       const emailVal = (custEmail.value||'').trim();
       const addrVal  = (custAddr.value||'').trim();
       const summaryHTML = document.getElementById('kcnSummary').innerHTML;
+      const ecoOpt = document.getElementById('kcnEcoOpt') ? document.getElementById('kcnEcoOpt').checked : true;
+      const ecoHTML = ecoOpt ? `<p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4">🌱 Nous protégeons la planète — KCN limite son impact environnemental (emballages responsables, gestes éco-responsables). Si vous le souhaitez, vous pouvez demander une version sans cette mention.</p>` : '';
 
       const html = `
 <!doctype html>
@@ -1460,6 +1507,7 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
     <hr>
     ${summaryHTML}
     <div class="tot"><span>Total</span><strong>${total}</strong></div>
+    ${ecoHTML}
     <p class="meta">Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>Un reçu définitif sera émis après vérification.</p>
   </div>
 </body>
@@ -1476,6 +1524,33 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
       URL.revokeObjectURL(url);
     }
   });
+
+  // Connect mobile floating button to the same handler so mobile users find it easily
+  const kcnReceiptMobileBtn = document.getElementById('kcnReceiptMobile');
+  if (kcnReceiptMobileBtn) {
+    kcnReceiptMobileBtn.addEventListener('click', ()=> {
+      // trigger existing handler programmatically
+      const mainBtn = document.getElementById('kcnReceipt');
+      if (mainBtn) mainBtn.click();
+    });
+    // Hide the floating button if modal is closed (robustness)
+    const observer = new MutationObserver(()=> {
+      const open = payModal.classList.contains('open');
+      // the CSS already shows/hides the button by sibling selector on small screens,
+      // but ensure it's hidden on other sizes or when modal closed.
+      if (!open) {
+        kcnReceiptMobileBtn.style.display = '';
+      } else {
+        // allow CSS to manage display; for some browsers we force block to ensure visibility on small screens
+        if (window.innerWidth <= 720) kcnReceiptMobileBtn.style.display = 'block';
+      }
+    });
+    observer.observe(payModal, { attributes: true, attributeFilter: ['class'] });
+    // Also update on resize
+    window.addEventListener('resize', ()=> {
+      if (window.innerWidth > 720) kcnReceiptMobileBtn.style.display = 'none';
+    });
+  }
 
   // Cache le bandeau si la promo est désactivée
 if (!PROMO.active) {
