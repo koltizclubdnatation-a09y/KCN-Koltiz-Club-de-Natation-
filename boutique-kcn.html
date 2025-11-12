@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>KCN — Boutique matériel & packs</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<!-- PDF + rendu HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-+Kv6C8xQyC6s2xN2YohQy2Kz3e0t8xO+eVUP0r4m5fKp+0lXrEmsSoiqKTwqBfN1I3oL2kPG1f3W7CzqEJf2WQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5lH8b2Jw4jyZzqH2Z0c4XHkJm9e0cQYw7I4oFQ2i7x9k5n7mYqv7t3TT0e1H1wI0Y1nYk1DkZgJm1iY2b4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <style>
   :root{
     --brand:#0066cc;--accent:#00bcd4;--sun:#ff9800;
@@ -290,6 +295,17 @@
         <div class="row"><span class="muted">Frais paiement</span><strong id="fee">0 HTG</strong></div>
         <div class="row total"><span>Total avec frais</span><strong id="gt">0 HTG</strong></div>
 
+        <!-- 🎯 Bloc Contribution Projet Piscine (intégré au panier) -->
+        <div style="border-top:1px dashed var(--line);padding-top:10px;margin-top:10px">
+          <h4 style="color:#0066cc;font-size:.95rem;margin:0 0 6px">💙 Soutenir le projet piscine</h4>
+          <p style="font-size:.85rem;color:#475569;margin:4px 0">Chaque contribution aide à concrétiser notre piscine éducative !</p>
+          <form id="kcnFundFormCart" style="display:flex;gap:6px;margin:6px 0">
+            <input type="number" id="kcnFundAmountCart" min="250" step="50" placeholder="250 HTG" style="flex:1;padding:6px 8px;border-radius:8px;border:1px solid var(--line);font-size:.9rem">
+            <button class="btn" type="submit" style="padding:6px 12px;font-size:.9rem;white-space:nowrap">Ajouter</button>
+          </form>
+          <div style="font-size:.8rem;color:#64748b;margin-top:4px">Montant min: 250 HTG</div>
+        </div>
+
         <button class="btn" id="checkout">Procéder au paiement</button>
         <button class="btn alt" id="clearCart">Vider le panier</button>
         <p class="mini">Le magasin est <strong>indépendant</strong> de l’inscription. Promo, devise, frais et livraison s’appliquent ici.</p>
@@ -448,6 +464,7 @@
 <script>
   /* ===================== Données Produits (AVEC STOCK) ===================== */
   const INVENTORY = [
+   
     /* Bonnets */
     { id:'bonnet-g', cat:'bonnets', name:'Bonnet (gros) #110', priceHTG:2900, stock:0,
       imgs:['./boutique-kcn/bonnet3/23.png','./boutique-kcn/bonnet3/24.png','./boutique-kcn/bonnet3/25.png','./boutique-kcn/bonnet3/28.jpeg','./boutique-kcn/bonnet3/29.jpeg','./boutique-kcn/bonnet3/30.jpeg'],
@@ -574,7 +591,7 @@
       desc:'Équipement de flotteurs d’aide d’été pour adultes et débutants, accessoires de natation, flotteurs de piscine, design ludique, construction robuste.',
       tags:['entrainement'], colors:['bleu','rose','orange','jaune','vert'] },
 
-    /* Articles additionnels importés depuis dossiers boutique-kcn (ajoutés automatiquement) */
+    /* Articles additionnels … */
     { id:'colan-1', cat:'colan', name:'Collant/homme #2020', priceHTG:1800, stock:0,
       imgs:['./boutique-kcn/colan-1/1.png','./boutique-kcn/colan-1/2.png','./boutique-kcn/colan-1/3.png','./boutique-kcn/colan-1/4.png','./boutique-kcn/colan-1/5.png'],
       desc:'Collant / caleçon bain — modèle 1.',
@@ -585,10 +602,10 @@
       desc:'Collant / caleçon bain — modèle 2.',
       tags:['tenue','bain'], colors:['noir','gris'] },
 
-    { id:'sac-gonflable', cat:'sac-gonflable', name:'Sac gonflable #2040', priceHTG:2500, stock:4,
+    { id:'sac-gonflable', cat:'colis', name:'Mini sac gonflable #2040', priceHTG:2500, stock:4,
       imgs:['./boutique-kcn/sac-gonflable/1.png','./boutique-kcn/sac-gonflable/2.png','./boutique-kcn/sac-gonflable/3.png'],
-      desc:'Sac gonflable de sécurité / rangement étanche (avec vidéo de présentation).',
-      tags:['accessoire'], colors:['bleu','rose'] },
+      desc:'Mini sac gonflable de sécurité / rangement étanche (pratique pour la plage et la piscine).',
+      tags:['accessoire','sac'], colors:['bleu','rose'] },
 
     { id:'tenue-adu-fi1', cat:'tenue-adulte-femme', name:'Tenue adulte femme #2050', priceHTG:4200, stock:5,
       imgs:['./boutique-kcn/tenue-adu-fi1/1.png','./boutique-kcn/tenue-adu-fi1/2.png','./boutique-kcn/tenue-adu-fi1/3.png','./boutique-kcn/tenue-adu-fi1/4.png'],
@@ -632,17 +649,15 @@
       desc:"Ensemble de pince à nez de natation et de bouchons d'oreille en silicone, fournitures de sports aquatiques en plein air.",
       tags:['accessoires'], colors:['bleu','rose','noir'] },
 
-    // Nouveau produit : te-fil-en
     { id:'te-fil-en', cat:'tenue-fille', name:'Tenue fille modèle #2130', priceHTG:1460, stock:5,
       imgs:['./boutique-kcn/te-fil-en/1.png','./boutique-kcn/te-fil-en/2.png', './boutique-kcn/te-fil-en/3.png','./boutique-kcn/te-fil-en/4.png', './boutique-kcn/te-fil-en/5.png', './boutique-kcn/te-fil-en/6.png','./boutique-kcn/te-fil-en/7.png'],
       desc:'Maillot de Bain Une Pièce Fermeture Éclair Dos Nu pour Filles - Maillot de Bain Compétition à Changement Rapide avec Jambes Courtes, Sans Manches pour Entraînement, Plage et Piscine, Lavable en Machine (Adolescentes) - Maillot de Bain Sportif Ajusté.',
       tags:['tenue de bain','fille'],
       colors:['bleu-marin','noir']
     },
-    // Nouveau produit : brassard-
     { id:'brassard-', cat:'brassards', name:'Brassards modèle #2140', priceHTG:2000, stock:10,
       imgs:['./boutique-kcn/brassard-/1.png','./boutique-kcn/brassard-/2.png','./boutique-kcn/brassard-/2 (2).png','./boutique-kcn/brassard-/4.png','./boutique-kcn/brassard-/5.png'],
-      desc:'Bestway, 1 Paire de Brassards Gonflables pour la Natation avec Sangle à Bobine - Motif Poisson Jaune Vif, Bobine Ajustable et Fixations Sécurisées pour Plage, Piscine, Lac, Activités Extérieures en Vacances, Jouets Aquatiques de Vacances | Accessoire de Bain Amusant | Bande Gonflable Durable, Flotteurs de Piscine.',
+      desc:'Bestway, 1 Paire de Brassards Gonflables…',
       tags:['sécurité','enfant'],
       colors:['jaune']
     }
@@ -651,9 +666,13 @@
   /* ===================== Config & État ===================== */
   const COURSE_ITEMS = [
     {id:'reg', name:"Frais d'inscription", priceHTG:1500},
-    {id:'month', name:'Mois 1', priceHTG:6500}
+    {id:'month', name:'Mois 1', priceHTG:6500},
+    // ✅ Don piscine en HTG (prix=1 HTG, qty = montant donné)
+    {id:'don-piscine', name:'Don Piscine Éducative — KCN (HTG)', priceHTG:1}
   ];
-  const PROMO = { active:true, rate:0.10, appliesTo:'packs' };
+
+  // Promo packs (bandeau) + règle supplémentaire "À partir de 4 articles, le 5ᵉ à moitié prix"
+  const PROMO = { active:false, rate:0.10, appliesTo:'packs' };
   const DELIVERY_HTG = 500;
 
   const state = { q:'', cat:'', currency:'HTG', rate:null, cart:{}, delivery:false };
@@ -681,7 +700,6 @@
     return htg;
   }
 
-  // ⚙️ Statuts courts unifiés
   function stockLabelAndClass(stock){
     if (stock <= 0) return { label: 'rupture',  cls: 'out'  };
     if (stock <= 2) return { label: 'critique', cls: 'warn' };
@@ -762,13 +780,44 @@
 
   /* ===================== Calcul Panier ===================== */
   function computeCartBase(){
+    // totalHTG : somme brute
+    // discountHTG : cumul remises (packs promo + promo quantité "5ᵉ à moitié prix")
     let totalHTG = 0, discountHTG = 0;
+    const unitPrices = []; // pour calcul quantité-based promo
+
     Object.entries(state.cart).forEach(([id,qty])=>{
       const item = INVENTORY.find(x=>x.id===id) || COURSE_ITEMS.find(x=>x.id===id);
       if(!item) return;
-      const line = item.priceHTG * qty; totalHTG += line;
-      if(PROMO.active && item.cat===PROMO.appliesTo){ discountHTG += line * PROMO.rate; }
+      const line = item.priceHTG * qty;
+      totalHTG += line;
+
+      // Promo packs (existant: -10% sur cat 'packs')
+      if(PROMO.active && item.cat === PROMO.appliesTo){
+        discountHTG += line * PROMO.rate;
+      }
+
+      // Préparer liste d'unités éligibles à la promo "5ᵉ à moitié prix".
+      // Exclure donations (id starting with 'don') et autres éléments non produits.
+      if(!String(id).startsWith('don')){
+        for(let i=0;i<qty;i++){
+          unitPrices.push(item.priceHTG);
+        }
+      }
     });
+
+    // Règle : "à partir de 4 articles, le 5ᵉ à moitié prix"
+    // Interprétation : pour chaque groupe de 5 unités (toutes catégories produits/packs, sauf donations),
+    // appliquer une remise = 50% du prix de l'unité la moins chère (par groupe).
+    // Ici on trie les unités par prix ascendant et on applique la moitié sur les plus petites unités (conservateur côté boutique).
+    unitPrices.sort((a,b)=>a-b);
+    const groups = Math.floor(unitPrices.length / 5);
+    for(let g=0; g<groups; g++){
+      const cheapest = unitPrices[g];
+      if(typeof cheapest === 'number' && isFinite(cheapest)){
+        discountHTG += Math.round(cheapest * 0.5);
+      }
+    }
+
     return { totalHTG, discountHTG, netHTG: totalHTG - discountHTG };
   }
 
@@ -800,7 +849,7 @@
     const vDisc = viewPrice(discountHTG);
     const vTot = viewPrice(netHTG);
     sub.textContent = isNaN(vSub)?'—':fmt(vSub,state.currency);
-    disc.textContent = (PROMO.active && !isNaN(vDisc) && vDisc>0) ? ('– '+fmt(vDisc,state.currency)) : '—';
+    disc.textContent = (discountHTG>0) ? ('– '+fmt(vDisc,state.currency)) : '—';
     tot.textContent = isNaN(vTot)?'—':fmt(vTot,state.currency);
     updateFeesAndGrandTotal();
   }
@@ -879,22 +928,11 @@
 
   // ✅ Bouton "Vider le panier" : vide immédiatement sans confirmation
   document.getElementById('clearCart').addEventListener('click', () => {
-    // 1) On vide l'état du panier
     state.cart = {};
     state.options = {};
-
-    // 2) On sauvegarde l'état vide dans le localStorage
     saveCart();
-
-    // 3) On met à jour l'affichage du panier
     renderCart();
-
-    // 4) On réinitialise les quantités dans la grille de produits
-    grid.querySelectorAll('input[data-qty-for]').forEach(input => {
-      input.value = 1;
-    });
-
-    // 5) On met à jour l'affichage des produits
+    grid.querySelectorAll('input[data-qty-for]').forEach(input => { input.value = 1; });
     renderProducts();
   });
 
@@ -913,32 +951,24 @@
       }
 
       const qtyInput = grid.querySelector(`input[data-qty-for="${addId}"]`);
-
-      // quantité demandée (par défaut 1)
       let qtyToAdd = Math.max(1, parseInt(qtyInput?.value || '1', 10) || 1);
       let newQty   = cartQty + qtyToAdd;
 
-      // on ne dépasse pas le stock
       if (newQty > stockLeft){
         qtyToAdd = stockLeft - cartQty;
         newQty   = stockLeft;
         alert(`Reste disponible : ${stockLeft - cartQty}`);
       }
 
-      // 🛒 mettre à jour le panier
       state.cart[addId] = newQty;
-
-      // 🧮 mettre à jour SEULEMENT la case "Qté" à côté du bouton
       if (qtyInput) qtyInput.value = newQty;
 
       saveCart();
       renderCart();
-      // ❌ PAS de renderProducts() ici, sinon la Qté revient à 1
     }
 
     if(viewId){ openProductModal(viewId); }
   });
-
 
   /* ===================== Modal Produit ===================== */
   const pdModal = document.getElementById('pdModal');
@@ -995,49 +1025,20 @@
       </div>`;
   }
 
-  function getSelectedSize(){
-    const r = document.querySelector('input[name="pdSize"]:checked');
-    return r ? r.value : null;
-  }
-
-  function getSelectedColor(){
-    const r = document.querySelector('input[name="pdColor"]:checked');
-    return r ? r.value : null;
-  }
+  function getSelectedSize(){ const r = document.querySelector('input[name="pdSize"]:checked'); return r ? r.value : null; }
+  function getSelectedColor(){ const r = document.querySelector('input[name="pdColor"]:checked'); return r ? r.value : null; }
 
   function openZoom(src, alt){
     if(!src) return;
-    zoomImg.src = src;
-    zoomImg.alt = alt || '';
-    zoomModal.classList.add('open');
-    zoomModal.setAttribute('aria-hidden','false');
+    zoomImg.src = src; zoomImg.alt = alt || '';
+    zoomModal.classList.add('open'); zoomModal.setAttribute('aria-hidden','false');
   }
+  function closeZoom(){ zoomModal.classList.remove('open'); zoomModal.setAttribute('aria-hidden','true'); }
 
-  function closeZoom(){
-    zoomModal.classList.remove('open');
-    zoomModal.setAttribute('aria-hidden','true');
-  }
-
-  // Clic sur l’image principale de la fiche produit → zoom
-  pdMain.addEventListener('click', ()=>{
-    if(!pdMain.src) return;
-    openZoom(pdMain.src, pdMain.alt);
-  });
-
-  // Bouton fermer du zoom
+  pdMain.addEventListener('click', ()=>{ if(!pdMain.src) return; openZoom(pdMain.src, pdMain.alt); });
   zoomClose.addEventListener('click', closeZoom);
-
-  // Clic en dehors de l’image → fermer
-  zoomModal.addEventListener('click', (e)=>{
-    if(e.target === zoomModal) closeZoom();
-  });
-
-  // ESC → fermer le zoom
-  window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      closeZoom();
-    }
-  });
+  zoomModal.addEventListener('click', (e)=>{ if(e.target === zoomModal) closeZoom(); });
+  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ closeZoom(); } });
 
   function openProductModal(id){
     const p = INVENTORY.find(x=>x.id===id);
@@ -1090,18 +1091,12 @@
 
   pdAdd.addEventListener('click', ()=>{
     if(!currentPdId) return;
-    
     let qtyToAdd = Math.max(1, parseInt(pdQty.value||'1',10)||1);
-    
     const s = getStock(currentPdId);
-    if(s <= 0){ 
-      alert('Rupture de stock'); 
-      return; 
-    }
+    if(s <= 0){ alert('Rupture de stock'); return; }
 
     const currentQty = state.cart[currentPdId] || 0;
     let newQty = currentQty + qtyToAdd;
-
     if(newQty > s){
       alert(`Stock disponible : ${s}\nQuantité déjà dans le panier : ${currentQty}\nQuantité maximum ajoutée.`);
       newQty = s;
@@ -1112,16 +1107,10 @@
     const opt = {};
     if (color) opt.color = color;
     if (size)  opt.size  = size;
-    if (Object.keys(opt).length){
-      state.options[currentPdId] = opt;
-    }
+    if (Object.keys(opt).length){ state.options[currentPdId] = opt; }
 
     state.cart[currentPdId] = newQty;
-    
-    saveCart(); 
-    renderCart(); 
-    renderProducts(); 
-    closePdModal();
+    saveCart(); renderCart(); renderProducts(); closePdModal();
   });
 
   /* ===================== Modal Paiement (checkout) ===================== */
@@ -1196,7 +1185,9 @@
     Object.entries(state.cart).forEach(([pid,qty])=>{
       const item = ALL_ITEMS.find(x=>x.id===pid);
       if(!item) return;
-      const s = getStock(pid);
+      // Don = pas de stock ; produits = on clip selon stock
+      const isProduct = INVENTORY.some(x=>x.id===pid);
+      const s = isProduct ? getStock(pid) : Infinity;
       const finalQty = Math.min(qty, s);
       if(finalQty<=0) return;
       const lineHTG = item.priceHTG * finalQty;
@@ -1215,6 +1206,22 @@
 
       lines.push({id:pid, name:nameWithOpt, qty:finalQty, priceHTG:item.priceHTG, lineHTG});
     });
+    // Appliquer la promo quantité "5ᵉ à moitié prix" ici aussi (même logique que computeCartBase)
+    const unitPrices = [];
+    lines.forEach(l=>{
+      if(!String(l.id).startsWith('don')){
+        for(let i=0;i<l.qty;i++) unitPrices.push(l.priceHTG);
+      }
+    });
+    unitPrices.sort((a,b)=>a-b);
+    const groups = Math.floor(unitPrices.length / 5);
+    for(let g=0; g<groups; g++){
+      const cheapest = unitPrices[g];
+      if(typeof cheapest === 'number' && isFinite(cheapest)){
+        discountHTG += Math.round(cheapest * 0.5);
+      }
+    }
+
     const netHTG = totalHTG - discountHTG;
 
     const payCfg = getSelectedPay();
@@ -1261,7 +1268,6 @@
       </div>
     `;
 
-    // WhatsApp message pré-rempli avec coordonnées
     const msg = encodeURIComponent(
       `Bonjour KCN, paiement commande ${id} pour un montant de ${kcnOrderTotal.textContent}.
 Nom: ${nameVal}
@@ -1284,18 +1290,17 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
       payMethod,
       payMethodLabel,
       customer: {
-        name: nameVal,
-        phone: phoneVal,
-        email: emailVal,
-        addr: state.delivery ? addrVal : ''
+        name: nameVal, phone: phoneVal, email: emailVal, addr: state.delivery ? addrVal : ''
       }
     });
     localStorage.setItem('kcn_orders', JSON.stringify(orders));
 
-    // Décrémenter stock
+    // Décrémenter stock uniquement pour les PRODUITS (pas pour le don)
     lines.forEach(l=>{
-      const remain = getStock(l.id) - l.qty;
-      setStock(l.id, remain);
+      if (INVENTORY.some(x=>x.id===l.id)){
+        const remain = getStock(l.id) - l.qty;
+        setStock(l.id, remain);
+      }
     });
 
     // Reset panier
@@ -1346,53 +1351,138 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
     });
   }
 
-  document.getElementById('kcnReceipt').addEventListener('click', ()=>{
-    const id = document.getElementById('kcnOrderId').textContent.trim();
-    const total = document.getElementById('kcnOrderTotal').textContent.trim();
-    const summaryHTML = document.getElementById('kcnSummary').innerHTML;
-    const method = window.KCN_PAY_METHOD_LABEL || '—';
+  // ---- Remplacement du handler "Télécharger le reçu" par un handler PDF+fallback HTML ----
+  document.getElementById('kcnReceipt').addEventListener('click', async ()=>{
+    try {
+      // --- 1) Récupère les infos depuis la modale ---
+      const id     = document.getElementById('kcnOrderId').textContent.trim();
+      const total  = document.getElementById('kcnOrderTotal').textContent.trim();
+      const method = (window.KCN_PAY_METHOD_LABEL || '—');
 
-    const nameVal  = (custName.value||'').trim();
-    const phoneVal = (custPhone.value||'').trim();
-    const emailVal = (custEmail.value||'').trim();
-    const addrVal  = (custAddr.value||'').trim();
+      // Coordonnées client (tes champs existants)
+      const nameVal  = (custName.value||'').trim();
+      const phoneVal = (custPhone.value||'').trim();
+      const emailVal = (custEmail.value||'').trim();
+      const addrVal  = (custAddr.value||'').trim();
 
-    const clientHTML = `
-      <div class="meta" style="margin:8px 0 10px">
-        <div><b>Client :</b> ${nameVal||'—'}</div>
-        <div><b>Tel :</b> ${phoneVal||'—'}</div>
-        <div><b>Email :</b> ${emailVal||'—'}</div>
-        <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
-        ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
-      </div>`;
+      // Résumé panier déjà rendu dans la modale
+      const summaryHTML = document.getElementById('kcnSummary').innerHTML;
 
-    const win = window.open('', '_blank');
-    win.document.write(`
-      <!doctype html><html lang="fr"><meta charset="utf-8">
-      <title>Reçu ${id} – KCN</title>
-      <style>
-        body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
-        .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
-        h1{color:#0066cc;margin:0 0 8px 0}
-        .meta{color:#475569}
-        .tot{display:flex;justify-content:space-between;font-weight:800;margin-top:10px}
-      </style>
-      <body>
-        <div class="sheet">
-          <h1>KOLTIZ Club de Natation</h1>
-          <div class="meta">Reçu provisoire – Commande ${id}</div>
-          <div class="meta">Mode de paiement : <b>${method}</b></div>
-          ${clientHTML}
-          <hr>
-          ${summaryHTML}
-          <div class="tot"><span>Total</span><strong>${total}</strong></div>
-          <p class="meta">Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>Un reçu définitif sera émis après vérification.</p>
+      // --- 2) Construit un bloc HTML PROPRE et autonome (styles inline) ---
+      const receipt = document.createElement('div');
+      receipt.style.width = '700px';
+      receipt.style.padding = '18px';
+      receipt.style.border = '1px solid #e5e7eb';
+      receipt.style.borderRadius = '12px';
+      receipt.style.fontFamily = "Montserrat, Arial, sans-serif";
+      receipt.style.color = "#0f172a";
+
+      receipt.innerHTML = `
+        <div style="margin-bottom:8px">
+          <h1 style="color:#0066cc;margin:0 0 4px 0;font-size:22px">KOLTIZ Club de Natation</h1>
+          <div style="color:#475569">Reçu provisoire — Commande <b>${id}</b></div>
+          <div style="color:#475569">Mode de paiement : <b>${method}</b></div>
         </div>
-        <script>window.print();<\/script>
-      </body></html>
-    `);
-    win.document.close();
+
+        <div style="margin:8px 0 10px;color:#475569">
+          <div><b>Client :</b> ${nameVal||'—'}</div>
+          <div><b>Tel :</b> ${phoneVal||'—'}</div>
+          <div><b>Email :</b> ${emailVal||'—'}</div>
+          <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
+          ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
+        </div>
+
+        <hr style="border:none;border-top:1px dashed #e5e7eb;margin:10px 0">
+
+        <div>${summaryHTML}</div>
+
+        <div style="display:flex;justify-content:space-between;font-weight:800;margin-top:12px">
+          <span>Total</span><strong>${total}</strong>
+        </div>
+
+        <p style="color:#475569;margin-top:10px;font-size:12px;line-height:1.5">
+          Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>
+          Un reçu <b>définitif</b> sera émis après vérification de la preuve de paiement.
+        </p>
+      `;
+
+      // --- 3) Génère le PDF avec jsPDF + html2canvas ---
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit:'pt', format:'a4' });
+
+      // Ajuste l’échelle pour un rendu net sur mobile
+      await pdf.html(receipt, {
+        margin: 24,
+        autoPaging: 'text',
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }
+      });
+
+      // Télécharge le fichier (mobile/desktop) — nom lisible
+      pdf.save(`Recu-${id}.pdf`);
+
+    } catch (err) {
+      console.warn('PDF non supporté ou bloqué, fallback HTML…', err);
+
+      // --- 4) Fallback robuste : on télécharge un .html autonome ---
+      const id     = document.getElementById('kcnOrderId').textContent.trim();
+      const total  = document.getElementById('kcnOrderTotal').textContent.trim();
+      const method = (window.KCN_PAY_METHOD_LABEL || '—');
+      const nameVal  = (custName.value||'').trim();
+      const phoneVal = (custPhone.value||'').trim();
+      const emailVal = (custEmail.value||'').trim();
+      const addrVal  = (custAddr.value||'').trim();
+      const summaryHTML = document.getElementById('kcnSummary').innerHTML;
+
+      const html = `
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<title>Reçu ${id} – KCN</title>
+<style>
+  body{font-family:Montserrat,Arial,sans-serif;color:#0f172a}
+  .sheet{max-width:700px;margin:20px auto;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+  h1{color:#0066cc;margin:0 0 8px 0}
+  .meta{color:#475569}
+  .tot{display:flex;justify-content:space-between;font-weight:800;margin-top:10px}
+</style>
+<body>
+  <div class="sheet">
+    <h1>KOLTIZ Club de Natation</h1>
+    <div class="meta">Reçu provisoire – Commande ${id}</div>
+    <div class="meta">Mode de paiement : <b>${method}</b></div>
+    <div class="meta" style="margin:8px 0 10px">
+      <div><b>Client :</b> ${nameVal||'—'}</div>
+      <div><b>Tel :</b> ${phoneVal||'—'}</div>
+      <div><b>Email :</b> ${emailVal||'—'}</div>
+      <div><b>Livraison :</b> ${state.delivery ? 'Oui' : 'Non'}</div>
+      ${state.delivery ? `<div><b>Adresse :</b> ${addrVal||'—'}</div>` : ''}
+    </div>
+    <hr>
+    ${summaryHTML}
+    <div class="tot"><span>Total</span><strong>${total}</strong></div>
+    <p class="meta">Paiement hors-ligne : Virement / MonCash / NatCash / Espèces.<br>Un reçu définitif sera émis après vérification.</p>
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `Recu-${id}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
   });
+
+  // Cache le bandeau si la promo est désactivée
+if (!PROMO.active) {
+  const pb = document.querySelector('.promo');
+  if (pb) pb.style.display = 'none';
+}
+
 
   /* ===================== Init ===================== */
   function init(){
@@ -1497,10 +1587,8 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
     }
   }
 
-  // Clic sur le FAB → accès admin
   fab.addEventListener('click', openGate);
 
-  // Raccourci clavier : Shift + Alt + S → affiche le FAB
   window.addEventListener('keydown', (e)=>{
     if (e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
       e.preventDefault(); showFab();
@@ -1508,17 +1596,35 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
     if (e.key === 'Escape') hideFab();
   });
 
-  // Appui long (1.2s) dans le coin bas-droit → affiche le FAB
   let pressT=null;
   hot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>{
     hot.addEventListener(ev, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
   });
 
-  // Double-clic sur le titre du hero (si présent) → affiche le FAB
   const h1 = document.querySelector('.hero h1');
   if (h1) h1.addEventListener('dblclick', showFab);
 })();
+</script>
+
+<!-- ===== Don Piscine — Ajout direct au panier ===== -->
+<script>
+/* Don: même logique que précédemment — quantité correspond au montant HTG (priceHTG=1) */
+const fundForm = document.getElementById('kcnFundFormCart');
+const fundInput = document.getElementById('kcnFundAmountCart');
+
+if (fundForm && fundInput){
+  fundForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const raw = parseFloat((fundInput.value||'').replace(',','.'));
+    if (!isFinite(raw) || raw < 250) { return; }
+    const amount = Math.round(raw); // HTG entier
+    state.cart['don-piscine'] = (state.cart['don-piscine'] || 0) + amount;
+    saveCart();
+    renderCart();
+    fundInput.value = '';
+  });
+}
 </script>
 
 </body>
