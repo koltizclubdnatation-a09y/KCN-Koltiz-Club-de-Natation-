@@ -1529,7 +1529,9 @@ ${state.delivery ? 'Livraison: OUI\nAdresse: '+addrVal : 'Livraison: NON'}`
       const addrVal  = (custAddr.value||'').trim();
       const summaryHTML = document.getElementById('kcnSummary').innerHTML;
       const ecoOpt = document.getElementById('kcnEcoOpt') ? document.getElementById('kcnEcoOpt').checked : true;
-      const ecoHTML = ecoOpt ? `<p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4">🌱 Nous protégeons la planète — KCN limite son impact environnemental (emballages responsables, gestes éco-responsables). Si vous le souhaitez, vous pouvez demander une version sans cette mention.</p>` : '';
+      const ecoHTML = ecoOpt ? `<p style="color:#075985;margin-top:10px;font-size:12px;line-height:1.4"> <strong>Pour la planète :</strong> Ce reçu est numérique pour réduire l'utilisation de papier. 
+
+        Vous pouvez télécharger ce reçu en PDF ou l'imprimer depuis votre appareil si vous souhaitez une copie papier.</p>` : '';
 
       const html = `
 <!doctype html>
