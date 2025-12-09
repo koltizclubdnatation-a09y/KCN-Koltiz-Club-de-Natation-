@@ -167,31 +167,55 @@
     }
     .btn.round:hover{ transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,.35); background:linear-gradient(90deg,#f4b400,#005bb5) }
     .btn.round:active{ transform:translateY(0); box-shadow:0 3px 10px rgba(0,0,0,.2) }
+   
+    /* Simple cookie banner */
+    .cookie-banner{
+      position:fixed;left:12px;right:12px;bottom:12px;background:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.12);display:flex;gap:12px;align-items:center;z-index:9999;flex-wrap:wrap;
+    }
+    .cookie-banner p{margin:0;flex:1;color:#111}
+    .cookie-banner .actions{display:flex;gap:8px}
+    .cookie-btn{padding:8px 14px;border-radius:8px;font-weight:700;border:2px solid var(--brand);background:transparent;color:var(--brand);cursor:pointer}
+    .cookie-btn.accept{background:var(--brand);color:#fff}
+ 
+    
+ 
+
+
   </style>
 </head>
 <body>
   <a class="skip" href="#contenu">Aller au contenu</a>
+  
+<!-- BOUTON HAMBURGER (placer dans le header ou en haut de la page) -->
+<button id="drawerToggle" class="drawer-toggle" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
 
-  <!-- BACKDROP & DRAWER -->
-  <div class="drawer-backdrop" data-drawer-backdrop hidden></div>
-  <aside id="drawer" class="drawer" aria-hidden="true" aria-label="Menu" data-drawer>
-    <div class="drawer-header">
-      <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" />
-      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer le menu">×</button>
-    </div>
-    <nav class="drawer-nav" aria-label="Navigation latérale">
-      <a href="./index.html">Accueil</a>
-      <a href="./Apropos.html">À propos</a>
-      <a href="./descriptioncours.html">Cours</a>
-      <a href="./plancours.html">Formation</a>
-      <a href="./evenement.html">Événements</a>
-      <a href="./temoignage.html">Témoignages</a>
-      <a href="./contactez-nous.html">Contact</a>
-      <a href="./certificat.html">Certifications</a>
-      <a href="./boutique-kcn.html">Boutique-KCN</a>
-    </nav>
-    <div class="drawer-footer">© 2025 KCN</div>
-  </aside>
+<!-- BACKDROP & DRAWER (garde ton code existant) -->
+<div class="drawer-backdrop" data-drawer-backdrop hidden></div>
+
+<aside id="drawer" class="drawer" aria-hidden="true" aria-label="Menu" data-drawer>
+  <div class="drawer-header">
+    <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" />
+    <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer le menu">×</button>
+  </div>
+  <nav class="drawer-nav" aria-label="Navigation latérale">
+    <a href="./index.html">Accueil</a>
+    <a href="./Apropos.html">À propos</a>
+    <a href="./descriptioncours.html">Cours</a>
+    <a href="./plancours.html">Formation</a>
+    <a href="./evenement.html">Événements</a>
+    <a href="./temoignage.html">Témoignages</a>
+    <a href="./contactez-nous.html">Contact</a>
+    <a href="./certificat.html">Certifications</a>
+    <a href="./boutique-kcn.html">Boutique-KCN</a>
+  </nav>
+  <div class="drawer-footer">© 2025 KCN</div>
+</aside>
+
+
 
   <!-- HEADER -->
   <header role="banner">
@@ -276,8 +300,8 @@
     <!-- FAQ -->
     <section class="faq" aria-label="Questions fréquentes">
       <h2>Questions fréquentes</h2>
-      <details><summary>À partir de quel âge débutez-vous ?</summary><p>Dès 4 ans, et adultes aussi.</p></details>
-      <details><summary>Proposez-vous un cours d’essai ?</summary><p>Oui, réservez un cours d’essai via la page Contact.</p></details>
+      <details><summary>À partir de quel âge débutez-vous ?</summary><p>3 ans et adultes aussi.</p></details>
+      <details><summary>Proposez-vous un cours d’essai ?</summary><p>Oui, réservez un cours d’essai via le bouton reserver votre essaie gratuit.</p></details>
       <details><summary>Et si mon enfant a peur de l’eau ?</summary><p>Pédagogie progressive et ludique pour lui donner confiance.</p></details>
       <details><summary>Combien de temps on peut prendre pour apprendre à nager ?</summary><p>Chaque élève progresse à son rythme. En moyenne, 8 à 12 semaines suffisent pour acquérir les bases, selon l’âge et la régularité.</p></details>
       <details><summary>Où êtes-vous situés ?</summary><p>Delmas 75, rue des tourterelles, Hôtel House of Dream, Haïti.</p></details>
@@ -344,6 +368,107 @@
     drawerLinks.forEach(a => a.addEventListener('click', closeDrawer));
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && bodyEl.classList.contains('drawer-open')) closeDrawer(); });
   </script>
+
+
+  <!-- Minimal local cookie consent (hébergé sur KOLTIZ) -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-live="polite" style="display:none">
+    <p>Nous utilisons des cookies pour améliorer l'expérience (nécessaires). Vous pouvez accepter ou refuser les cookies analytiques / marketing.</p>
+    <div class="actions">
+      <button id="cookieReject" class="cookie-btn">Refuser</button>
+      <button id="cookieAccept" class="cookie-btn accept">Accepter</button>
+    </div>
+  </div>
+
+  <script>
+    // Domain to use for shared cookies between subdomains
+    const COOKIE_DOMAIN = ".koltiz.com"; // <- adapte si tu utilises un autre domaine
+
+    function setCookie(name, value, days){
+      let expires = "";
+      if(days){
+        const d = new Date();
+        d.setTime(d.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + d.toUTCString();
+      }
+      document.cookie = name + "=" + (value||"") + expires + "; path=/; domain=" + COOKIE_DOMAIN + "; Secure";
+    }
+    function getCookie(name){
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    }
+
+    // cookie UI logic
+    const banner = document.getElementById('cookieBanner');
+    const acceptBtn = document.getElementById('cookieAccept');
+    const rejectBtn = document.getElementById('cookieReject');
+
+    function showBannerIfNeeded(){
+      if(!getCookie('koltiz_cookie_consent')){
+        banner.style.display = 'flex';
+      }
+    }
+    acceptBtn.addEventListener('click', ()=>{
+      setCookie('koltiz_cookie_consent','accepted',365);
+      // Ici : tu peux lancer les scripts analytiques si tu veux (ex: Google Analytics)
+      banner.style.display = 'none';
+    });
+    rejectBtn.addEventListener('click', ()=>{
+      setCookie('koltiz_cookie_consent','rejected',365);
+      // Bloque les scripts analytiques / marketing — ne rien charger
+      banner.style.display = 'none';
+    });
+
+    // Afficher après chargement
+    window.addEventListener('load', showBannerIfNeeded);
+  </script>
+
+  <!-- NOTE : aucun script externe de tracking ou widget tiers n'est chargé ici -->
+<script>
+(function() {
+  function enforceHideOnDesktop() {
+    var isDesktop = window.matchMedia('(min-width: 1025px)').matches;
+    // sélecteurs à couvrir
+    var sel = [
+      '#drawer', '.drawer', '[data-drawer]',
+      '.drawer-backdrop', '.sidebar',
+      '.drawer-toggle', '.hamburger', '.burger', '[data-drawer-toggle]', '.menu-btn'
+    ];
+    sel.forEach(function(s) {
+      document.querySelectorAll(s).forEach(function(el) {
+        if (isDesktop) {
+          // applique style inline pour écraser tout JS/CSS
+          el.style.display = 'none';
+          el.style.visibility = 'hidden';
+          el.style.opacity = '0';
+          el.style.pointerEvents = 'none';
+          // si c'est un drawer, assure qu'il soit fermé
+          if (el.hasAttribute && el.hasAttribute('aria-hidden')) el.setAttribute('aria-hidden', 'true');
+          el.classList.remove('open', 'show', 'is-open'); // retire classes courantes
+        } else {
+          // restaure l'état par défaut (laisser le CSS gérer l'affichage)
+          el.style.display = '';
+          el.style.visibility = '';
+          el.style.opacity = '';
+          el.style.pointerEvents = '';
+        }
+      });
+    });
+  }
+
+  // exécute au chargement et à la redimension
+  enforceHideOnDesktop();
+  window.addEventListener('resize', enforceHideOnDesktop);
+  // si un script tiers ouvre le drawer après le chargement, on le referme rapidement
+  document.addEventListener('click', function() {
+    if (window.matchMedia('(min-width: 1025px)').matches) {
+      var drawer = document.querySelector('#drawer, .drawer, [data-drawer]');
+      var backdrop = document.querySelector('.drawer-backdrop');
+      if (drawer) { drawer.style.display = 'none'; drawer.setAttribute('aria-hidden', 'true'); }
+      if (backdrop) { backdrop.style.display = 'none'; backdrop.hidden = true; }
+    }
+  }, true);
+})();
+</script>
 
 </body>
 </html>
