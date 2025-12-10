@@ -178,7 +178,113 @@
     .cookie-btn.accept{background:var(--brand);color:#fff}
  
     
- 
+
+
+  /* ------------------ Masquer drawer & hamburger sur desktop ------------------ */
+@media (min-width: 1025px) {
+  #drawer,
+  .drawer,
+  .drawer-backdrop,
+  [data-drawer],
+  .drawer-toggle,
+  .hamburger,
+  .burger,
+  .menu-btn {
+    display: none !important;       /* plus d’affichage */
+    visibility: hidden !important;  /* invisible */
+  }
+}
+
+/* ------------------ Afficher drawer & hamburger sur tablette & mobile ------------------ */
+@media (max-width: 1024px) {
+  #drawer,
+  .drawer,
+  .drawer-backdrop,
+  [data-drawer] {
+    display: block !important;      /* visible */
+    visibility: visible !important;
+  }
+
+  .drawer-toggle,
+  .hamburger,
+  .burger,
+  .menu-btn {
+    display: inline-block !important;
+    visibility: visible !important;
+  }
+}
+
+/* ---------- HEADER ---------- */
+.header-wrap {
+  display: flex;
+  justify-content: space-between; /* gauche et droite aux extrémités */
+  align-items: center;            /* alignement vertical */
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* LEFT GROUP (hamburger + logo) */
+.left-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* LOGO */
+.logo {
+  height: 700px;
+  width: auto;
+}
+
+/* RIGHT GROUP (menu complet) */
+.right-group nav {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; /* s’adapte si écran trop petit */
+}
+
+/* LIENS */
+.right-group a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  white-space: nowrap; /* pas de retour à la ligne */
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+/* Sur mobile et tablette : drawer et hamburger visibles, menu complet caché */
+@media (max-width: 1024px) {
+  #drawer,
+  .drawer,
+  .drawer-backdrop,
+  [data-drawer],
+  .hamburger {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .right-group nav {
+    display: none; /* cacher menu complet */
+  }
+}
+
+/* Sur desktop : drawer et hamburger invisibles, menu complet visible */
+@media (min-width: 1025px) {
+  #drawer,
+  .drawer,
+  .drawer-backdrop,
+  [data-drawer],
+  .hamburger {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .right-group nav {
+    display: flex; /* menu complet visible */
+  }
+}
 
 
   </style>
@@ -300,7 +406,7 @@
     <!-- FAQ -->
     <section class="faq" aria-label="Questions fréquentes">
       <h2>Questions fréquentes</h2>
-      <details><summary>À partir de quel âge débutez-vous ?</summary><p>3 ans et adultes aussi.</p></details>
+      <details><summary>À partir de quel âge débutez-vous ?</summary><p> Dès 3 ans et adultes aussi.</p></details>
       <details><summary>Proposez-vous un cours d’essai ?</summary><p>Oui, réservez un cours d’essai via le bouton reserver votre essaie gratuit.</p></details>
       <details><summary>Et si mon enfant a peur de l’eau ?</summary><p>Pédagogie progressive et ludique pour lui donner confiance.</p></details>
       <details><summary>Combien de temps on peut prendre pour apprendre à nager ?</summary><p>Chaque élève progresse à son rythme. En moyenne, 8 à 12 semaines suffisent pour acquérir les bases, selon l’âge et la régularité.</p></details>
@@ -423,52 +529,8 @@
   </script>
 
   <!-- NOTE : aucun script externe de tracking ou widget tiers n'est chargé ici -->
-<script>
-(function() {
-  function enforceHideOnDesktop() {
-    var isDesktop = window.matchMedia('(min-width: 1025px)').matches;
-    // sélecteurs à couvrir
-    var sel = [
-      '#drawer', '.drawer', '[data-drawer]',
-      '.drawer-backdrop', '.sidebar',
-      '.drawer-toggle', '.hamburger', '.burger', '[data-drawer-toggle]', '.menu-btn'
-    ];
-    sel.forEach(function(s) {
-      document.querySelectorAll(s).forEach(function(el) {
-        if (isDesktop) {
-          // applique style inline pour écraser tout JS/CSS
-          el.style.display = 'none';
-          el.style.visibility = 'hidden';
-          el.style.opacity = '0';
-          el.style.pointerEvents = 'none';
-          // si c'est un drawer, assure qu'il soit fermé
-          if (el.hasAttribute && el.hasAttribute('aria-hidden')) el.setAttribute('aria-hidden', 'true');
-          el.classList.remove('open', 'show', 'is-open'); // retire classes courantes
-        } else {
-          // restaure l'état par défaut (laisser le CSS gérer l'affichage)
-          el.style.display = '';
-          el.style.visibility = '';
-          el.style.opacity = '';
-          el.style.pointerEvents = '';
-        }
-      });
-    });
-  }
 
-  // exécute au chargement et à la redimension
-  enforceHideOnDesktop();
-  window.addEventListener('resize', enforceHideOnDesktop);
-  // si un script tiers ouvre le drawer après le chargement, on le referme rapidement
-  document.addEventListener('click', function() {
-    if (window.matchMedia('(min-width: 1025px)').matches) {
-      var drawer = document.querySelector('#drawer, .drawer, [data-drawer]');
-      var backdrop = document.querySelector('.drawer-backdrop');
-      if (drawer) { drawer.style.display = 'none'; drawer.setAttribute('aria-hidden', 'true'); }
-      if (backdrop) { backdrop.style.display = 'none'; backdrop.hidden = true; }
-    }
-  }, true);
-})();
-</script>
+ 
 
 </body>
 </html>
