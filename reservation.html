@@ -24,28 +24,227 @@
       --bg:#f8fafc; --white:#ffffff; --ring:0 0 0 3px rgba(0,102,204,.25);
       --radius:14px;
       --shadow-lg:0 20px 50px rgba(0,0,0,.12);
+      --line:#e6edf6;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink-900);line-height:1.7}
+    body{
+      margin:0;
+      font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink-900);
+      line-height:1.7
+    }
     img{max-width:100%;display:block}
     a{color:var(--brand-600);text-decoration:none}
-    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box-shadow:var(--ring)}
+    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+      outline:none;box-shadow:var(--ring)
+    }
 
     /* Layout */
     .container{max-width:1200px;margin-inline:auto;padding:0 24px}
     .stack{display:grid;gap:clamp(12px,2vw,20px)}
 
+    /* =========================
+       HEADER + DRAWER (100% CSS)
+       ========================= */
+    .site-header{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background:#fff;                 /* header blan */
+      border-bottom: 3px solid var(--brand-600);
+      box-shadow: 0 2px 10px rgba(2,6,23,.06); /* ombre */
+    }
+    .site-header .header-inner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .site-header .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+    }
+    .site-header .logo{
+      height:56px;
+      width:auto;
+      object-fit:contain;
+    }
+
+    /* Desktop menu */
+    .site-header .nav-links{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+    }
+    .site-header .nav-links a{
+      color:var(--brand-600);                 /* couleur brand */
+      font-weight:700;
+      padding: 8px 12px;
+      border-radius: 10px;
+      text-decoration:none;
+    }
+    .site-header .nav-links a:hover{
+      background: rgba(0,0,0,.06);
+    }
+
+    /* Drawer toggle (checkbox hidden) */
+    #navToggle{
+      position:absolute;
+      width:1px;height:1px;
+      margin:-1px;padding:0;
+      border:0;overflow:hidden;
+      clip:rect(0 0 0 0);
+      white-space:nowrap;
+    }
+
+    /* Hamburger (mobile/tablette only) */
+    .hamburger{
+      display:none;
+      width:44px;
+      height:44px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius: 12px;
+      background:#fff;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+    }
+    .hamburger span{
+      font-size: 22px;
+      line-height: 1;
+      color:var(--brand-600);
+      font-weight:900;
+    }
+
+    /* Backdrop */
+    .backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 1090;
+    }
+
+    /* Drawer panel */
+    .drawer{
+      position: fixed;
+      top:0;
+      left:0;
+      width: 280px;
+      height: 100dvh;
+      background:#fff;
+      box-shadow: 2px 0 18px rgba(0,0,0,.18);
+      transform: translateX(-105%);
+      transition: transform .28s ease;
+      z-index: 1100;
+      overflow-y:auto;
+      padding: 14px 12px;
+    }
+    .drawer .drawer-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 6px 6px 10px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 10px;
+    }
+    .drawer .drawer-head img{
+      height: 44px;
+      width:auto;
+      object-fit: contain;
+    }
+    .drawer .drawer-close{
+      display:inline-flex;
+      width:42px;height:42px;
+      align-items:center;justify-content:center;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius: 12px;
+      background:#fff;
+      cursor:pointer;
+      font-size: 22px;
+      color:var(--brand-600);
+      user-select:none;
+    }
+    .drawer a{
+      display:block;
+      padding: 12px 14px;
+      color:var(--brand-600);                /* couleur brand */
+      font-weight:700;
+      border-radius: 12px;
+      text-decoration:none;
+    }
+    .drawer a:hover{ background: rgba(0,0,0,.06); }
+
+    /* OPEN state */
+    #navToggle:checked ~ .backdrop{
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #navToggle:checked ~ .drawer{
+      transform: translateX(0);
+    }
+
+    /* Responsive rules */
+    @media (max-width: 1024px){
+      .site-header .nav-links{ display:none; }
+      .hamburger{ display:inline-flex; }
+    }
+    @media (min-width: 1025px){
+      .drawer, .backdrop, #navToggle{ display:none !important; }
+      .site-header .nav-links{ display:flex; }
+    }
+
     /* HERO */
     .hero{position:relative;min-height:58vh;display:grid;place-items:center;overflow:hidden}
-    .hero::before{content:"";position:absolute;inset:0;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;filter:saturate(1.08) contrast(1.04)}
-    .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,22,50,.25),rgba(0,0,0,.35))}
-    .hero-inner{position:relative;z-index:1;text-align:center;padding:28px;border-radius:var(--radius);backdrop-filter:saturate(1.1) blur(3px);background:rgba(255,255,255,.86);box-shadow:0 12px 34px rgba(0,0,0,.12)}
-    .hero h1{margin:.2em 0 .2em;font-size:clamp(28px,4vw,46px);line-height:1.1;background:linear-gradient(90deg,var(--brand-600),var(--brand-400));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero::before{
+      content:"";position:absolute;inset:0;
+      background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
+      filter:saturate(1.08) contrast(1.04)
+    }
+    .hero::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(to bottom,rgba(0,22,50,.25),rgba(0,0,0,.35))
+    }
+    .hero-inner{
+      position:relative;z-index:1;text-align:center;
+      padding:28px;border-radius:var(--radius);
+      backdrop-filter:saturate(1.1) blur(3px);
+      background:rgba(255,255,255,.86);
+      box-shadow:0 12px 34px rgba(0,0,0,.12)
+    }
+    .hero h1{
+      margin:.2em 0 .2em;
+      font-size:clamp(28px,4vw,46px);
+      line-height:1.1;
+      background:linear-gradient(90deg,var(--brand-600),var(--brand-400));
+      -webkit-background-clip:text;background-clip:text;color:transparent
+    }
     .hero p{margin:0;color:var(--ink-700)}
     .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 20px;border-radius:12px;border:1px solid transparent;font-weight:800;cursor:pointer;transition:.18s}
-    .btn.primary{background:linear-gradient(90deg,var(--accent-500),var(--accent-400));color:#fff;box-shadow:0 10px 28px rgba(255,152,0,.25)}
+
+    /* Buttons (existing) */
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:14px 20px;border-radius:12px;
+      border:1px solid transparent;font-weight:800;
+      cursor:pointer;transition:.18s
+    }
+    .btn.primary{
+      background:linear-gradient(90deg,var(--accent-500),var(--accent-400));
+      color:#fff;box-shadow:0 10px 28px rgba(255,152,0,.25)
+    }
     .btn.primary:hover{transform:translateY(-2px)}
     .btn.ghost{background:#ffffff;color:var(--brand-600);border-color:var(--brand-600)}
     .btn.outline{background:#fff;color:var(--brand-600);border:2px solid var(--brand-600)}
@@ -54,48 +253,96 @@
     /* Badges */
     .badges{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
     @media (min-width: 900px){.badges{grid-template-columns:repeat(4,1fr)}}
-    .badge{background:var(--white);border:1px solid var(--muted);border-radius:12px;padding:14px;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.06)}
+    .badge{
+      background:var(--white);
+      border:1px solid var(--muted);
+      border-radius:12px;
+      padding:14px;text-align:center;
+      box-shadow:0 8px 22px rgba(0,0,0,.06)
+    }
 
     /* Cards */
     .cards{display:grid;gap:20px}
     @media (min-width: 900px){.cards{grid-template-columns:1.2fr .8fr}}
-    .card{background:#fff;border:1px solid var(--muted);border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .card{
+      background:#fff;border:1px solid var(--muted);
+      border-radius:14px;padding:22px;
+      box-shadow:0 10px 30px rgba(0,0,0,.06)
+    }
     .card h2{margin:0 0 6px;color:var(--brand-600)}
     .list{padding-left:18px;margin:0;display:grid;gap:8px}
 
     /* Modal (dialog) */
-    dialog.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,16,40,.65);backdrop-filter:blur(4px);z-index:100}
+    dialog.modal{
+      position:fixed;inset:0;display:none;
+      align-items:center;justify-content:center;
+      background:rgba(0,16,40,.65);
+      backdrop-filter:blur(4px);
+      z-index:1200; /* au-dessus du header/drawer */
+    }
     dialog[open]{display:flex}
-    .sheet{width:min(1080px,92vw);height:min(88vh,900px);border-radius:18px;background:#fff;box-shadow:var(--shadow-lg);overflow:auto;transform:translateY(12px) scale(.98);opacity:0;animation:pop .4s ease forwards}
+    .sheet{
+      width:min(1080px,92vw);
+      height:min(88vh,900px);
+      border-radius:18px;background:#fff;
+      box-shadow:var(--shadow-lg);
+      overflow:auto;
+      transform:translateY(12px) scale(.98);
+      opacity:0;animation:pop .4s ease forwards
+    }
     @keyframes pop{to{transform:translateY(0) scale(1);opacity:1}}
-    .sheet-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(90deg,var(--brand-600),var(--brand-400));color:#fff}
+    .sheet-header{
+      position:sticky;top:0;z-index:2;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;
+      background:linear-gradient(90deg,var(--brand-600),var(--brand-400));
+      color:#fff
+    }
     .sheet-title{font-weight:800}
     .sheet-actions{display:flex;gap:8px}
-    .icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:10px;border:none;background:rgba(255,255,255,.18);color:#fff;font-size:20px;cursor:pointer}
+    .icon-btn{
+      display:inline-grid;place-items:center;
+      width:40px;height:40px;border-radius:10px;
+      border:none;background:rgba(255,255,255,.18);
+      color:#fff;font-size:20px;cursor:pointer
+    }
     .icon-btn:hover{background:rgba(255,255,255,.28)}
 
     /* Footer (cohérent KCN) */
-    footer{
-      margin-top:40px;background:linear-gradient(90deg,#00b4db,#0093e9);
-      color:#fff;text-align:center;padding:20px 0;border-top:3px solid rgba(255,255,255,.3)
+    .site-footer{
+      background:linear-gradient(90deg,#00b4db,#0093e9);
+      color:#fff;
+      border-top:3px solid rgba(255,255,255,.3);
+      padding:18px 16px;
+      box-sizing:border-box;
+      margin-top: 18px;
     }
-    .footer-inner{max-width:1100px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px}
-    .footer-top{display:flex;align-items:center;flex-direction:column;gap:8px}
-    .footer-logo{width:70px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-    .copyright{font-size:.9rem;color:#f1f9ff;margin:0}
-    .footer-social-block{display:flex;flex-direction:column;align-items:center;gap:6px}
-    .follow-text{font-weight:600;font-size:.95rem;color:#ffe082}
-    .footer-social{display:flex;justify-content:center;gap:14px}
-    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;transition:transform .3s,box-shadow .3s}
-    .footer-social img:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(255,255,255,.4)}
-    .footer-legal{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:6px}
-    .footer-legal a{color:#fff;text-decoration:none;font-size:.9rem;transition:color .3s}
-    .footer-legal a:hover{color:#004c91;text-decoration:underline}
-    @media (min-width:768px){
-      .footer-inner{flex-direction:row;justify-content:space-between;text-align:left}
-      .footer-top{flex-direction:row;gap:14px}
-      .footer-social-block{flex-direction:row;gap:10px}
-      .footer-legal{margin-top:0}
+    .footer-inner{
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-copy{margin:0;font-size:.95rem;color:#fff}
+    .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .footer-legal{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .footer-legal a{
+      color:#fff;text-decoration:none;font-weight:600;
+      background:rgba(255,255,255,.06);
+      padding:6px 10px;border-radius:8px
+    }
+    .footer-legal a:hover{background:rgba(255,255,255,.12);text-decoration:underline}
+    .footer-social{display:flex;gap:12px;align-items:center}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;display:block}
+    @media (max-width: 768px){
+      .footer-inner{flex-direction:column;align-items:center;text-align:center;gap:12px}
+      .footer-right{align-items:center}
+      .footer-legal{justify-content:center}
     }
 
     /* Motion safe */
@@ -103,9 +350,69 @@
       .btn,.icon-btn{transition:none}
       .sheet{animation:none;transform:none;opacity:1}
     }
+    /* Modal / Form style (from testimonial) */
+    .modal { display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:3000; padding:20px; }
+    dialog.modal[open], .modal.open { display:flex; }
+    .form-box { background:#fff; padding:18px; border-radius:12px; max-width:720px; width:100%; box-shadow:0 12px 40px rgba(2,6,23,.12); }
+    .form-box h3{margin:0 0 12px;color:var(--brand-600)}
+    .form-box label{display:block;margin:10px 0;font-size:0.95rem}
+    .form-box input[type="text"], .form-box input[type="email"], .form-box input[type="tel"], .form-box textarea, .form-box select{
+      width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; margin-top:6px; font-family:inherit;
+    }
+    .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .status{margin-top:10px;font-size:0.95rem;color:#333;display:none}
+    /* Responsive form rows */
+    .form-row{display:grid;gap:14px;grid-template-columns:1fr}
+    @media(min-width:720px){ .form-row.two{grid-template-columns:1fr 1fr} }
+    /* Allow modal content to scroll on small screens so fields remain visible */
+    .form-box{max-height:80vh;overflow:auto}
   </style>
 </head>
+
 <body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html" aria-label="Accueil KCN">
+        <img src="./folder3/imaj12.png" class="logo" alt="Logo KOLTIZ Club de Natation">
+      </a>
+
+      <!-- Desktop menu -->
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./evenement.html">Événements</a>
+        <a href="./temoignages.html">Témoignages</a>
+        <a href="./contactez-nous.html">Contact</a>
+        <a href="./reservation.html" aria-current="page">Réservation</a>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <label class="hamburger" for="navToggle" aria-label="Ouvrir le menu">
+        <span>☰</span>
+      </label>
+    </div>
+  </header>
+
+  <!-- Drawer system (CSS only) -->
+  <input type="checkbox" id="navToggle" aria-hidden="true">
+  <label class="backdrop" for="navToggle" aria-label="Fermer le menu"></label>
+
+  <aside class="drawer" aria-label="Menu mobile">
+    <div class="drawer-head">
+      <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation">
+      <label class="drawer-close" for="navToggle" aria-label="Fermer">×</label>
+    </div>
+    <nav aria-label="Navigation latérale">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+      <a href="./reservation.html">Réservation</a>
+    </nav>
+  </aside>
 
   <main id="main" class="stack">
     <!-- HERO -->
@@ -115,7 +422,9 @@
         <p>Une expérience premium, sécurisée et inclusive. Adultes & enfants – débutants à avancés.</p>
         <div class="cta">
           <button class="btn primary" id="open-modal" type="button" aria-haspopup="dialog" aria-controls="modal">Réserver maintenant</button>
-          <a class="btn ghost" id="open-new" href="https://docs.google.com/forms/d/1_xfPIzYXUKw0DaGkkJngAdow1x8GGtHygUReyqj0WpU/viewform" target="_blank" rel="noopener">Ouvrir le formulaire</a>
+          <a class="btn ghost" id="open-new"
+             href="https://docs.google.com/forms/d/1_xfPIzYXUKw0DaGkkJngAdow1x8GGtHygUReyqj0WpU/viewform"
+             target="_blank" rel="noopener">Ouvrir le formulaire</a>
         </div>
       </div>
     </section>
@@ -143,17 +452,19 @@
       </article>
       <article class="card">
         <h2>Besoin d'aide ?</h2>
-        <p>Téléphone : <a href="tel:+50936956939">(+509) 36 95 6939</a><br/>
-        WhatsApp : <a href="https://wa.me/50936956939" target="_blank" rel="noopener">+509 36 95 6939</a><br/>
-        Email : <a href="mailto:koltizclubdnatation@gmail.com">koltizclubdnatation@gmail.com</a></p>
+        <p>
+          Téléphone : <a href="tel:+50936956939">(+509) 36 95 6939</a><br/>
+          WhatsApp : <a href="https://wa.me/50936956939" target="_blank" rel="noopener">+509 36 95 6939</a><br/>
+          Email : <a href="mailto:koltizclubdnatation@gmail.com">koltizclubdnatation@gmail.com</a>
+        </p>
       </article>
     </section>
   </main>
 
   <!-- MODAL FORMULAIRE -->
   <dialog class="modal" id="modal" aria-label="Formulaire de réservation KCN">
-    <div class="sheet" role="document">
-      <div class="sheet-header">
+    <div class="form-box" role="document">
+      <div class="sheet-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div class="sheet-title">Réservation · KCN</div>
         <div class="sheet-actions">
           <a class="icon-btn" id="open-tab"
@@ -163,108 +474,112 @@
         </div>
       </div>
 
-      <div class="frame" style="padding:14px;overflow:auto">
-        <!-- Formspree -->
-        <form id="kcn-reserv" action="https://formspree.io/f/xjkaoyak" method="POST"
-              class="stack" style="max-width:920px;margin:0 auto">
-          <input type="hidden" name="_subject" value="Nouvelle réservation – KCN" />
-          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+      <!-- Formspree (structure adapted to testimonial modal) -->
+      <form id="kcn-reserv" action="https://formspree.io/f/xjkaoyak" method="POST" class="stack" style="max-width:920px;margin:0 auto">
+        <input type="hidden" name="_subject" value="Nouvelle réservation – KCN" />
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
 
-          <div class="form-row" style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
-            <div>
-              <label for="nom">Nom complet *</label>
-              <input id="nom" name="nom" type="text" required autocomplete="name" />
-            </div>
-            <div>
-              <label for="telephone">Téléphone *</label>
-              <input id="telephone" name="telephone" type="tel" required autocomplete="tel" pattern="^[+\d][\d\s()-]{6,}$" />
-            </div>
-          </div>
+        <h3>Réserver un essai</h3>
 
-          <div class="form-row" style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
-            <div>
-              <label for="email">Email</label>
-              <input id="email" name="email" type="email" autocomplete="email" placeholder="exemple@mail.com" />
-            </div>
-            <div>
-              <label for="categorie">Catégorie *</label>
-              <select id="categorie" name="categorie" required>
-                <option value="">Sélectionnez</option>
-                <option>Enfant – Débutant</option>
-                <option>Enfant – Intermédiaire</option>
-                <option>Adulte – Débutant</option>
-                <option>Adulte – Intermédiaire/Perfectionnement</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row" style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
-            <div>
-              <label for="jour">Jour préféré *</label>
-              <select id="jour" name="jour" required>
-                <option value="">Sélectionnez</option>
-                <option>Samedi</option>
-                <option>Dimanche</option>
-              </select>
-            </div>
-            <div>
-              <label for="heure">Heure *</label>
-              <select id="heure" name="heure" required>
-                <option value="">Sélectionnez</option>
-                <option>08:00–10:00</option>
-                <option>10:00–12:00</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row" style="display:grid;gap:14px;grid-template-columns:1fr 1fr">
-            <div>
-              <label for="materiels">Matériels souhaités (optionnel) – tarifs élèves</label><br>
-              <select id="materiels" name="materiels" multiple size="3" aria-label="Matériels souhaités">
-                <option>Bonnet (1350 HTG)</option>
-                <option>Lunettes (1350 HTG)</option>
-                <option>Brassards (1250 HTG)</option>
-              </select>
-              <small class="meta">Maintenir Ctrl/Cmd pour multi-sélection.</small>
-            </div>
-            <div>
-              <label for="objet">Objet *</label>
-              <input id="objet" name="objet" type="text" required value="Réservation de cours" />
-            </div>
-          </div>
-
+        <div class="form-row two">
           <div>
-            <label for="message">Message (optionnel)</label>
-            <textarea id="message" name="message" rows="5" placeholder="Âge du participant, niveau, remarques…"></textarea>
+            <label for="nom">Nom complet *</label>
+            <input id="nom" name="nom" type="text" required autocomplete="name" />
           </div>
-
-          <div class="consent" style="display:flex;gap:10px;align-items:flex-start">
-            <input id="consent" name="consent" type="checkbox" required />
-            <label for="consent">J'accepte la <a href="confidentialités.html" target="_blank" rel="noopener">Politique de confidentialité</a> et les <a href="conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a>. *</label>
+          <div>
+            <label for="telephone">Téléphone *</label>
+            <input id="telephone" name="telephone" type="tel" required autocomplete="tel" pattern="^[+\d][\d\s()-]{6,}$" />
           </div>
+        </div>
 
-          <button class="btn primary" id="submitBtn" type="submit">Envoyer ma réservation</button>
-          <p id="reserv-status" class="meta" role="status" aria-live="polite"></p>
+        <div class="form-row two">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="exemple@mail.com" />
+          </div>
+          <div>
+            <label for="categorie">Catégorie *</label>
+            <select id="categorie" name="categorie" required>
+              <option value="">Sélectionnez</option>
+              <option>Enfant – Débutant</option>
+              <option>Enfant – Intermédiaire</option>
+              <option>Adulte – Débutant</option>
+              <option>Adulte – Intermédiaire/Perfectionnement</option>
+            </select>
+          </div>
+        </div>
 
-          <details class="meta">
-            <summary>Ou utiliser le Google Form</summary>
-            <div style="margin-top:8px">
-              <a class="btn outline" href="https://docs.google.com/forms/d/1_xfPIzYXUKw0DaGkkJngAdow1x8GGtHygUReyqj0WpU/viewform" target="_blank" rel="noopener">Ouvrir le Google Form ↗</a>
+        <div class="form-row two">
+          <div>
+            <label for="jour">Jour préféré *</label>
+            <select id="jour" name="jour" required>
+              <option value="">Sélectionnez</option>
+              <option>Samedi</option>
+              <option>Dimanche</option>
+            </select>
+          </div>
+          <div>
+            <label for="heure">Heure *</label>
+            <select id="heure" name="heure" required>
+              <option value="">Sélectionnez</option>
+              <option>08:00–10:00</option>
+              <option>10:00–12:00</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row two">
+          <div>
+            <label for="materiels">Matériels souhaités (optionnel) – tarifs élèves</label>
+            <div class="materials-checkboxes" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+              <label style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" name="materiels[]" value="Bonnet (1350 HTG)"> Bonnet (1350 HTG)</label>
+              <label style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" name="materiels[]" value="Lunettes (1350 HTG)"> Lunettes (1350 HTG)</label>
+              <label style="display:inline-flex;align-items:center;gap:8px"><input type="checkbox" name="materiels[]" value="Brassards (1250 HTG)"> Brassards (1250 HTG)</label>
             </div>
-          </details>
-        </form>
-      </div>
+          </div>
+          <div>
+            <label for="objet">Objet *</label>
+            <input id="objet" name="objet" type="text" required value="Réservation de cours" />
+          </div>
+        </div>
+
+        <div>
+          <label for="message">Message (optionnel)</label>
+          <textarea id="message" name="message" rows="5" placeholder="Âge du participant, niveau, remarques…"></textarea>
+        </div>
+
+        <div class="consent" style="display:flex;gap:10px;align-items:flex-start">
+          <input id="consent" name="consent" type="checkbox" required />
+          <label for="consent">
+            J'accepte la <a href="confidentialités.html" target="_blank" rel="noopener">Politique de confidentialité</a> et les
+            <a href="conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a>. *
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn primary" id="submitBtn" type="submit">Envoyer ma réservation</button>
+        </div>
+        <p id="reserv-status" class="status" role="status" aria-live="polite"></p>
+
+        <details class="meta" style="margin-top:8px">
+          <summary>Ou utiliser le Google Form</summary>
+          <div style="margin-top:8px">
+            <a class="btn outline"
+               href="https://docs.google.com/forms/d/1_xfPIzYXUKw0DaGkkJngAdow1x8GGtHygUReyqj0WpU/viewform"
+               target="_blank" rel="noopener">Ouvrir le Google Form ↗</a>
+          </div>
+        </details>
+      </form>
     </div>
   </dialog>
 
   <!-- CTA secondaires -->
   <div class="container" style="text-align:center;margin:22px auto">
     <a href="./inscription1eretapes.html" class="btn outline" aria-label="Je m'inscris">Je m'inscris</a>
-    <a href="./Apropos.html" class="btn outline" aria-current="page">Retour</a>
-   
+    <a href="./Apropos.html" class="btn outline">Retour</a>
   </div>
 
-  <!-- JS -->
+  <!-- JS (modal + envoi form) - drawer pa bezwen JS -->
   <script>
     (function(){
       const modal = document.getElementById('modal');
@@ -274,11 +589,9 @@
       const status = document.getElementById('reserv-status');
       const submitBtn = document.getElementById('submitBtn');
 
-      // Dialog open/close (fallback soft si showModal indispo)
       function openModal(){
         if (modal.showModal) modal.showModal();
         else modal.setAttribute('open','');
-        // focus premier champ
         setTimeout(()=> document.getElementById('nom')?.focus(), 120);
       }
       function closeModal(){
@@ -286,14 +599,14 @@
         else modal.removeAttribute('open');
         openBtn?.focus();
       }
+
       openBtn?.addEventListener('click', openModal);
       closeBtn?.addEventListener('click', closeModal);
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.hasAttribute('open')) closeModal(); });
 
-      // Soumission Formspree
       form?.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        status.textContent = 'Envoi en cours…';
+        status.textContent = 'Envoi en cours…'; status.style.display = 'block';
         submitBtn.disabled = true;
         try {
           const res = await fetch(form.action, {
@@ -303,9 +616,9 @@
           });
           if (!res.ok) throw new Error('Réponse non valide');
           form.reset();
-          status.textContent = '✅ Merci ! Votre demande a bien été envoyée.';
+          status.textContent = '✅ Merci ! Votre demande a bien été envoyée.'; status.style.display = 'block';
         } catch (err) {
-          status.textContent = "❌ Désolé, l'envoi a échoué. Réessayez plus tard.";
+          status.textContent = "❌ Désolé, l'envoi a échoué. Réessayez plus tard."; status.style.display = 'block';
         } finally {
           submitBtn.disabled = false;
         }
@@ -313,35 +626,31 @@
     })();
   </script>
 
-  <!-- FOOTER KCN -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-top">
-        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
-        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        </a>
+        <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
       </div>
 
-      <div class="footer-social-block">
-        <span class="follow-text">Suivez-nous :</span>
-        <div class="footer-social" aria-label="Réseaux sociaux KCN">
-          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" aria-label="Facebook KCN">
-            <img src="./folder0/facebook.png" alt="Facebook KCN">
-          </a>
-          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" aria-label="Instagram KCN">
-            <img src="./folder0/instagram.png" alt="Instagram KCN">
-          </a>
-          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" aria-label="WhatsApp KCN">
-            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN">
-          </a>
+      <div class="footer-right">
+        <nav aria-label="Liens légaux" class="footer-legal">
+          <a href="./confidentialités.html">Confidentialité</a>
+          <a href="./conditions.html">Conditions</a>
+          <a href="./contactez-nous.html">Contact</a>
+        </nav>
+
+        <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+          <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
         </div>
       </div>
-
-      <nav class="footer-legal" aria-label="Liens légaux">
-        <a href="./confidentialités.html">Confidentialité</a>
-        <a href="./conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
-      </nav>
     </div>
   </footer>
+
 </body>
 </html>
