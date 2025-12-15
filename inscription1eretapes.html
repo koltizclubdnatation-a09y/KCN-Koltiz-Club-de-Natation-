@@ -5,26 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>KCN — Formulaire d’inscription</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+
   <style>
     :root{
       --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
       --ink:#0f172a; --muted:#475569; --line:#e5e7eb; --card:#ffffff; --page:#f7f9fc;
       --radius:16px; --shadow:0 18px 48px rgba(2,6,23,.12);
+      --danger:#ef4444; --ok:#10b981; --warn:#f59e0b;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.6}
     a{color:var(--brand);text-decoration:none}
+    img{display:block;max-width:100%;height:auto}
     .wrap{max-width:1200px;margin:28px auto 60px;padding:0 16px}
 
-    /* HERO */
-    .hero{position:relative;border-radius:20px;overflow:hidden;background:
-      linear-gradient(180deg,rgba(0,102,204,.18),rgba(0,188,212,.14)),
-      url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;min-height:220px;display:grid;place-items:center}
-    .hero .card{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);padding:22px 20px;border-radius:18px;box-shadow:var(--shadow);text-align:center;border:1px solid rgba(255,255,255,.65);width:min(92%,860px)}
+    header{
+      position:sticky; top:0; z-index:120;
+      background:#fff; border-bottom:3px solid var(--brand);
+      display:flex; justify-content:space-between; align-items:center;
+      padding:10px 16px;
+    }
+    .logo{height:56px; object-fit:contain;}
+    .nav-links{display:flex; gap:12px; align-items:center;}
+    .nav-links a{color:var(--brand); font-weight:700; padding:8px 12px; border-radius:10px;}
+    .nav-links a:hover{background:rgba(0,102,204,.08);}
+
+    .hamburger{font-size:26px; background:none; border:none; cursor:pointer;color:var(--brand); display:none;}
+    .drawer-backdrop{position:fixed; inset:0; background:rgba(2,6,23,.45);opacity:0; pointer-events:none; transition:.2s;z-index:129;}
+    .drawer{
+      position:fixed; top:0; left:0;width:280px; height:100%;
+      background:#fff; box-shadow:2px 0 18px rgba(0,0,0,.2);
+      transform:translateX(-110%); transition:.25s ease;
+      z-index:130; overflow-y:auto;padding-top:56px;
+    }
+    .drawer.open{transform:translateX(0);}
+    .drawer-backdrop.open{opacity:1; pointer-events:auto;}
+    .drawer a{display:block; padding:14px 18px; font-weight:800; color:var(--brand);border-bottom:1px solid var(--line);}
+    .drawer a:hover{background:rgba(0,102,204,.08);}
+    .drawer-close{position:absolute; top:10px; right:10px;font-size:26px; background:none; border:none; cursor:pointer;color:var(--brand);}
+
+    @media (max-width:1023px){ .nav-links{display:none;} .hamburger{display:block;} }
+    @media (min-width:1024px){ .drawer, .drawer-backdrop{display:none;} }
+
+    .hero{
+      position:relative;border-radius:20px;overflow:hidden;
+      background:
+        linear-gradient(180deg,rgba(0,102,204,.18),rgba(0,188,212,.14)),
+        url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
+      min-height:220px;display:grid;place-items:center
+    }
+    .hero .card{
+      background:rgba(255,255,255,.9);
+      backdrop-filter:blur(6px);
+      padding:22px 20px;border-radius:18px;box-shadow:var(--shadow);
+      text-align:center;border:1px solid rgba(255,255,255,.65);
+      width:min(92%,860px)
+    }
     .hero h1{color:var(--brand);font-size:1.9rem;margin-bottom:6px}
     .hero p{color:#111827}
 
-    /* GRID */
     .grid{display:grid;gap:24px;margin-top:26px;grid-template-columns:1fr}
     @media(min-width:980px){.grid{grid-template-columns:1.2fr .8fr}}
     .panel{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
@@ -32,46 +71,65 @@
     .panel .hd h2{font-size:1.1rem;color:#0b4573}
     .panel .bd{padding:18px}
 
-    /* FORMS */
     label{font-weight:700;color:#0b4573;display:block;margin:12px 0 6px}
     .help{color:#64748b;font-size:.9rem}
-    input[type="text"],input[type="email"],input[type="tel"],input[type="date"],select,textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
+    input[type="text"],input[type="email"],input[type="tel"],input[type="datetime-local"],input[type="number"],select,textarea{
+      width:100%;padding:12px 12px;border-radius:12px;border:1px solid var(--line);background:#fff
+    }
     textarea{min-height:110px}
-    input[type="number"]{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff}
     .row{display:grid;gap:14px;grid-template-columns:1fr}
     @media(min-width:720px){.row.two{grid-template-columns:1fr 1fr}}
-    @media(min-width:1024px){.row.three{grid-template-columns:1fr 1fr 1fr}}
     .inline{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    .chip{border:1px solid rgba(0,102,204,.25);background:rgba(0,102,204,.06);color:#0b4573;border-radius:999px;padding:6px 10px;font-weight:700}
+    .chip{border:1px solid rgba(0,102,204,.25);background:rgba(0,102,204,.06);color:#0b4573;border-radius:999px;padding:6px 10px;font-weight:800}
 
-    /* SUMMARY */
     .summary{position:sticky;top:16px}
     .sum-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
     .sum-row.small{font-size:.95rem;color:#334155}
-    .sum-row.total{border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;font-weight:800}
+    .sum-row.total{border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;font-weight:900}
 
-    /* PRODUCTS */
-    .product{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+    .product{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;gap:10px}
     .product .left{display:flex;gap:12px;align-items:center}
     .product input[type="checkbox"]{width:18px;height:18px}
 
-    /* Payment */
     .payopt{display:grid;gap:12px}
-    .opt{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between}
+    .opt{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
     .opt input{width:18px;height:18px}
     .opt small{color:#475569}
     .note{background:#f8fafc;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;color:#334155}
 
-    /* Buttons */
     .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
-    .btn{background:linear-gradient(90deg,var(--sun),#ffc107);color:#fff;border:0;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)}
+    .btn{
+      background:linear-gradient(90deg,var(--sun),#ffc107);
+      color:#fff;border:0;border-radius:14px;padding:12px 18px;
+      font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(255,152,0,.28)
+    }
     .btn.outline{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
     .btn:disabled{opacity:.6;cursor:not-allowed}
     .mini{margin-top:14px;font-size:.85rem;color:#475569}
 
-    /* ===== Reçu (modal) + filigrane ===== */
-    .receipt-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px);z-index:60;opacity:0;pointer-events:none;transition:.2s}
-    .receipt-modal{position:fixed;inset:0;display:grid;place-items:center;z-index:61;opacity:0;pointer-events:none}
+    /* Alert box */
+    .alert{
+      margin-top:10px;
+      border-radius:14px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .alert strong{display:block}
+    .alert.ok{border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.06)}
+    .alert.warn{border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.06)}
+    .alert.danger{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.06)}
+    .alert .dot{width:10px;height:10px;border-radius:99px;margin-top:6px;background:#94a3b8}
+    .alert.ok .dot{background:var(--ok)}
+    .alert.warn .dot{background:var(--warn)}
+    .alert.danger .dot{background:var(--danger)}
+
+    /* ===== Reçu (modal) ===== */
+    .receipt-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(2px);z-index:200;opacity:0;pointer-events:none;transition:.2s}
+    .receipt-modal{position:fixed;inset:0;display:grid;place-items:center;z-index:201;opacity:0;pointer-events:none}
     .receipt-card{width:min(92%,700px);max-height:88vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px 20px;position:relative}
     .receipt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;position:sticky;top:0;background:#fff;padding-top:4px;z-index:2}
     .receipt-head h3{margin:0;color:#0b4573}
@@ -84,58 +142,91 @@
     .receipt-tot table{min-width:240px}
     .receipt-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
     .show{opacity:1;pointer-events:auto}
-    .wm{ position:absolute; inset:0; display:none; place-items:center; pointer-events:none; z-index:1; }
-    .wm span{ font-size:92px; font-weight:900; letter-spacing:4px; color:#0f172a; opacity:.09; transform:rotate(-20deg); text-transform:uppercase; user-select:none; }
-    @media (prefers-color-scheme: dark) {.hero .card { background: rgba(255,255,255,.92); }}
 
-    /* ====== FAB Admin caché + hotspot ====== */
+    .wm{ position:absolute; inset:0; display:none; place-items:center; pointer-events:none; z-index:1; }
+    .wm span{ font-size:72px; font-weight:900; letter-spacing:3px; color:#0f172a; opacity:.09; transform:rotate(-20deg); text-transform:uppercase; user-select:none; }
+   
+    /* ===== BOUTON ADMIN (BOUCLIER) ===== */
     .fab-admin{
-      position:fixed; right:18px; bottom:18px;
-      width:54px; height:54px; display:none; place-items:center;
-      border-radius:999px; border:2px solid #0066cc; background:#fff;
-      box-shadow:0 12px 30px rgba(0,0,0,.15); cursor:pointer; z-index:9999;
+      position:fixed;
+      bottom:25px;
+      right:25px;
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#111;
+      color:#fff;
+      font-size:28px;
+      display:none; /* CACHÉ PAR DÉFAUT */
+      place-items:center;
+      cursor:pointer;
+      z-index:9999;
+      box-shadow:0 6px 15px rgba(0,0,0,.35);
     }
-    .fab-admin span{font-size:22px; line-height:1}
-    .fab-admin:hover{transform:translateY(-2px)}
-    #adminHotspot{
-      position:fixed; right:0; bottom:0; width:68px; height:68px;
-      z-index:9998; background:transparent;
-    }
+    #adminHotspot{ position:fixed; top:0; right:0; width:60px; height:60px; z-index:9998; background:transparent; }
   </style>
 </head>
+
 <body>
+
+  <header>
+    <a href="./index.html">
+      <img src="./folder3/imaj12.png" class="logo" alt="Logo KOLTIZ Club de Natation">
+    </a>
+
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+    </nav>
+
+    <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false">☰</button>
+  </header>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="drawer" id="drawer" aria-label="Menu mobile" aria-hidden="true">
+    <button class="drawer-close" id="drawerClose" aria-label="Fermer">×</button>
+    <a href="./index.html">Accueil</a>
+    <a href="./Apropos.html">À propos</a>
+    <a href="./evenement.html">Événements</a>
+    <a href="./temoignages.html">Témoignages</a>
+    <a href="./contactez-nous.html">Contact</a>
+  </aside>
+
   <div class="wrap">
-    <!-- HERO -->
     <section class="hero" role="banner" aria-label="Formulaire d'inscription KCN">
       <div class="card">
-        <h1>Inscription & paiement au KOLTIZ Club de Natation</h1>
-        <p>Étape 1 — Remplissez le formulaire, choisissez un mode de paiement et validez.<br/>
-        Paiement en ligne (MonCash / NatCash), <strong>virement bancaire</strong> ou espèces.</p>
+        <h1>Inscription & paiement — KOLTIZ Club de Natation (KCN)</h1>
+        <p>Remplissez le formulaire, choisissez le mode de paiement, puis validez.<br/>
+        MonCash / NatCash, <strong>virement bancaire</strong> ou cash.</p>
       </div>
     </section>
 
-    <!-- Bouton retour simple -->
-    <div style="max-width:1200px;margin:12px auto 0;padding:0 16px">
-      <button
-        type="button"
-        class="btn outline"
-        onclick="window.location.href='./index.html'"
-        aria-label="Retour">
-        ← Retour
-      </button>
+    <div style="margin:12px 0 0;">
+      <button type="button" class="btn outline" onclick="window.location.href='./index.html'" aria-label="Retour">← Retour</button>
     </div>
 
     <div class="grid" role="region" aria-label="Formulaire et récapitulatif">
-      <!-- FORMULAIRE -->
+
       <form class="panel" id="kcn-form" autocomplete="on" novalidate>
         <div class="hd">
-          <h2>Informations du/de la nageur·euse</h2>
+          <h2>Informations du parent / payeur</h2>
           <span class="chip" aria-hidden="true">Sécurité • Qualité • Inclusion</span>
         </div>
+
         <div class="bd">
+
           <div class="row two">
             <div>
               <label for="fname">Prénom</label>
+
+            <!-- Admin hotspot & shield (hidden par défaut) -->
+            <div id="shopInsAdminHotspot" aria-hidden="true" style="position:fixed;right:0;bottom:0;width:68px;height:68px;z-index:10008;background:transparent"></div>
+            <button id="fabInscriptionAdmin" class="fab-admin" title="Admin inscription" style="display:none">🛡</button>
+            <div id="adminHotspot"></div>
+
               <input id="fname" name="fname" type="text" required>
             </div>
             <div>
@@ -146,24 +237,13 @@
 
           <div class="row two">
             <div>
-              <label for="level">Niveau</label>
-              <select id="level" name="level" required>
-                <option value="">Choisir…</option>
-                <option>Débutant·e</option>
-                <option>Intermédiaire</option>
-                <option>Avancé·e</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row two">
-            <div>
               <label for="email">E-mail</label>
               <input id="email" name="email" type="email" required>
             </div>
             <div>
-              <label for="phone">Téléphone / WhatsApp</label>
-              <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="+509…" pattern="^[0-9+()\\s-]{8,}$" required>
+              <label for="phone">Téléphone / WhatsApp (ID payeur)</label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="+509…" pattern="^[0-9+()\s-]{8,}$" required>
+              <p class="help">Ce numéro sert d’identifiant du payeur dans l’administration.</p>
             </div>
           </div>
 
@@ -185,6 +265,87 @@
             </div>
           </div>
 
+          <!-- PAIEMENT POUR PLUSIEURS ENFANTS -->
+          <div class="panel" style="margin-top:14px">
+            <div class="hd"><h2>Paiement pour plusieurs enfants</h2></div>
+            <div class="bd">
+              <label class="inline" style="gap:10px">
+                <input type="checkbox" id="isGroupKids">
+                Oui, je paie pour plusieurs enfants (une seule facture)
+              </label>
+
+              <div id="groupKidsBox" style="display:none;margin-top:12px">
+                <div class="row two">
+                  <div>
+                    <label for="kidsCount">Nombre d’enfants payés dans cette facture</label>
+                    <input id="kidsCount" type="number" min="1" step="1" value="2">
+                    <p class="help">
+                      ✅ Vous devez saisir le <strong>nom complet</strong> de <strong>chaque enfant</strong> (ex: “Jean Paul DURAND”).<br>
+                      Si un nom complet manque, la validation sera bloquée.
+                    </p>
+                  </div>
+                </div>
+
+                <div id="kidsFields" style="margin-top:12px"></div>
+
+                <div class="alert warn" id="kidsAlert" style="display:none">
+                  <div class="dot"></div>
+                  <div>
+                    <strong>Attention</strong>
+                    Veuillez saisir le <strong>nom complet</strong> pour chaque enfant (prénom + nom).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GROUPE ACTIF POUR RABAIS -->
+          <div class="panel" style="margin-top:14px">
+            <div class="hd"><h2>Rabais de groupe (dynamique)</h2></div>
+            <div class="bd">
+              <div class="row two">
+                <div>
+                  <label for="grpActiveCount">Nombre de personnes ACTIVES dans votre groupe</label>
+                  <input id="grpActiveCount" type="number" min="1" step="1" value="1">
+                  <p class="help">
+                    Le rabais commence à partir de <strong>3</strong> personnes actives (vous + 2 autres).<br>
+                    Si une personne quitte, <strong>modifiez ce nombre</strong> : le rabais s’ajuste automatiquement.
+                  </p>
+                </div>
+              </div>
+
+              <div class="alert" id="groupAlert" style="margin-top:10px">
+                <div class="dot"></div>
+                <div id="groupAlertText">
+                  Aucun rabais (groupe actif = 1). Minimum requis : 3.
+                </div>
+              </div>
+
+              <div class="panel" style="margin-top:12px">
+                <div class="hd"><h2>Noms des personnes dans le groupe (obligatoire si groupe ≥ 3)</h2></div>
+                <div class="bd">
+                  <label for="grpNames">Liste des noms complets (1 par ligne)</label>
+                  <textarea id="grpNames" placeholder="Ex:
+Jean Paul DURAND
+Marie LOPEZ
+..."></textarea>
+                  <p class="mini" style="margin-top:10px">
+                    NB : Si le groupe est <strong>≥ 3</strong>, vous devez fournir les noms (1 par ligne).
+                  </p>
+
+                  <div class="alert danger" id="grpNamesAlert" style="display:none">
+                    <div class="dot"></div>
+                    <div>
+                      <strong>Blocage</strong>
+                      Groupe ≥ 3 : merci de saisir les <strong>noms complets</strong> (1 par ligne).
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <hr style="margin:18px 0;border:0;border-top:1px solid var(--line)">
 
           <!-- Devise -->
@@ -196,25 +357,12 @@
                 <option value="USD">USD (US Dollars)</option>
               </select>
             </div>
+
             <div id="rateWrap" style="display:none">
               <label for="usdrate">Taux USD ↔ HTG</label>
-              <input id="usdrate" type="text" inputmode="decimal" placeholder="130">
-              <p class="help">Saisissez le taux courant pour l’affichage en USD.</p>
-            </div>
-          </div>
-
-          <!-- Rabais -->
-          <div class="panel" style="margin-top:14px">
-            <div class="hd"><h2>Rabais</h2></div>
-            <div class="bd">
-              <div class="row two">
-                <div>
-                  <label for="grpCount">Nombre total de personnes inscrites (vous inclus)</label>
-                  <input id="grpCount" type="number" min="1" step="1" value="1">
-                  <p class="mini">Les remises s’appliquent sur le prix du <strong>Mois</strong> selon le total d’inscrits.</p>
-                </div>
-              </div>
-              <div class="note" id="rebateSummary">Aucun rabais appliqué pour l’instant.</div>
+              <input id="usdrate" type="number" value="130" readonly
+                     style="background:#f8fafc;font-weight:800;cursor:not-allowed;">
+              <p class="help">Taux appliqué automatiquement : <strong>130 HTG</strong> pour 1 USD.</p>
             </div>
           </div>
 
@@ -222,92 +370,42 @@
           <div class="panel" style="margin-top:14px">
             <div class="hd"><h2>Éléments à régler</h2></div>
             <div class="bd" id="items">
-              <!-- Frais fixes -->
+
               <div class="product" data-key="reg">
                 <div class="left">
                   <input type="checkbox" id="reg" checked>
                   <label for="reg">Frais d'inscription</label>
                 </div>
-                <strong class="price" data-htg="1500">1500 HTG</strong>
+                <strong class="price" data-htg="1750">1750 HTG</strong>
               </div>
+
               <div class="product" data-key="month">
                 <div class="left">
                   <input type="checkbox" id="month" checked>
                   <label for="month">Spécial Mois</label>
                 </div>
-                <strong class="price" id="monthPrice" data-htg="6500">6500 HTG</strong>
+                <strong class="price" id="monthPrice" data-htg="7000">7000 HTG</strong>
               </div>
 
-              <!-- Matériels -->
-              <div class="product" data-key="bonnet-p">
-                <div class="left">
-                  <input type="checkbox" id="bonnetp">
-                  <label for="bonnetp">Bonnet (petit)</label>
-                </div>
-                <div class="inline">
-                  <input type="number" id="qty-bonnetp" min="1" step="1" value="1" style="width:80px" aria-label="Quantité bonnet petit"> ×
-                  <strong class="price" data-htg="1350">1350 HTG</strong>
-                </div>
-              </div>
-              <div class="product" data-key="bonnet-g">
-                <div class="left">
-                  <input type="checkbox" id="bonnetg">
-                  <label for="bonnetg">Bonnet (gros)</label>
-                </div>
-                <div class="inline">
-                  <input type="number" id="qty-bonnetg" min="1" step="1" value="1" style="width:80px" aria-label="Quantité bonnet gros"> ×
-                  <strong class="price" data-htg="2025">2025 HTG</strong>
-                </div>
-              </div>
-              <div class="product" data-key="lunettes-p">
-                <div class="left">
-                  <input type="checkbox" id="lunettesp">
-                  <label for="lunettesp">Lunettes (petites)</label>
-                </div>
-                <div class="inline">
-                  <input type="number" id="qty-lunettesp" min="1" step="1" value="1" style="width:80px" aria-label="Quantité lunettes petites"> ×
-                  <strong class="price" data-htg="1350">1350 HTG</strong>
-                </div>
-              </div>
-              <div class="product" data-key="lunettes-g">
-                <div class="left">
-                  <input type="checkbox" id="lunettesg">
-                  <label for="lunettesg">Lunettes (grosses)</label>
-                </div>
-                <div class="inline">
-                  <input type="number" id="qty-lunettesg" min="1" step="1" value="1" style="width:80px" aria-label="Quantité lunettes grosses"> ×
-                  <strong class="price" data-htg="2025">2025 HTG</strong>
-                </div>
-              </div>
-              <div class="product" data-key="brassards">
-                <div class="left">
-                  <input type="checkbox" id="brassards">
-                  <label for="brassards">Brassards</label>
-                </div>
-                <div class="inline">
-                  <input type="number" id="qty-brassards" min="1" step="1" value="1" style="width:80px" aria-label="Quantité brassards"> ×
-                  <strong class="price" data-htg="2025">2025 HTG</strong>
-                </div>
-              </div>
+              <p class="mini" style="margin-top:6px">
+                Si vous payez pour plusieurs enfants :<br>
+                • Le mois = <strong>Enfant 1 (parrain)</strong> (rabais/bourse selon groupe actif) + autres enfants (plein tarif).
+              </p>
 
-
-              <!-- DON pour le projet piscine éducative KCN -->
               <div class="product" data-key="don">
                 <div class="left">
                   <input type="checkbox" id="don">
                   <label for="don">💙 Soutenir le projet piscine éducative</label>
                 </div>
-                <div>
-                  <input id="donAmount" type="text" inputmode="decimal" placeholder="250" style="width:140px;text-align:right" aria-label="Montant du don (HTG)">
-                  HTG
-                  
+                <div class="inline">
+                  <input id="donAmount" type="text" inputmode="decimal" placeholder="250"
+                         style="width:140px;text-align:right">
+                  <strong id="donCur">HTG</strong>
                 </div>
               </div>
 
               <p class="mini" style="margin-top:8px">
-                <strong>Option solidaire (100 % facultatif)</strong> :  à partir de <strong>250 HTG</strong>, si vous le souhaitez, vous pouvez ajouter un don pour soutenir
-                notre projet de piscine éducative KCN. Il s’agit d’un projet pédagogique conçu et porté
-                <strong>uniquement par KOLTIZ Club de Natation (KCN)</strong>.
+                <strong>Option solidaire (100 % facultatif)</strong> : à partir de <strong>250 HTG</strong>.
               </p>
             </div>
           </div>
@@ -317,11 +415,15 @@
             <div class="hd"><h2>Paiement</h2></div>
             <div class="bd payopt" id="paybox">
               <label class="opt">
-                <div class="inline"><input type="radio" name="pay" value="bank" data-fee-pct="0" data-fee-fixed="0" required> &nbsp;Virement bancaire</div>
+                <div class="inline">
+                  <input type="radio" name="pay" value="bank" data-fee-pct="0" data-fee-fixed="0" required>
+                  Virement bancaire
+                </div>
                 <small>Aucun frais KCN</small>
               </label>
+
               <div id="bankDetails" class="note" style="display:none">
-                <strong>Coordonnées bancaires (à compléter) :</strong>
+                <strong>Coordonnées bancaires :</strong>
                 <div style="margin-top:6px;line-height:1.6">
                   Banque : <span contenteditable="true" style="border-bottom:1px dotted #94a3b8">UNIBANK</span><br>
                   Titulaire : <span contenteditable="true" style="border-bottom:1px dotted #94a3b8">KOLTIZ</span><br>
@@ -333,23 +435,36 @@
                   Devise : <span contenteditable="true" style="border-bottom:1px dotted #94a3b8">USD</span>
                 </div>
               </div>
+
               <label class="opt">
-                <div class="inline"><input type="radio" name="pay" value="moncash" data-fee-pct="0.03" data-fee-fixed="0"> &nbsp;MonCash <small>(+ 3 %)</small></div>
+                <div class="inline">
+                  <input type="radio" name="pay" value="moncash" data-fee-pct="0.03" data-fee-fixed="0">
+                  MonCash <small>(+ 3 %)</small>
+                </div>
                 <small>Frais opérateur ajoutés</small>
               </label>
+
               <label class="opt">
-                <div class="inline"><input type="radio" name="pay" value="natcash" data-fee-pct="0.03" data-fee-fixed="0"> &nbsp;NatCash <small>(+ 3 %)</small></div>
+                <div class="inline">
+                  <input type="radio" name="pay" value="natcash" data-fee-pct="0.03" data-fee-fixed="0">
+                  NatCash <small>(+ 3 %)</small>
+                </div>
                 <small>Frais opérateur ajoutés</small>
               </label>
+
               <label class="opt">
-                <div class="inline"><input type="radio" name="pay" value="cash" data-fee-pct="0" data-fee-fixed="0"> &nbsp;Espèces / Cash <small>(au comptoir)</small></div>
+                <div class="inline">
+                  <input type="radio" name="pay" value="cash" data-fee-pct="0" data-fee-fixed="0">
+                  Espèces / Cash <small>(au comptoir)</small>
+                </div>
                 <small>Aucun frais KCN</small>
               </label>
-              <p class="note">Pour virement, complète le bloc “Coordonnées bancaires”.</p>
+
+              <p class="note">Pour virement, complétez le bloc “Coordonnées bancaires”.</p>
             </div>
           </div>
 
-          <!-- Mois concerné -->
+          <!-- Mois -->
           <div class="panel" style="margin-top:14px;">
             <div class="hd"><h2>Mois concerné</h2></div>
             <div class="bd">
@@ -360,7 +475,6 @@
                 <option>Mai</option><option>Juin</option><option>Juillet</option><option>Août</option>
                 <option>Septembre</option><option>Octobre</option><option>Novembre</option><option>Décembre</option>
               </select>
-              <p class="help">S’affichera sur le reçu (Mois: …).</p>
             </div>
           </div>
 
@@ -395,38 +509,41 @@
             </div>
           </div>
 
-          <!-- Politique -->
           <div style="margin-top:14px">
-            <label class="inline" style="gap:10px"><input type="checkbox" required> J'accepte les politiques KCN (sécurité, annulation, confidentialité).</label>
+            <label class="inline" style="gap:10px">
+              <input type="checkbox" required>
+              J'accepte les politiques KCN (sécurité, annulation, confidentialité).
+            </label>
           </div>
 
           <div class="actions">
             <button type="submit" class="btn">Valider l'inscription</button>
-            <button type="button" class="btn outline" id="payNow" disabled>Procéder au paiement en ligne</button>
           </div>
 
-          <p class="mini">Après validation, veuillez nous envoyer une copie du reçu afin de confirmer votre paiement.</p>
-          <p class="mini">Vous pouvez l’envoyer par WhatsApp ou par e-mail à l’équipe KOLTIZ Club de Natation.</p>
+          <p class="mini">
+            Après validation, un reçu est généré (statut “EN ATTENTE” tant que la preuve n’est pas validée).
+          </p>
         </div>
       </form>
 
       <!-- RÉCAP -->
       <aside class="panel summary" aria-live="polite">
-        <div class="hd"><h2>Récapitulatif / Summary</h2></div>
+        <div class="hd"><h2>Récapitulatif</h2></div>
         <div class="bd" id="summary">
-          <div class="sum-row"><span>Devise / Currency</span><strong id="sumCur">HTG</strong></div>
-          <div class="sum-row small"><span>Sous-total / Subtotal</span><strong id="sumSub">0 HTG</strong></div>
-          <div class="sum-row small"><span>Frais paiement / Payment fee</span><strong id="sumFee">0 HTG</strong></div>
+          <div class="sum-row"><span>Devise</span><strong id="sumCur">HTG</strong></div>
+          <div class="sum-row small"><span>Sous-total</span><strong id="sumSub">0 HTG</strong></div>
+          <div class="sum-row small"><span>Frais paiement</span><strong id="sumFee">0 HTG</strong></div>
           <div class="sum-row total"><span>Total</span><strong id="sumTot">0 HTG</strong></div>
           <hr style="margin:12px 0;border:0;border-top:1px solid var(--line)">
-          <p class="help">Le total s'actualise selon vos choix (items + mode de paiement). <br>Tapez votre taux pour l’affichage en USD.</p>
-          <p class="mini" style="margin-top:8px"><em>Reçu en statut <strong>EN ATTENTE</strong> ≠ preuve de paiement.</em></p>
+          <p class="help">
+            Rabais de groupe : actif à partir de <strong>3</strong> personnes et s’ajuste si le groupe change.
+          </p>
         </div>
       </aside>
     </div>
   </div>
 
-  <!-- ===== MODAL REÇU ===== -->
+  <!-- MODAL REÇU -->
   <div class="receipt-backdrop" id="receiptBackdrop"></div>
   <div class="receipt-modal" id="receiptModal" role="dialog" aria-modal="true" aria-label="Reçu de paiement">
     <div class="receipt-card" id="receiptCard">
@@ -439,12 +556,20 @@
       <div id="rcWM" class="wm" aria-hidden="true"><span>EN ATTENTE</span></div>
 
       <div class="receipt-meta" id="receiptMeta">
-        <div><strong>N° de reçu:</strong> <span id="receiptNo"></span></div>
-        <div><strong>Date:</strong> <span id="receiptDate"></span></div>
-        <div><strong>Nom:</strong> <span id="receiptName"></span></div>
-        <div><strong>Email:</strong> <span id="receiptEmail"></span></div>
-        <div><strong>Méthode:</strong> <span id="receiptMethod"></span></div>
-        <div><strong>Devise:</strong> <span id="receiptCurrency"></span></div>
+        <div><strong>N° de reçu :</strong> <span id="receiptNo"></span></div>
+        <div><strong>Date :</strong> <span id="receiptDate"></span></div>
+        <div><strong>Payeur :</strong> <span id="receiptName"></span></div>
+        <div><strong>Téléphone :</strong> <span id="receiptPhone"></span></div>
+        <div><strong>Email :</strong> <span id="receiptEmail"></span></div>
+        <div><strong>Méthode :</strong> <span id="receiptMethod"></span></div>
+        <div><strong>Devise :</strong> <span id="receiptCurrency"></span></div>
+        <div><strong>Enfants payés :</strong> <span id="receiptKids">—</span></div>
+        <div><strong>Groupe actif :</strong> <span id="receiptGroupActive">—</span></div>
+      </div>
+
+      <div class="note" id="receiptGroupNamesBox" style="display:none;margin-top:8px">
+        <strong>Noms du groupe :</strong>
+        <div id="receiptGroupNames" style="margin-top:6px;white-space:pre-wrap"></div>
       </div>
 
       <table class="receipt-table" aria-label="Détail des éléments facturés">
@@ -467,34 +592,71 @@
         <div id="rcProofText" style="margin-top:6px;line-height:1.6"></div>
       </div>
 
-      <p class="mini" id="receiptNote">Merci pour votre confiance !<br><strong>Therese Redgie Marc</strong> — Secrétaire administrative - KCN</p>
+      <p class="mini" id="receiptNote">
+        Merci pour votre confiance !<br><strong>Therese Redgie Marc</strong> — Secrétaire administrative - KCN
+      </p>
 
       <div class="receipt-actions">
         <button class="btn outline" type="button" id="rcClose">OK</button>
+        <button class="btn outline" type="button" id="rcContinue" style="display:none">Continuer l’inscription (Google Form)</button>
         <button class="btn" type="button" id="rcDownload">Télécharger le reçu (PDF)</button>
       </div>
     </div>
   </div>
 
-  <!-- ====== Hotspot invisible + FAB Admin (caché par défaut) ====== -->
-  <div id="adminHotspot" aria-hidden="true"></div>
-  <button type="button" id="fabAdmin" class="fab-admin" title="Espace admin" aria-label="Aller à l’admin">
-    <span>🛡️</span>
-  </button>
+  <script>
+    /* ================= Drawer (Hamburger) ================= */
+    (function(){
+      const hamburger = document.getElementById('hamburger');
+      const drawer = document.getElementById('drawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const closeBtn = document.getElementById('drawerClose');
+
+      function openDrawer(){
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        drawer.setAttribute('aria-hidden','false');
+        hamburger.setAttribute('aria-expanded','true');
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+        drawer.setAttribute('aria-hidden','true');
+        hamburger.setAttribute('aria-expanded','false');
+      }
+
+      hamburger.addEventListener('click', openDrawer);
+      closeBtn.addEventListener('click', closeDrawer);
+      backdrop.addEventListener('click', closeDrawer);
+      drawer.querySelectorAll('a').forEach(a=> a.addEventListener('click', closeDrawer));
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeDrawer(); });
+    })();
+  </script>
 
   <script>
-    /* ======= Constantes ======= */
-    const STORAGE_KEY = 'kcn_receipts';       // ⚠️ doit matcher l'Admin
-    const BASE_MONTH = 6500;
+    /* =================== CALCUL (RABAIS GROUPE) + USD FIXE =================== */
+    const STORAGE_KEY = 'kcn_receipts';
 
-    /* ======= Outils ======= */
-    const fmtMoney = (val, cur) => (cur==='USD'?'$ ':'') + new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(val) + (cur==='HTG'?' HTG':'');
+    const BASE_MONTH = 7000;      // Spécial Mois
+    const BASE_REG   = 1750;      // Inscription
+    const FIXED_RATE = 130;       // Taux fixe
+
     const $ = s => document.querySelector(s);
-    const $$ = s => [...document.querySelectorAll(s)];
+
+    const fmtMoney = (val, cur) => {
+      const n = new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(val);
+      if(cur==='USD') return '$ ' + n;
+      return n.replace(/\s/g,' ') + ' HTG';
+    };
+
+    function parseDecSafe(v, fallback=0){
+      const x = parseFloat(String(v||'').replace(',','.'));
+      return isFinite(x) ? x : fallback;
+    }
+
     function loadList(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{ return []; } }
     function saveList(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
 
-    // Convertir un fichier en DataURL pour l'Admin (image/pdf)
     async function fileToDataURL(file){
       return new Promise((resolve,reject)=>{
         const fr = new FileReader();
@@ -504,7 +666,6 @@
       });
     }
 
-    /* ======= Éléments ======= */
     const currencySel = $('#currency');
     const rateWrap = $('#rateWrap');
     const rateInput = $('#usdrate');
@@ -516,16 +677,8 @@
 
     const itemsEl = $('#items');
     const products = [...itemsEl.querySelectorAll('.product')];
-    const qtyMap = new Map([
-      ['bonnet-p','qty-bonnetp'],
-      ['bonnet-g','qty-bonnetg'],
-      ['lunettes-p','qty-lunettesp'],
-      ['lunettes-g','qty-lunettesg'],
-      ['brassards','qty-brassards'],
-    ]);
 
     const paybox = $('#paybox');
-    const payNow = $('#payNow');
     const payMonth = $('#payMonth');
 
     const proofBox = $('#proofBox');
@@ -534,99 +687,239 @@
     const txDate = $('#txDate');
     const txFile = $('#txFile');
     const txConfirm = $('#txConfirm');
-
     const bankDetails = $('#bankDetails');
+
+    const monthPriceEl = $('#monthPrice');
+
+    // GROUP KIDS
+    const isGroupKids = document.getElementById('isGroupKids');
+    const groupKidsBox = document.getElementById('groupKidsBox');
+    const kidsCountEl = document.getElementById('kidsCount');
+    const kidsFields = document.getElementById('kidsFields');
+    const kidsAlert = document.getElementById('kidsAlert');
+
+    // GROUP DISCOUNT (ACTIVE)
+    const grpActiveCountEl = document.getElementById('grpActiveCount');
+    const grpNamesEl = document.getElementById('grpNames');
+    const groupAlert = document.getElementById('groupAlert');
+    const groupAlertText = document.getElementById('groupAlertText');
+    const grpNamesAlert = document.getElementById('grpNamesAlert');
 
     let state = { currency:'HTG', pay:{pct:0, fix:0}, method:null };
 
-    /* ======= Rabais ======= */
-    const monthPriceEl = $('#monthPrice');
-    const rebateSummary = $('#rebateSummary');
+    function getRate(){ return FIXED_RATE; }
 
-    function adjustedMonthPrice(){
+    function getKidsCount(){
+      if(isGroupKids && isGroupKids.checked){
+        const n = Math.max(1, parseInt(kidsCountEl?.value || '1', 10) || 1);
+        return n;
+      }
+      return 1;
+    }
+
+    function getActiveGroupCount(){
+      const n = Math.max(1, parseInt(grpActiveCountEl?.value || '1', 10) || 1);
+      return n;
+    }
+
+    function renderKidsFields(){
+      if(!kidsFields) return;
+      const n = getKidsCount();
+      kidsFields.innerHTML = '';
+
+      for(let i=1; i<=n; i++){
+        const wrap = document.createElement('div');
+        wrap.className = 'panel';
+        wrap.style.marginTop = '10px';
+        wrap.innerHTML = `
+          <div class="hd"><h2>Enfant ${i}</h2></div>
+          <div class="bd">
+            <div class="row two">
+              <div>
+                <label>Prénom (obligatoire)</label>
+                <input type="text" class="kid-fname" placeholder="Prénom enfant ${i}" autocomplete="off">
+              </div>
+              <div>
+                <label>Nom (obligatoire)</label>
+                <input type="text" class="kid-lname" placeholder="Nom enfant ${i}" autocomplete="off">
+              </div>
+            </div>
+            <div class="row two">
+              <div>
+                <label>Niveau (facultatif)</label>
+                <select class="kid-level">
+                  <option value="">Choisir…</option>
+                  <option>Débutant·e</option>
+                  <option>Intermédiaire</option>
+                  <option>Avancé·e</option>
+                </select>
+              </div>
+              <div>
+                <p class="help" style="margin-top:28px">
+                  Le rabais/bourse du mois (si applicable) s’applique sur <strong>Enfant 1 (parrain)</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+        kidsFields.appendChild(wrap);
+      }
+    }
+
+    function getKidsList(){
+      const kids = [];
+      document.querySelectorAll('#kidsFields .panel').forEach(p=>{
+        const fn = (p.querySelector('.kid-fname')?.value || '').trim();
+        const ln = (p.querySelector('.kid-lname')?.value || '').trim();
+        const lv = (p.querySelector('.kid-level')?.value || '').trim();
+        const full = (fn + ' ' + ln).replace(/\s+/g,' ').trim();
+        kids.push({fname: fn, lname: ln, name: full || '—', level: lv || '—'});
+      });
+      return kids;
+    }
+
+    function validateKidsFullNames(){
+      // Seulement si paiement groupé
+      if(!(isGroupKids && isGroupKids.checked)) return true;
+      const kids = getKidsList();
+      if(!kids.length) return false;
+
+      // Exiger prénom + nom pour chaque enfant
+      for(const k of kids){
+        if(!k.fname || !k.lname) return false;
+        // Protection: éviter "A" "B" trop courts
+        if(k.fname.length < 2 || k.lname.length < 2) return false;
+      }
+      return true;
+    }
+
+    function normalizeLines(s){
+      return String(s||'')
+        .split('\n')
+        .map(x=>x.trim().replace(/\s+/g,' '))
+        .filter(Boolean);
+    }
+
+    function validateGroupNamesIfNeeded(){
+      const g = getActiveGroupCount();
+      if(g < 3) return true; // pas obligatoire si pas de rabais
+      const lines = normalizeLines(grpNamesEl?.value || '');
+      // Exiger au moins 3 noms complets (1 par ligne) quand groupe >=3
+      if(lines.length < 3) return false;
+      // Chaque ligne doit contenir au moins 2 mots (prénom + nom)
+      for(const line of lines){
+        const parts = line.split(' ').filter(Boolean);
+        if(parts.length < 2) return false;
+        if(parts[0].length < 2 || parts[parts.length-1].length < 2) return false;
+      }
+      return true;
+    }
+
+    /* ===== Rabais GROUPE (dynamique) =====
+       Règle (corrigée) :
+       1-2 : aucun rabais
+       3   : rabais fixe 1000 HTG (appliqué à la personne qui a amené les autres — "Enfant 1" / parrain)
+       4   : demi-bourse (50% du mois) — un seul bénéficiaire (Enfant 1)
+       5   : demi-bourse (50%) — même comportement que pour 4
+       6+  : bourse complète (mois = 0) — un seul bénéficiaire (Enfant 1)
+       NB: le rabais/bourse du mois s'applique uniquement sur Enfant 1 (parrain). Les autres paient le tarif normal.
+    */
+    function discountedMonthForChild1HTG(){
       const monthChecked = $('#month')?.checked;
-      const n = Math.max(parseInt($('#grpCount')?.value||'1',10)||1, 1);
       if(!monthChecked) return BASE_MONTH;
 
-      let price = BASE_MONTH; let msg = 'Aucun rabais appliqué.';
-      if(n >= 6){ price = 0; msg = 'Bourse complète (6+ inscrits) appliquée au Mois 1.'; }
-      else if(n === 5){ price = Math.max(0, (BASE_MONTH/2) - 1000); msg = 'Demi-bourse + 1000 HTG : Mois 1 fortement remisé.'; }
-      else if(n === 4){ price = BASE_MONTH/2; msg = 'Demi-bourse (4 inscrits) : Mois 1 à 50%.'; }
-      else if(n === 3){ price = Math.max(0, BASE_MONTH - 1000); msg = 'Rabais 1000 HTG (3 inscrits) sur le Mois 1.'; }
-      else if(n === 2){ price = Math.max(0, BASE_MONTH - 750); msg = 'Rabais 750 HTG (2 inscrits) sur le Mois 1.'; }
+      const n = getActiveGroupCount();
+      let price = BASE_MONTH;
 
-      rebateSummary.textContent = msg;
+      if(n >= 6){
+        // 6 personnes et plus : un bénéficiaire - bourse complète
+        price = 0;
+      } else if(n >= 4){
+        // 4 ou 5 personnes : demi-bourse (50%) pour Enfant 1
+        price = Math.round(BASE_MONTH / 2);
+      } else if(n === 3){
+        // 3 personnes : rabais fixe 1000 HTG pour Enfant 1
+        price = Math.max(0, BASE_MONTH - 1000);
+      } else {
+        // 1-2 personnes : pas de rabais
+        price = BASE_MONTH;
+      }
       return Math.round(price);
     }
+
+    function groupMessage(){
+      const n = getActiveGroupCount();
+      if(n >= 6) return {cls:'ok', text:`Bourse complète active (groupe actif = ${n}).`};
+      if(n === 5) return {cls:'ok', text:`Demi-bourse + 1000 HTG active (groupe actif = 5).`};
+      if(n === 4) return {cls:'ok', text:`Demi-bourse (50%) active (groupe actif = 4).`};
+      if(n === 3) return {cls:'warn', text:`Rabais 1000 HTG actif (groupe actif = 3).`};
+      return {cls:'danger', text:`Aucun rabais (groupe actif = ${n}). Minimum requis : 3.`};
+    }
+
+    function updateGroupAlertUI(){
+      const msg = groupMessage();
+      groupAlert.classList.remove('ok','warn','danger');
+      groupAlert.classList.add(msg.cls);
+      groupAlertText.textContent = msg.text;
+    }
+
+    // Total mois HTG facture:
+    // Enfant 1 = rabais (si groupe >=3 selon règles), autres enfants = plein tarif
+    function monthTotalHTG(){
+      const kidsN = getKidsCount();
+      const monthKid1 = discountedMonthForChild1HTG();
+      const others = Math.max(0, kidsN - 1) * BASE_MONTH;
+      return monthKid1 + others;
+    }
+
     function updateMonthDisplay(){
-      const p = adjustedMonthPrice();
-      if(monthPriceEl) monthPriceEl.textContent = p + ' HTG';
+      // Affiche le prix du mois pour Enfant 1 (rabais possible)
+      const p = discountedMonthForChild1HTG();
+      if(monthPriceEl) monthPriceEl.dataset.htg = String(p);
     }
 
-    function getRate(){
-      return parseFloat((rateInput.value||'').replace(',','.'))||0;
-    }
+    function renderPrices(){
+      const cur = state.currency;
+      const rate = (cur === 'USD') ? getRate() : 0;
 
-    function parseDecSafe(v, fallback=0){
-      const x = parseFloat(String(v||'').replace(',','.'));
-      return isFinite(x) ? x : fallback;
+      document.querySelectorAll('.price[data-htg]').forEach(el=>{
+        const htg = parseDecSafe(el.dataset.htg, 0);
+        if(cur === 'USD'){
+          el.textContent = (rate>0) ? fmtMoney(htg / rate, 'USD') : '—';
+        } else {
+          el.textContent = Math.round(htg) + ' HTG';
+        }
+      });
+
+      const donCur = document.getElementById('donCur');
+      if(donCur) donCur.textContent = (cur === 'USD') ? 'USD' : 'HTG';
     }
 
     function currentSubtotalHTG(){
       let sub=0;
+      const kidsN = getKidsCount();
+
       products.forEach(p=>{
         const cb = p.querySelector('input[type="checkbox"]');
         if(!cb || !cb.checked) return;
+
         const key = p.dataset.key;
         let amt = 0;
-        if(key==='custom'){
-          const raw = ($('#customAmount').value||'').trim();
-          const val = Math.max(0, parseDecSafe(raw,0));
-          amt = val;
-        } else if(key==='don'){
+
+        if(key==='don'){
           const raw = ($('#donAmount').value||'').trim();
           const val = Math.max(0, parseDecSafe(raw,0));
-          // Don pris en compte uniquement si >= 250 HTG
           if(val >= 250) amt = val;
         } else if(key==='month'){
-          amt = adjustedMonthPrice();
-        } else {
-          const unit = parseDecSafe(p.querySelector('.price').dataset.htg,0);
-          if(qtyMap.has(key)){
-            const qid = qtyMap.get(key);
-            const q = Math.max(1, parseDecSafe($('#'+qid)?.value,1));
-            amt = unit * q;
-          } else {
-            amt = unit;
-          }
+          amt = monthTotalHTG();
+        } else if(key==='reg'){
+          amt = BASE_REG * kidsN;
         }
+
         sub += amt;
       });
+
       return sub;
-    }
-
-    function compute(){
-      const subHTG = currentSubtotalHTG();
-      const feeHTG = subHTG * (state.pay.pct||0) + (state.pay.fix||0);
-      const totHTG = subHTG + feeHTG;
-
-      sumCur.textContent = state.currency;
-
-      if(state.currency==='USD'){
-        const rate = getRate();
-        if(rate>0){
-          sumSub.textContent = fmtMoney(subHTG/rate, 'USD');
-          sumFee.textContent = fmtMoney(feeHTG/rate, 'USD');
-          sumTot.textContent = fmtMoney(totHTG/rate, 'USD');
-        } else {
-          sumSub.textContent = '—'; sumFee.textContent = '—'; sumTot.textContent = 'Saisir un taux';
-        }
-      }else{
-        sumSub.textContent = fmtMoney(subHTG, 'HTG');
-        sumFee.textContent = fmtMoney(feeHTG, 'HTG');
-        sumTot.textContent = fmtMoney(totHTG, 'HTG');
-      }
-      enforceProofRules();
     }
 
     function isProofComplete(){
@@ -643,66 +936,98 @@
       const needProof = ['moncash','natcash','bank'].includes(state.method);
       proofBox.style.display = needProof ? 'block' : 'none';
       bankDetails.style.display = (state.method==='bank') ? 'block' : 'none';
-
-      const sub = currentSubtotalHTG();
-      const isOnline = ['moncash','natcash','bank'].includes(state.method);
-      const monthOk = payMonth && payMonth.value && payMonth.value.trim() !== '';
-      payNow.disabled = !(isOnline && sub>0 && monthOk);
     }
 
-    /* ======= Events ======= */
-    currencySel.addEventListener('change', (e)=>{
-      state.currency = e.target.value;
-      rateWrap.style.display = state.currency==='USD' ? 'block' : 'none';
+    function compute(){
+      updateGroupAlertUI();
+      updateMonthDisplay();
+      renderPrices();
+
+      // live validation hints
+      if(isGroupKids && isGroupKids.checked){
+        const okKids = validateKidsFullNames();
+        kidsAlert.style.display = okKids ? 'none' : 'flex';
+      } else {
+        kidsAlert.style.display = 'none';
+      }
+
+      const okGroupNames = validateGroupNamesIfNeeded();
+      grpNamesAlert.style.display = okGroupNames ? 'none' : 'flex';
+
+      const subHTG = currentSubtotalHTG();
+      const feeHTG = subHTG * (state.pay.pct||0) + (state.pay.fix||0);
+      const totHTG = subHTG + feeHTG;
+
+      sumCur.textContent = state.currency;
+
+      if(state.currency==='USD'){
+        const rate = getRate();
+        sumSub.textContent = fmtMoney(subHTG/rate, 'USD');
+        sumFee.textContent = fmtMoney(feeHTG/rate, 'USD');
+        sumTot.textContent = fmtMoney(totHTG/rate, 'USD');
+      } else {
+        sumSub.textContent = fmtMoney(subHTG, 'HTG');
+        sumFee.textContent = fmtMoney(feeHTG, 'HTG');
+        sumTot.textContent = fmtMoney(totHTG, 'HTG');
+      }
+
+      enforceProofRules();
+    }
+
+    /* ===== Events ===== */
+    currencySel.addEventListener('change', ()=>{
+      state.currency = currencySel.value;
+      rateWrap.style.display = (state.currency === 'USD') ? 'block' : 'none';
+      rateInput.value = FIXED_RATE;
       compute();
     });
-    rateInput.addEventListener('input', compute);
 
-    ['grpCount','month','custom','customAmount','reg','bonnetp','bonnetg','lunettesp','lunettesg','brassards','don','donAmount'].forEach(id=>{
+    if(isGroupKids){
+      isGroupKids.addEventListener('change', ()=>{
+        groupKidsBox.style.display = isGroupKids.checked ? 'block' : 'none';
+        renderKidsFields();
+        compute();
+      });
+    }
+    if(kidsCountEl){
+      kidsCountEl.addEventListener('input', ()=>{
+        renderKidsFields();
+        compute();
+      });
+    }
+
+    document.addEventListener('input', (e)=>{
+      if(e.target && (e.target.classList?.contains('kid-fname') || e.target.classList?.contains('kid-lname') || e.target.classList?.contains('kid-level'))){
+        compute();
+      }
+    });
+
+    ['reg','month','don','donAmount','grpActiveCount','grpNames'].forEach(id=>{
       const el = document.getElementById(id);
-      if(el) el.addEventListener(el.type==='checkbox' ? 'change' : 'input', ()=>{ updateMonthDisplay(); compute(); });
-    });
-    qtyMap.forEach((qid)=> {
-      const q = document.getElementById(qid);
-      if(q) q.addEventListener('input', compute);
+      if(!el) return;
+      el.addEventListener(el.type==='checkbox' ? 'change' : 'input', compute);
     });
 
-    if (payMonth) payMonth.addEventListener('change', enforceProofRules);
+    payMonth.addEventListener('change', compute);
 
-    // Méthode de paiement + frais
     paybox.querySelectorAll('input[type="radio"]').forEach(r=>{
       r.addEventListener('change', ()=>{
         state.method = r.value;
         state.pay = { pct: parseDecSafe(r.dataset.feePct,0), fix: parseDecSafe(r.dataset.feeFixed,0) };
-        bankDetails.style.display = (r.value==='bank') ? 'block' : 'none';
         compute();
       });
     });
 
-    payNow.addEventListener('click', async () => {
-      if (!['moncash','natcash','bank'].includes(state.method)) return;
-      if(!(payMonth && payMonth.value)){
-        alert('Merci de sélectionner le mois concerné par ce paiement.');
-        return;
-      }
-      if(state.currency==='USD' && getRate()<=0){
-        alert('Merci de saisir un taux USD↔HTG valide.');
-        return;
-      }
-      const status = isProofComplete() ? 'EN ATTENTE' : 'EN ATTENTE — PREUVE À VALIDER';
-      const data = await buildReceiptData(status);
-      persistReceipt(data);
-      fillReceiptUI(data);
-      openReceiptModal();
-      alert('Paiement enregistré — Reçu officiel disponible.');
-    });
-
     [txRef,payerPhone,txDate,txFile,txConfirm].forEach(el=>{
-      el.addEventListener(el.type==='file'?'change':'input', enforceProofRules);
-      if(el.type==='checkbox') el.addEventListener('change', enforceProofRules);
+      if(!el) return;
+      el.addEventListener(el.type==='file'?'change':'input', compute);
+      if(el.type==='checkbox') el.addEventListener('change', compute);
     });
 
-    /* ======= Reçu ======= */
+    /* ===== REÇU ===== */
+    const receiptBackdrop = $('#receiptBackdrop');
+    const receiptModal = $('#receiptModal');
+
     function toDisp(valueHTG, currency, rate){
       if(currency==='USD'){
         const r = Number(rate)||0;
@@ -712,12 +1037,12 @@
     }
 
     function computeWatermarkText(data){
-      if((data.status||'').toUpperCase()==='PAYÉ') return '';
       const proofOk = data.proof && data.proof.ref && data.proof.phone && data.proof.when && (data.proof.file || data.proof.fileName);
-      if(['moncash','natcash','bank'].includes(data.method) && !proofOk){
+      const m = (data.method||'').toLowerCase();
+      if(['moncash','natcash','bank'].includes(m) && !proofOk){
         return 'EN ATTENTE — PREUVE À VALIDER';
       }
-      if(data.method==='bank' && proofOk){
+      if(m==='bank' && proofOk){
         return 'EN ATTENTE — VÉRIF VIREMENT';
       }
       return 'EN ATTENTE';
@@ -728,9 +1053,27 @@
       $('#receiptNo').textContent = data.no;
       $('#receiptDate').textContent = data.date;
       $('#receiptName').textContent = data.name || '—';
+      $('#receiptPhone').textContent = data.phone || '—';
       $('#receiptEmail').textContent = data.email || '—';
       $('#receiptMethod').textContent = (data.method||'-').toUpperCase();
       $('#receiptCurrency').textContent = data.currency;
+
+      const kidsText = (data.kids && data.kids.length)
+        ? data.kids.map((k,i)=> `${i+1}) ${k.name}${k.level && k.level!=='—' ? ' — ' + k.level : ''}`).join(' | ')
+        : (data.kidsCount>1 ? `Paiement groupé: ${data.kidsCount} enfants` : '—');
+
+      $('#receiptKids').textContent = kidsText;
+      $('#receiptGroupActive').textContent = `${data.grpActiveCount || 1} actif(s)`;
+
+      const grpBox = document.getElementById('receiptGroupNamesBox');
+      const grpNames = (data.grpNames || '').trim();
+      if(grpNames){
+        grpBox.style.display = 'block';
+        document.getElementById('receiptGroupNames').textContent = grpNames;
+      } else {
+        grpBox.style.display = 'none';
+        document.getElementById('receiptGroupNames').textContent = '';
+      }
 
       const tbody = $('#receiptRows');
       tbody.innerHTML = '';
@@ -760,100 +1103,58 @@
 
       const wm = $('#rcWM');
       const mark = computeWatermarkText(data);
-      if(mark){
-        wm.style.display = 'grid';
-        wm.querySelector('span').textContent = mark;
-      } else {
-        wm.style.display = 'none';
+      wm.style.display = 'grid';
+      wm.querySelector('span').textContent = mark;
+
+      // Show "Continuer l'inscription" only if the receipt includes an inscription item
+      const rcContinueBtn = document.getElementById('rcContinue');
+      if(rcContinueBtn){
+        const hasInscription = Array.isArray(data.rows) && data.rows.some(r => /inscri/i.test(String(r.label||'')));
+        rcContinueBtn.style.display = hasInscription ? 'inline-block' : 'none';
       }
     }
 
     function openReceiptModal(){
-      $('#receiptBackdrop').classList.add('show');
-      $('#receiptModal').classList.add('show');
+      receiptBackdrop.classList.add('show');
+      receiptModal.classList.add('show');
     }
     function closeReceiptModal(){
-      $('#receiptBackdrop').classList.remove('show');
-      $('#receiptModal').classList.remove('show');
+      receiptBackdrop.classList.remove('show');
+      receiptModal.classList.remove('show');
     }
-    $('#receiptBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='receiptBackdrop') closeReceiptModal(); });
+
+    receiptBackdrop.addEventListener('click', (e)=>{ if(e.target.id==='receiptBackdrop') closeReceiptModal(); });
     $('#rcX').addEventListener('click', closeReceiptModal);
     $('#rcClose').addEventListener('click', closeReceiptModal);
 
-    function downloadReceipt() {
+    $('#rcDownload').addEventListener('click', ()=>{
       const node = document.getElementById('receiptCard');
-      // Récupérer le texte de watermark actuel
       const wm = document.querySelector('#rcWM span')?.textContent || '';
-
       const w = window.open('', 'PRINT', 'height=900,width=900');
-      if (!w) {
-        alert("Autorisez les fenêtres popup pour imprimer / télécharger le reçu.");
-        return;
-      }
+      if (!w) { alert("Autorisez les fenêtres popup pour imprimer / télécharger le reçu."); return; }
 
       w.document.write(`<!doctype html><html><head><title>Reçu KCN</title>
         <meta charset='utf-8'>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
         <style>
-          body{
-            font-family:Montserrat,Arial,sans-serif;
-            padding:20px;
-            color:#0f172a;
-            background:#ffffff;
-          }
-          .eco-message{
-            color:#2d5c8a;
-            margin:4px 0 12px;
-            font-size:.98em;
-            line-height:1.5;
-          }
-          .receipt-actions,
-          .receipt-close{
-            display:none !important;
-          }
-          .receipt-card{
-            box-shadow:none !important;
-            border:0 !important;
-            padding:0 !important;
-          }
-          table {width:100%;border-collapse:collapse;}
-          th,td {border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left;}
-          th {color:#0b4573;}
-          .wm{
-            position:absolute;
-            inset:0;
-            display:grid;
-            place-items:center;
-            pointer-events:none;
-            z-index:0;
-          }
-          .wm span{
-            font-size:92px;
-            font-weight:900;
-            letter-spacing:4px;
-            color:#0f172a;
-            opacity:.09;
-            transform:rotate(-20deg);
-            text-transform:uppercase;
-          }
+          body{font-family:Montserrat,Arial,sans-serif;padding:20px;color:#0f172a;background:#ffffff;}
+          .receipt-actions,.receipt-close{display:none !important;}
+          .receipt-card{box-shadow:none !important;border:0 !important;padding:0 !important;}
+          table{width:100%;border-collapse:collapse;}
+          th,td{border-bottom:1px solid #e5e7eb;padding:10px 8px;text-align:left;}
+          th{color:#0b4573;}
+          .wm{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0;}
+          .wm span{font-size:72px;font-weight:900;letter-spacing:3px;color:#0f172a;opacity:.09;transform:rotate(-20deg);text-transform:uppercase;}
         </style>
       </head><body>
       <div class="wm"><span>${wm}</span></div>
-      <h2>Reçu KCN / KOLTIZ Club de Natation</h2>
-      <div class="eco-message">
-        Pour éviter les déchets d'emballage excessifs, nous n'incluons pas de reçus papier. Cependant, vous pouvez toujours en imprimer un pour vos archives.
-      </div>
-      `);
+      <h2>Reçu KCN / KOLTIZ Club de Natation</h2>`);
       w.document.write(node.outerHTML);
       w.document.write('</body></html>');
-
       w.document.close();
       w.focus();
       w.print();
-    }
-    // Sur mobile, le navigateur gère la fermeture (bouton retour)
-
-    $('#rcDownload').addEventListener('click', downloadReceipt);
+    });
 
     function persistReceipt(data){
       const list = loadList();
@@ -862,58 +1163,72 @@
       saveList(list);
     }
 
-    // buildReceiptData async pour capter la preuve (image/pdf)
     async function buildReceiptData(status){
-      const fname = $('#fname').value || '';
-      const lname = $('#lname').value || '';
-      const email = $('#email').value || '';
+      const fname = ($('#fname').value || '').trim();
+      const lname = ($('#lname').value || '').trim();
+      const email = ($('#email').value || '').trim();
+      const phone = ($('#phone').value || '').trim();
+
       const method = (document.querySelector('input[name="pay"]:checked')||{}).value || '-';
       const cur = $('#currency').value;
       const rate = (cur==='USD') ? getRate() : 1;
       const month = ($('#payMonth')||{value:''}).value || '';
 
+      const kidsN = getKidsCount();
+      const kids = (isGroupKids && isGroupKids.checked) ? getKidsList() : [];
+      const grpActiveCount = getActiveGroupCount();
+      const grpNames = (grpNamesEl?.value || '').trim();
+
       const rows = [];
       const prods = document.querySelectorAll('#items .product');
       let sub = 0;
+
       prods.forEach(p=>{
         const cb = p.querySelector('input[type="checkbox"]');
         if(!cb || !cb.checked) return;
+
         const key = p.dataset.key;
-        let label = p.querySelector('label').textContent.trim();
-        let unit = 0; let qty = 1; let amt = 0;
-        if(key==='custom'){
-          const raw = ($('#customAmount').value||'').replace(',','.');
-          amt = Math.max(0, parseDecSafe(raw,0));
-        }else if(key==='don'){
+
+        if(key==='don'){
           const raw = ($('#donAmount').value||'').replace(',','.');
           const val = Math.max(0, parseDecSafe(raw,0));
           if(val >= 250){
-            amt = val;
-            label = 'Don — Projet piscine éducative KCN';
-          } else {
-            return; // don ignoré si < 250
+            rows.push({ label:'Don — Projet piscine éducative KCN', qty:1, amt: val });
+            sub += val;
           }
-        }else if(key==='month'){
-          unit = adjustedMonthPrice();
-          amt = unit;
-          if(month) label += ` — Mois: ${month}`;
-        }else{
-          unit = parseDecSafe(p.querySelector('.price').dataset.htg,0);
-          const qInput = p.querySelector('input[type="number"]');
-          qty = qInput ? (Math.max(1, parseDecSafe((qInput.value||'1'),1))) : 1;
-          amt = unit * qty;
+          return;
         }
-        sub += amt; // HTG
-        rows.push({label, qty, amt}); // amt en HTG
+
+        if(key==='reg'){
+          const amt = BASE_REG * kidsN;
+          rows.push({ label:`Frais d'inscription`, qty:kidsN, amt });
+          sub += amt;
+          return;
+        }
+
+        if(key==='month'){
+          const monthKid1 = discountedMonthForChild1HTG();
+          const othersCount = Math.max(0, kidsN - 1);
+          const monthOthers = othersCount * BASE_MONTH;
+
+          const label1 = `Spécial Mois — Enfant 1 (rabais/bourse selon groupe) — Mois: ${month} — Groupe actif: ${grpActiveCount}`;
+          rows.push({ label: label1, qty:1, amt: monthKid1 });
+          sub += monthKid1;
+
+          if(othersCount > 0){
+            rows.push({ label:`Spécial Mois — Autres enfants (plein tarif)`, qty: othersCount, amt: monthOthers });
+            sub += monthOthers;
+          }
+          return;
+        }
       });
 
       const pay = document.querySelector('input[name="pay"]:checked');
       const pct = parseDecSafe(pay?.dataset.feePct,0);
       const fix = parseDecSafe(pay?.dataset.feeFixed,0);
-      const fee = sub*pct + fix; // HTG
-      const tot = sub + fee;     // HTG
+      const fee = sub*pct + fix;
+      const tot = sub + fee;
 
-      // Preuve (inclure DataURL pour l'Admin)
       let proof = null;
       if(['moncash','natcash','bank'].includes(method)){
         const fileObj = txFile.files && txFile.files.length>0 ? txFile.files[0] : null;
@@ -928,87 +1243,145 @@
         };
       }
 
-      const ts = Date.now(); // ID numérique pour un bon tri côté admin
-
+      const ts = Date.now();
       return {
         id: ts,
         no: 'KCN-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + (''+ts).slice(-4),
         date: new Date().toLocaleString('fr-FR'),
         name: (fname+' '+lname).trim(),
         email,
-        method,              // 'bank' | 'moncash' | 'natcash' | 'cash'
-        currency: cur,       // 'HTG' | 'USD'
-        rate: rate,          // si USD, sinon 1
-        rows, sub, fee, tot, // montants en HTG (stockés)
+        phone,            // ✅ ID payeur (utile en admin)
+        method,
+        currency: cur,
+        rate: rate,
+        kidsCount: kidsN,
+        kids,
+        grpActiveCount,
+        grpNames,
+        rows, sub, fee, tot,
         status,
         proof
       };
     }
 
-    // Submit → génère + enregistre le reçu
+    function requireOkOrAlert(cond, msg){
+      if(cond) return true;
+      alert(msg);
+      return false;
+    }
+
     $('#kcn-form').addEventListener('submit', async (e)=>{
       e.preventDefault();
-      if(!payMonth.value){
-        alert('Merci de sélectionner le mois concerné.');
-        return;
+
+      // validations importantes
+      if(!requireOkOrAlert(!!payMonth.value, 'Merci de sélectionner le mois concerné.')) return;
+      if(!requireOkOrAlert(!!state.method, 'Merci de choisir une méthode de paiement.')) return;
+
+      // Paiement groupé => noms enfants obligatoires
+      if(isGroupKids && isGroupKids.checked){
+        if(!requireOkOrAlert(validateKidsFullNames(), 'Paiement groupé : veuillez saisir le prénom + nom pour chaque enfant.')) return;
       }
-      if(!state.method){
-        alert('Merci de choisir une méthode de paiement.');
-        return;
+
+      // Groupe >=3 => noms groupe obligatoires
+      if(getActiveGroupCount() >= 3){
+        if(!requireOkOrAlert(validateGroupNamesIfNeeded(), 'Groupe ≥ 3 : veuillez saisir les noms complets (1 par ligne).')) return;
       }
-      if(state.currency==='USD' && getRate()<=0){
-        alert('Merci de saisir un taux USD↔HTG valide.');
-        return;
-      }
+
       let status = 'EN ATTENTE';
       if(['moncash','natcash','bank'].includes(state.method) && !isProofComplete()){
         status = 'EN ATTENTE — PREUVE À VALIDER';
       }
+
       const data = await buildReceiptData(status);
       persistReceipt(data);
       fillReceiptUI(data);
       openReceiptModal();
-      alert('Formulaire validé. Reçu généré et enregistré pour KOLTIZ.');
+      document.getElementById('rcContinue').onclick = () => {
+  const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSeRrBYzdtuA5cLszfo7TH3h75vP2TJlXacpaXFTVHgH2lxkDA/viewform?usp=header";
+
+  const params = new URLSearchParams({
+    // Ou pral ranplase "entry.xxxxx" yo ak ID kestyon Form yo
+    "entry.1111111111": data.no,          // N° reçu
+    "entry.2222222222": data.name,        // Payeur
+    "entry.3333333333": data.phone,       // Téléphone payeur
+    "entry.4444444444": String(data.kidsCount || 1), // Nb enfants
+    "entry.5555555555": (document.getElementById('payMonth')?.value || '') // Mois
+  });
+
+  window.open(formBase + "?" + params.toString(), "_blank");
+};
+
+      alert('Formulaire validé. Reçu généré et enregistré.');
     });
 
-    function init(){
-      updateMonthDisplay();
+    /* INIT */
+    (function init(){
+      state.currency = currencySel.value || 'HTG';
+      rateWrap.style.display = (state.currency === 'USD') ? 'block' : 'none';
+      rateInput.value = FIXED_RATE;
+
+      if(groupKidsBox) groupKidsBox.style.display = (isGroupKids && isGroupKids.checked) ? 'block' : 'none';
+      renderKidsFields();
+
       compute();
-    }
-    init();
+    })();
+  </script>
 
-    /* ===== FAB Admin : affichage secret + navigation ===== */
+  <script>
+    // Admin secret interactions for inscription page: reveal shield after 5 rapid clicks on hero title
     (function(){
-      // ⚠️ Mets ici le chemin exact de ta page admin si différent
       const ADMIN_URL = './admininscription.html';
+      const heroTitle = document.querySelector('.hero h1');
+      const shield = document.getElementById('fabInscriptionAdmin');
+      const CLICK_THRESHOLD_MS = 800;
 
-      const fab = document.getElementById('fabAdmin');
-      const hotspot = document.getElementById('adminHotspot');
+      function revealShield(){
+        if(!shield) return;
+        shield.style.display = 'grid';
+        shield.style.opacity = '1';
+        shield.style.pointerEvents = 'auto';
+      }
 
-      function showFab(){ fab.style.display = 'grid'; }
-      function goAdmin(){ window.location.href = ADMIN_URL; }
+      if(heroTitle){
+        let heroCount = 0;
+        let heroTimer = null;
+        heroTitle.addEventListener('click', (e)=>{
+          heroCount++;
+          if(heroCount === 1){
+            heroTimer = setTimeout(()=>{ heroCount = 0; }, CLICK_THRESHOLD_MS);
+          }
+          if(heroCount === 5){
+            clearTimeout(heroTimer);
+            heroCount = 0;
+            revealShield();
+          }
+        });
+      }
 
-      // Raccourci clavier: Shift + Alt + A
+      // keyboard shortcut to force show (Shift+Alt+S)
       window.addEventListener('keydown', (e)=>{
-        if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='a'){
-          e.preventDefault();
-          showFab();
+        if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){
+          if(shield) shield.style.display = 'grid';
         }
       });
 
-      // Appui long (1.2s) coin bas-droit
-      let pressT=null;
-      hotspot.addEventListener('pointerdown', ()=>{ pressT = setTimeout(showFab, 1200); });
-      ['pointerup','pointerleave','pointercancel'].forEach(evt=>{
-        hotspot.addEventListener(evt, ()=>{ if(pressT){ clearTimeout(pressT); pressT=null; } });
-      });
+      // shield requires 4 rapid clicks to go to admininscription.html
+      if(shield){
+        // hide by default and make non-clickable until revealed
+        shield.style.opacity = '0';
+        shield.style.pointerEvents = 'none';
 
-      // Double-clic sur le titre du hero
-      const h1 = document.querySelector('.hero h1');
-      if(h1){ h1.addEventListener('dblclick', showFab); }
-
-      // Clic -> admin
-      fab.addEventListener('click', goAdmin);
+        let taps = 0;
+        let timer = null;
+        shield.addEventListener('click', (e)=>{
+          const style = window.getComputedStyle(shield);
+          if(style.pointerEvents === 'none' || style.display === 'none' || style.opacity === '0') return;
+          e.preventDefault();
+          taps++;
+          if(taps === 1){ timer = setTimeout(()=>{ taps = 0; }, CLICK_THRESHOLD_MS); }
+          if(taps === 4){ clearTimeout(timer); taps = 0; window.location.href = ADMIN_URL + '?from=inscription'; }
+        });
+      }
     })();
   </script>
 </body>
