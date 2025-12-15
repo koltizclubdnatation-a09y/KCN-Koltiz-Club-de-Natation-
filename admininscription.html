@@ -257,6 +257,7 @@ function render() {
           <th>Reçu</th>
           <th>Date</th>
           <th>Nom</th>
+          <th>Téléphone</th>
           <th>Méthode</th>
           <th>Devise</th>
           <th style="text-align:right">Total (affiché)</th>
@@ -278,6 +279,7 @@ function render() {
             <td><a href="#" class="open" title="Voir le reçu">${x.no||'—'}</a></td>
             <td>${x.date||'—'}</td>
             <td>${x.name||'—'}<div class="mini">${x.email||''}</div></td>
+            <td>${x.phone || x.proof?.phone || '—'}</td>
             <td>${(x.method||'-').toUpperCase()}</td>
             <td>${cur}</td>
             <td class="money" style="text-align:right">${fmtMoney(totDisp, cur)}</td>
