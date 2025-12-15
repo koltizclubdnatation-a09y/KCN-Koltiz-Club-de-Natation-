@@ -18,6 +18,8 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ===== CSS UNIQUE & NETTOYÉ (mettre ici toutes les règles) ===== -->
   <style>
     :root{
       --brand-600:#0066cc; --brand-500:#0c7fd6; --brand-400:#00bcd4;
@@ -25,7 +27,11 @@
       --text-900:#1f2937; --text-700:#374151; --text-500:#6b7280;
       --bg:#f9fafb; --white:#ffffff; --muted:#e5e7eb; --ring: 0 0 0 3px rgba(0,102,204,.25);
       --radius: 12px;
+      --brand: #0066cc;
+      --line: #e6eef8;
+      --shadow: 0 6px 20px rgba(2,6,23,.06);
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;background:var(--bg);color:var(--text-900);line-height:1.6}
@@ -93,11 +99,37 @@
       .reviews-grid img{max-width:80px;max-height:50px}
     }
 
-    /* Footer */
-    footer{margin-top:50px;background:linear-gradient(90deg,var(--brand-600),var(--brand-400));color:#fff}
-    .footer-inner{display:grid;gap:12px;justify-items:center;padding:18px 0}
-    .legal{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-    .legal a{color:#fff;text-decoration:underline dotted}
+    /* Footer simplifié */
+    .site-footer {
+      background: linear-gradient(90deg,#00b4db,#0093e9);
+      color: #fff;
+      border-top: 3px solid rgba(255,255,255,.3);
+      padding: 18px 16px;
+      box-sizing: border-box;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .footer-left { display:flex; align-items:center; gap:12px; }
+    .footer-logo { width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.1) }
+    .footer-copy { margin:0; font-size:0.95rem; color:#fff }
+    .footer-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+    .footer-legal { display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end; }
+    .footer-legal a { color:#fff; text-decoration:none; font-weight:600; background: rgba(255,255,255,0.06); padding:6px 10px; border-radius:8px; }
+    .footer-legal a:hover { background: rgba(255,255,255,0.12); text-decoration:underline; }
+    .footer-social { display:flex; gap:12px; align-items:center; }
+    .footer-social img { width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; display:block }
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction:column; align-items:center; text-align:center; gap:12px; }
+      .footer-right { align-items:center; }
+      .footer-legal { justify-content:center; }
+    }
 
     /* A11y helpers */
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -109,33 +141,96 @@
     @media (prefers-reduced-motion: reduce){
       *{transition:none !important; animation:none !important; scroll-behavior:auto !important}
     }
+
+    /* Header / Drawer styles unifiés */
+    header.kcn-header{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 3px solid var(--brand);
+      box-shadow: 0 2px 6px rgba(2,6,23,.04);
+    }
+    .kcn-container{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .nav-left { display:flex; gap:12px; align-items:center; }
+    .nav-brand .logo, .logo { height:56px; width:auto; object-fit:contain; display:block; }
+    .nav-right { display:flex; gap:14px; align-items:center; }
+    .nav-right a{ color: var(--brand); text-decoration:none; font-weight:700; padding:8px 12px; border-radius:10px; transition: background .12s; }
+    .nav-right a:hover{ background: rgba(0,102,204,.06); }
+    .hamburger{ display:none; background:none; border:0; font-size:24px; cursor:pointer; color:var(--brand); }
+
+    .drawer-backdrop{ position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; display: none; }
+    .drawer-backdrop.show{ display:block; }
+    .drawer { position: fixed; top:0; left:0; width:260px; height:100%; background:#fff; box-shadow: 2px 0 18px rgba(0,0,0,.12); transform: translateX(-100%); transition: transform .28s ease; z-index:1000; overflow:auto; }
+    .drawer.open { transform: translateX(0); }
+    .drawer .drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--line); }
+    .drawer a{ display:block; padding:12px 16px; color:var(--brand); text-decoration:none; border-bottom:1px solid var(--line); }
+    .drawer a:hover{ background: rgba(0,102,204,.04); }
+    .drawer-close{ background:none; border:0; font-size:22px; cursor:pointer; color:var(--brand); }
+
+    @media (max-width: 1024px){
+      .nav-right{ display:none; }
+      .hamburger{ display:inline-block; }
+    }
+    @media (min-width: 1025px){
+      .drawer, .drawer-backdrop{ display:none !important; }
+    }
+
   </style>
-
-  <!-- JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SportsActivityLocation",
-    "name": "KOLTIZ Club de Natation (KCN)",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Delmas 75, rue des Tourterelles, Hôtel House of Dream",
-      "addressLocality": "Delmas",
-      "addressRegion": "Ouest",
-      "addressCountry": "HT",
-      "postalCode": "6120"
-    },
-    "telephone": "+50936956939",
-    "email": "koltizclubdnatation@gmail.com",
-    "url": "https://example.com/",
-    "image": "./assets/images/og-cover.jpg"
-  }
-  </script>
+  <!-- ===== FIN CSS ===== -->
 </head>
-<body>
-  <a class="sr-only" href="#main">Aller au contenu</a>
 
-  <main id="main" class="container stack">
+<body>
+  <!-- HEADER -->
+  <header class="kcn-header" role="banner">
+    <div class="kcn-container">
+      <div class="nav-left">
+        <button class="hamburger" id="kcnHamburger" aria-label="Ouvrir le menu" aria-controls="kcnDrawer" aria-expanded="false">☰</button>
+
+        <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" class="logo">
+        </a>
+      </div>
+
+      <!-- NAV DESKTOP: pas de Contact ici -->
+      <nav class="nav-right" aria-label="Navigation principale">
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./evenement.html">Événements</a>
+        <a href="./temoignages.html">Témoignages</a>
+        <a href="./boutique-kcn.html">Boutique</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Drawer -->
+  <div id="kcnBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+  <aside id="kcnDrawer" class="drawer" aria-hidden="true" aria-label="Menu mobile">
+    <div class="drawer-header">
+      <img src="./folder3/imaj12.png" alt="Logo KCN" style="height:44px;">
+      <button id="kcnDrawerClose" class="drawer-close" aria-label="Fermer le menu">×</button>
+    </div>
+    <nav class="drawer-nav" aria-label="Navigation mobile">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a> <!-- unique ici -->
+      <a href="./boutique-kcn.html">Boutique</a>
+    </nav>
+    <div style="padding:12px 16px; color:#444;">© 2025 KCN</div>
+  </aside>
+
+  <!-- MAIN (je garde tout ce que tu avais) -->
+  <main id="main" class="stack container">
     <!-- HERO -->
     <section class="hero" role="banner" aria-label="En-tête visuel">
       <div class="hero-overlay">
@@ -144,7 +239,7 @@
       </div>
     </section>
 
-    <!-- SLIDER (facultatif : se cache si images manquantes) -->
+    <!-- SLIDER -->
     <section class="slider frame" aria-label="Moments KCN">
       <div class="slides" id="slides">
         <img src="./folder0/image7.jpg" alt="Enfant souriant dans la piscine" loading="lazy" class="active">
@@ -257,7 +352,6 @@
             <label for="consent">J'accepte la <a href="confidentialités.html" target="_blank" rel="noopener">Politique de confidentialité</a> et les <a href="conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a>. *</label>
           </div>
 
-          <!-- Anti-spam : honeypot -->
           <input type="text" name="_gotcha" style="display:none" autocomplete="off">
 
           <button class="btn" type="submit">Envoyer</button>
@@ -304,19 +398,34 @@
     </div>
   </main>
 
-  <footer>
-    <div class="container footer-inner">
-      <div>© 2025 KOLTIZ Club de Natation – Tous droits réservés</div>
-      <nav class="legal" aria-label="Liens légaux">
-        <a href="confidentialités.html">Confidentialité</a>
-        <a href="conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact</a>
-      </nav>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        </a>
+        <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
+      </div>
+
+      <div class="footer-right">
+        <nav aria-label="Liens légaux" class="footer-legal">
+          <a href="./confidentialités.html">Confidentialité</a>
+          <a href="./conditions.html">Conditions</a>
+          <a href="./contactez-nous.html">Contact</a>
+        </nav>
+
+        <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+          <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+        </div>
+      </div>
     </div>
   </footer>
 
+  <!-- SCRIPTS -->
   <script>
-    // Slider: auto + boutons, se désactive si pas d'images
+    // Slider
     (function(){
       const slider = document.querySelector('.slider');
       const imgs = Array.from(document.querySelectorAll('.slides img'));
@@ -339,7 +448,7 @@
       show(i); start();
     })();
 
-    // Envoi Formspree avec feedback (sans rechargement)
+    // Formspree submit
     (function(){
       const form = document.getElementById('contact-form');
       const status = document.getElementById('form-status');
@@ -354,7 +463,6 @@
         e.preventDefault();
         setStatus('Envoi en cours…', true);
 
-        // validation HTML5
         if(!form.checkValidity()){
           setStatus('Merci de compléter les champs requis.', false);
           form.reportValidity();
@@ -373,6 +481,43 @@
         }catch(err){
           setStatus("Connexion impossible. Vérifiez votre réseau et réessayez.", false);
         }
+      });
+    })();
+
+    // Drawer
+    (function(){
+      const btn = document.getElementById('kcnHamburger');
+      const drawer = document.getElementById('kcnDrawer');
+      const backdrop = document.getElementById('kcnBackdrop');
+      const closeBtn = document.getElementById('kcnDrawerClose');
+
+      function openDrawer(){
+        drawer.classList.add('open');
+        backdrop.classList.add('show');
+        drawer.setAttribute('aria-hidden','false');
+        backdrop.setAttribute('aria-hidden','false');
+        if(btn) btn.setAttribute('aria-expanded','true');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('show');
+        drawer.setAttribute('aria-hidden','true');
+        backdrop.setAttribute('aria-hidden','true');
+        if(btn) btn.setAttribute('aria-expanded','false');
+        document.body.style.overflow = '';
+      }
+
+      if(btn) btn.addEventListener('click', openDrawer);
+      if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if(backdrop) backdrop.addEventListener('click', closeDrawer);
+
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+      });
+
+      document.querySelectorAll('.drawer-nav a').forEach(a => {
+        a.addEventListener('click', () => { closeDrawer(); });
       });
     })();
   </script>
