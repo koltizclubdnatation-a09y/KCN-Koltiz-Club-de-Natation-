@@ -6,12 +6,6 @@
   <title>KCN — Témoignages anonymes (parents & amis)</title>
   <meta name="description" content="Quelques commentaires anonymes de parents et amis du KOLTIZ Club de Natation. Retours d’expérience, encouragements et avis authentiques." />
   <meta name="theme-color" content="#0066cc" />
-  <!-- Open Graph -->
-  <meta property="og:title" content="KCN — Témoignages (anonymes)" />
-  <meta property="og:description" content="Avis et retours de parents & amis — KOLTIZ Club de Natation." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="./assets/images/og-cover.jpg" />
-
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
 
   <style>
@@ -25,40 +19,190 @@
     html,body{margin:0}
     body{font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.65}
 
-    /* Header compact */
-    header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--brand);box-shadow:0 2px 12px rgba(0,0,0,.04)}
-    .nav{max-width:1200px;margin:auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .logo{height:56px;object-fit:contain}
-    .nav a{color:var(--brand);font-weight:700;text-decoration:none;padding:8px 12px;border-radius:10px}
-    .nav a:hover{background:rgba(0,102,204,.08)}
+    /* =========================
+       HEADER + DRAWER (100% CSS)
+       ========================= */
+    .site-header{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background:#fff;
+      border-bottom: 3px solid var(--brand);
+      box-shadow: 0 2px 10px rgba(2,6,23,.06);
+    }
+    .site-header .header-inner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .site-header .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+    }
+    .site-header .logo{
+      height:56px;
+      width:auto;
+      object-fit:contain;
+    }
+
+    /* Desktop menu */
+    .site-header .nav-links{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .site-header .nav-links a{
+      color:var(--brand);                 /* couleur brand */
+      font-weight:700;
+      text-decoration:none;
+      padding:8px 12px;
+      border-radius:10px;
+    }
+    .site-header .nav-links a:hover{
+      background: rgba(0,0,0,.06);
+    }
+
+    /* Drawer toggle checkbox (hidden) */
+    #navToggle{
+      position:absolute;
+      width:1px;height:1px;
+      margin:-1px;padding:0;
+      border:0;overflow:hidden;
+      clip:rect(0 0 0 0);
+      white-space:nowrap;
+    }
+
+    /* Hamburger (only mobile/tablette) */
+    .hamburger{
+      display:none;
+      width:44px;
+      height:44px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+    }
+    .hamburger span{
+      font-size:22px;
+      line-height:1;
+      color:var(--brand);
+      font-weight:900;
+    }
+
+    /* Backdrop */
+    .backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      z-index:1090;
+    }
+
+    /* Drawer panel */
+    .drawer{
+      position:fixed;
+      top:0; left:0;
+      width:280px;
+      height:100dvh;
+      background:#fff;
+      box-shadow:2px 0 18px rgba(0,0,0,.18);
+      transform:translateX(-105%);
+      transition:transform .28s ease;
+      z-index:1100;
+      overflow-y:auto;
+      padding:14px 12px;
+    }
+    .drawer .drawer-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:6px 6px 10px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:10px;
+    }
+    .drawer .drawer-head img{
+      height:44px;
+      width:auto;
+      object-fit:contain;
+    }
+    .drawer .drawer-close{
+      display:inline-flex;
+      width:42px;height:42px;
+      align-items:center;justify-content:center;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      font-size:22px;
+      color:var(--brand);
+      user-select:none;
+    }
+    .drawer a{
+      display:block;
+      padding:12px 14px;
+      color:var(--brand);                 /* couleur brand */
+      font-weight:700;
+      text-decoration:none;
+      border-radius:12px;
+    }
+    .drawer a:hover{ background: rgba(0,0,0,.06); }
+
+    /* OPEN state */
+    #navToggle:checked ~ .backdrop{
+      opacity:1;
+      pointer-events:auto;
+    }
+    #navToggle:checked ~ .drawer{
+      transform:translateX(0);
+    }
+
+    /* Responsive rules */
+    @media (max-width:1024px){
+      .site-header .nav-links{display:none;}
+      .hamburger{display:inline-flex;}
+    }
+    @media (min-width:1025px){
+      .drawer,.backdrop,#navToggle{display:none !important;}
+      .site-header .nav-links{display:flex;}
+    }
+
+    /* Buttons */
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ffc107);color:#fff;border:0}
+    .btn.ghost{background:#fff;color:var(--brand);border:2px solid var(--brand)}
 
     /* Hero */
     .hero{
-      position:relative;min-height:40vh;display:grid;place-items:center;padding:28px;
-      background:
-        linear-gradient(180deg,rgba(0,102,204,.14),rgba(0,188,212,.12)),
-        url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
+      position:relative; min-height:40vh; display:grid; place-items:center; padding:28px;
+      background: linear-gradient(180deg,rgba(0,102,204,.14),rgba(0,188,212,.12)),
+                  url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
       border-bottom:1px solid var(--line);
     }
     .hero .card{background:rgba(255,255,255,.92);backdrop-filter:saturate(1.1) blur(3px);
-      border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow);border-radius:var(--radius);
-      padding:20px 22px;max-width:900px;text-align:center}
+      border:1px solid rgba(255,255,255,.7); box-shadow:var(--shadow); border-radius:var(--radius);
+      padding:20px 22px; max-width:900px; text-align:center}
     .hero h1{margin:0 0 8px;font-size:clamp(24px,4vw,34px);color:var(--brand)}
     .hero p{margin:0;color:#1f2937}
-
-    /* Intro strip */
-    .strip{max-width:1100px;margin:24px auto 0;padding:12px 16px;border-left:4px solid var(--brand);
-      background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);color:#223}
-    .strip small{color:#475569}
+    .cta-row{display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
 
     /* Grid */
     .wrap{max-width:1200px;margin:22px auto 60px;padding:0 16px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .cardT{
-      background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-      box-shadow:0 8px 24px rgba(2,6,23,.06);display:flex;flex-direction:column
-    }
-    figure{margin:0;display:flex;flex-direction:column;height:100%}
+    .cardT{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+      box-shadow:0 8px 24px rgba(2,6,23,.06);display:flex;flex-direction:column}
+    figure{margin:0; display:flex; flex-direction:column; height:100%}
     .thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:pointer;transition:transform .3s ease}
     .cardT:hover .thumb{transform:scale(1.02)}
     figcaption{padding:10px 12px;font-size:.92rem;color:#334;border-top:1px solid var(--line);background:#fcfdff}
@@ -66,7 +210,7 @@
       padding:4px 8px;border-radius:999px;font-size:.82rem;font-weight:700;margin-right:6px}
 
     /* Lightbox */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:50}
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:2000}
     .lightbox.show{display:flex}
     .lb-inner{position:relative;max-width:92vw;max-height:92vh}
     .lb-img{max-width:100%;max-height:92vh;border-radius:12px;box-shadow:0 6px 22px rgba(255,255,255,.25)}
@@ -74,48 +218,104 @@
       width:44px;height:44px;font-size:22px;cursor:pointer}
     .lb-caption{color:#fff;text-align:center;margin-top:8px;font-size:.95rem}
 
-    /* CTA */
-    .cta-row{display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
-    .btn{display:inline-block;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none}
-    .btn.primary{background:linear-gradient(90deg,var(--accent),#ffc107);color:#fff;box-shadow:0 10px 26px rgba(255,152,0,.28)}
-    .btn.ghost{background:#fff;color:var(--brand);border:2px solid var(--brand)}
+    /* Modal Form (Formspree) */
+    .modal { display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:3000; padding:20px; }
+    .modal.open { display:flex; }
+    .form-box { background:#fff; padding:18px; border-radius:12px; max-width:720px; width:100%; box-shadow:0 12px 40px rgba(2,6,23,.12); }
+    .form-box h3{margin:0 0 12px;color:var(--brand)}
+    .form-box label{display:block;margin:10px 0;font-size:0.95rem}
+    .form-box input[type="text"], .form-box input[type="email"], .form-box input[type="tel"], .form-box textarea{
+      width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; margin-top:6px; font-family:inherit;
+    }
+    .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .status{margin-top:10px;font-size:0.95rem;color:#333;display:none}
 
-    /* Footer */
-    footer{background:linear-gradient(90deg,#00b4db,#0093e9);color:#fff;text-align:center;padding:20px 0;border-top:3px solid rgba(255,255,255,.3)}
-    .footer-inner{max-width:1100px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px}
-    .footer-logo{width:70px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-    .footer-social{display:flex;gap:14px}
-    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px}
-    .footer-legal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .footer-legal a{color:#fff;text-decoration:none}
-    .footer-legal a:hover{text-decoration:underline}
-    @media(min-width:768px){.footer-inner{flex-direction:row;justify-content:space-between;text-align:left}}
+    /* Footer (same style you use) */
+    .site-footer{
+      background:linear-gradient(90deg,#00b4db,#0093e9);
+      color:#fff;
+      border-top:3px solid rgba(255,255,255,.3);
+      padding:18px 16px;
+      box-sizing:border-box;
+    }
+    .footer-inner{
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-copy{margin:0;font-size:.95rem;color:#fff}
+    .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .footer-legal{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .footer-legal a{
+      color:#fff;text-decoration:none;font-weight:600;
+      background:rgba(255,255,255,.06);
+      padding:6px 10px;border-radius:8px
+    }
+    .footer-legal a:hover{background:rgba(255,255,255,.12);text-decoration:underline}
+    .footer-social{display:flex;gap:12px;align-items:center}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;display:block}
+    @media (max-width: 768px){
+      .footer-inner{flex-direction:column;align-items:center;text-align:center;gap:12px}
+      .footer-right{align-items:center}
+      .footer-legal{justify-content:center}
+    }
   </style>
 </head>
+
 <body>
 
-  <!-- Header -->
-  <header>
-    <nav class="nav" aria-label="Navigation principale">
-      <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
-        <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" class="logo">
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html" aria-label="Accueil KCN">
+        <img src="./folder3/imaj12.png" class="logo" alt="Logo KOLTIZ Club de Natation">
       </a>
-      <div>
+
+      <!-- Desktop menu -->
+      <nav class="nav-links" aria-label="Navigation principale">
         <a href="./index.html">Accueil</a>
         <a href="./Apropos.html">À propos</a>
         <a href="./evenement.html">Événements</a>
         <a href="./temoignages.html" aria-current="page">Témoignages</a>
         <a href="./contactez-nous.html">Contact</a>
-      </div>
-    </nav>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <label class="hamburger" for="navToggle" aria-label="Ouvrir le menu">
+        <span>☰</span>
+      </label>
+    </div>
   </header>
 
+  <!-- Drawer system (CSS only) -->
+  <input type="checkbox" id="navToggle" aria-hidden="true">
+  <label class="backdrop" for="navToggle" aria-label="Fermer le menu"></label>
+
+  <aside class="drawer" aria-label="Menu mobile">
+    <div class="drawer-head">
+      <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation">
+      <label class="drawer-close" for="navToggle" aria-label="Fermer">×</label>
+    </div>
+    <nav aria-label="Navigation latérale">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+    </nav>
+  </aside>
+
   <!-- Hero -->
-  <section class="hero" role="banner" aria-label="Témoignages (anonymisés)">
+  <section class="hero">
     <div class="card">
       <h1>Quelques commentaires anonymes — parents & amis</h1>
-      <p>Nous partageons ici des retours authentiques. Les noms et détails sensibles ont été retirés
-         pour respecter la confidentialité.</p>
+      <p>Nous partageons ici des retours authentiques. Les noms et détails sensibles ont été retirés pour respecter la confidentialité.</p>
       <div class="cta-row">
         <a href="./inscription1eretapes.html" class="btn primary">Je m’inscris</a>
         <a href="./reservation.html" class="btn ghost">Essai gratuit</a>
@@ -123,62 +323,61 @@
     </div>
   </section>
 
-  
-
   <!-- Grille Témoignages -->
   <main class="wrap">
-    <section class="grid" aria-label="Galerie des témoignages">
-      <!-- 1 -->
+    <section class="grid">
+      <!-- Carte 1 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj1112.png" alt="Témoignage de parent (anonyme) — capture d’écran"
-               data-full="./folder0/imaj1112.png" data-caption="Parent — remerciements & progrès de l’enfant">
+          <img class="thumb" src="./folder0/imaj1112.png" alt="Parent" data-full="./folder0/imaj1112.png" data-caption="Parent — remerciements & progrès de l’enfant">
           <figcaption><span class="badge">Parent</span>Remerciements & progrès de l’enfant</figcaption>
         </figure>
       </article>
-      <!-- 2 -->
+
+      <!-- Carte 2 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj1111.png" alt="Témoignage d’ami du club (anonyme)"
-               data-full="./folder0/imaj1111.png" data-caption="Ami du club — soutien & encouragements">
+          <img class="thumb" src="./folder0/imaj1111.png" alt="Ami" data-full="./folder0/imaj1111.png" data-caption="Ami du club — soutien & encouragements">
           <figcaption><span class="badge">Ami</span>Soutien & encouragements</figcaption>
         </figure>
       </article>
-      <!-- 3 -->
+
+      <!-- Carte 3 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj1123.png" alt="Témoignage de parent — expérience positive"
-               data-full="./folder0/imaj1123.png" data-caption="Parent — expérience positive sur la pédagogie">
+          <img class="thumb" src="./folder0/imaj1123.png" alt="Parent" data-full="./folder0/imaj1123.png" data-caption="Parent — expérience positive sur la pédagogie">
           <figcaption><span class="badge">Parent</span>Expérience positive sur la pédagogie</figcaption>
         </figure>
       </article>
-      <!-- 4 -->
+
+      <!-- Carte 4 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj11234.png" alt="Retour anonyme — progression & sécurité"
-               data-full="./folder0/imaj11234.png" data-caption="Retour — progression & sécurité en priorité">
+          <img class="thumb" src="./folder0/imaj11234.png" alt="Parent" data-full="./folder0/imaj11234.png" data-caption="Progression & sécurité">
           <figcaption><span class="badge">Parent</span>Progression & sécurité en priorité</figcaption>
         </figure>
       </article>
-      <!-- 5 (ambiance) -->
+
+      <!-- Carte 5 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj12345.png" alt="Enfants qui s’amusent à la piscine (ambiance)"
-               data-full="./folder0/imaj12345.png" data-caption="Ambiance — enfants qui s’amusent">
+          <img class="thumb" src="./folder0/imaj12345.png" alt="Ambiance" data-full="./folder0/imaj12345.png" data-caption="Ambiance — enfants qui s’amusent">
           <figcaption><span class="badge">Ambiance</span>Enfants qui s’amusent</figcaption>
         </figure>
       </article>
-      <!-- 6 (ambiance) -->
+
+      <!-- Carte 6 -->
       <article class="cardT">
         <figure>
-          <img class="thumb" loading="lazy" decoding="async"
-               src="./folder0/imaj02-.jpeg" alt="Ambiance — moments de joie à la piscine"
-               data-full="./folder0/imaj02-.jpeg" data-caption="Ambiance — moments de joie à la piscine">
+          <img class="thumb" src="./folder0/imaj02-.jpeg" alt="Ambiance" data-full="./folder0/imaj02-.jpeg" data-caption="Ambiance — moments de joie à la piscine">
+          <figcaption><span class="badge">Ambiance</span>Moments de joie à la piscine</figcaption>
+        </figure>
+      </article>
+
+      <!-- Carte 7 -->
+      <article class="cardT">
+        <figure>
+          <img class="thumb" src="./folder0/0-4.png" alt="Ambiance" data-full="./folder0/0-4.png" data-caption="Ambiance — moments de joie à la piscine">
           <figcaption><span class="badge">Ambiance</span>Moments de joie à la piscine</figcaption>
         </figure>
       </article>
@@ -186,64 +385,162 @@
 
     <!-- CTA bas de page -->
     <div class="cta-row" style="margin-top:8px">
-      <a href="./contactez-nous.html" class="btn ghost">Partager un témoignage</a>
+      <button id="openTestimony" class="btn ghost">Partager un témoignage</button>
       <a href="./Apropos.html" class="btn primary">Retour</a>
     </div>
   </main>
 
+  <!-- Modal Formspree -->
+  <div class="modal" id="testimonyModal" aria-hidden="true" role="dialog" aria-label="Formulaire de témoignage">
+    <div class="form-box" role="document">
+      <form id="testimonyForm" action="https://formspree.io/f/myzrnovw" method="POST">
+        <h3>Partager un témoignage</h3>
+
+        <label>
+          Votre nom (optionnel)
+          <input type="text" name="name" placeholder="Ex. Jean" />
+        </label>
+
+        <label>
+          Votre email (optionnel)
+          <input type="email" name="_replyto" placeholder="Ex. jean@mail.com" />
+        </label>
+
+        <label>
+          Téléphone (optionnel)
+          <input type="tel" name="phone" placeholder="+509 36 95 69 39" />
+        </label>
+
+        <label>
+          Votre témoignage *
+          <textarea name="message" required rows="6" placeholder="Écrivez votre témoignage…"></textarea>
+        </label>
+
+        <!-- Honeypot -->
+        <div style="display:none" aria-hidden="true">
+          <label>Ne remplissez pas ceci
+            <input name="website" type="text" />
+          </label>
+        </div>
+
+        <input type="hidden" name="_subject" value="Nouveau témoignage KOLTIZ">
+
+        <div class="form-actions">
+          <button type="button" id="cancelTestimony" class="btn ghost">Annuler</button>
+          <button type="submit" class="btn primary">Envoyer</button>
+        </div>
+
+        <div id="testimonyStatus" class="status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
   <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement du témoignage">
+  <div class="lightbox" id="lightbox">
     <div class="lb-inner">
-      <button class="lb-close" id="lbClose" aria-label="Fermer">×</button>
+      <button class="lb-close" id="lbClose">×</button>
       <img class="lb-img" id="lbImg" src="" alt="">
       <div class="lb-caption" id="lbCaption"></div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer>
+  <!-- FOOTER -->
+  <footer class="site-footer">
     <div class="footer-inner">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
-        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
-        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      <div class="footer-left">
+        <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        </a>
+        <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
       </div>
-      <div class="footer-social" aria-label="Réseaux sociaux KCN">
-        <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener"><img src="./folder0/facebook.png" alt="Facebook"></a>
-        <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener"><img src="./folder0/instagram.png" alt="Instagram"></a>
-        <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+
+      <div class="footer-right">
+        <nav aria-label="Liens légaux" class="footer-legal">
+          <a href="./confidentialités.html">Confidentialité</a>
+          <a href="./conditions.html">Conditions</a>
+          <a href="./contactez-nous.html">Contact</a>
+        </nav>
+
+        <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+          <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+        </div>
       </div>
-      <nav class="footer-legal" aria-label="Liens légaux">
-        <a href="./confidentialités.html">Confidentialité</a>
-        <a href="./conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
-      </nav>
     </div>
   </footer>
 
   <script>
-    // Lightbox simple
-    (function(){
-      const lb = document.getElementById('lightbox');
-      const lbImg = document.getElementById('lbImg');
-      const lbCaption = document.getElementById('lbCaption');
-      const lbClose = document.getElementById('lbClose');
+    /* Lightbox */
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+    const lbClose = document.getElementById('lbClose');
 
-      document.querySelectorAll('.thumb').forEach(img=>{
-        img.addEventListener('click', ()=>{
-          const full = img.getAttribute('data-full') || img.src;
-          const caption = img.getAttribute('data-caption') || img.alt || '';
-          lbImg.src = full;
-          lbImg.alt = img.alt || '';
-          lbCaption.textContent = caption;
-          lb.classList.add('show');
-        });
+    document.querySelectorAll('.thumb').forEach(img=>{
+      img.addEventListener('click',()=>{
+        lbImg.src = img.getAttribute('data-full');
+        lbImg.alt = img.alt;
+        lbCaption.textContent = img.getAttribute('data-caption');
+        lb.classList.add('show');
       });
+    });
+    lbClose.addEventListener('click',()=>lb.classList.remove('show'));
+    lb.addEventListener('click',e=>{if(e.target===lb) lb.classList.remove('show');});
+    window.addEventListener('keydown',e=>{if(e.key==='Escape' && lb.classList.contains('show')) lb.classList.remove('show');});
 
-      function closeLB(){ lb.classList.remove('show'); lbImg.src = ''; lbCaption.textContent=''; }
-      lbClose.addEventListener('click', closeLB);
-      lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
-      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && lb.classList.contains('show')) closeLB(); });
-    })();
+    /* Modal open/close */
+    const openBtn = document.getElementById('openTestimony');
+    const modal = document.getElementById('testimonyModal');
+    const cancelBtn = document.getElementById('cancelTestimony');
+
+    openBtn.addEventListener('click', ()=> {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    });
+    cancelBtn.addEventListener('click', ()=> {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    });
+
+    /* Submit Formspree via AJAX */
+    const form = document.getElementById('testimonyForm');
+    const status = document.getElementById('testimonyStatus');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.style.display = 'block';
+      status.textContent = 'Envoi en cours…';
+
+      const data = new FormData(form);
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          status.textContent = 'Merci — votre témoignage a été envoyé.';
+          form.reset();
+          setTimeout(()=> {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden','true');
+            status.style.display = 'none';
+            document.body.style.overflow = '';
+          }, 1400);
+        } else {
+          const json = await res.json();
+          status.textContent = 'Erreur : ' + (json?.error || 'Le service a retourné une erreur.');
+        }
+      } catch (err) {
+        status.textContent = 'Erreur réseau — réessayez.';
+      }
+    });
   </script>
+
 </body>
 </html>
