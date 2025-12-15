@@ -403,6 +403,26 @@
     <div class="caption" id="lb-cap" aria-live="polite"></div>
   </div>
 
+  <!-- CODE GATE MODAL -->
+  <div id="codeModal" class="lightbox" aria-modal="true" role="dialog" aria-label="Entrer le code du certificat" style="display:none;">
+    <div style="position:relative;max-width:720px;width:92%;padding:22px;border-radius:12px;background:#0b1726;color:#fff;text-align:center;">
+      <button id="codeClose" class="close" aria-label="Fermer" style="position:absolute;right:12px;top:8px;color:#fff;background:none;border:0;font-size:26px">×</button>
+      <h3 style="margin:6px 0 10px">Code requis</h3>
+      <p style="margin:0 0 12px;opacity:.9">Pour voir ou télécharger ce certificat, entrez le code fourni par KOLTIZ.</p>
+      <div style="margin:12px 0">
+        <input id="codeInput" type="text" placeholder="Code du certificat" style="width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);font-size:16px" />
+      </div>
+      <div id="codeMsg" style="min-height:20px;margin-bottom:8px;color:#ffcccb;font-weight:700"></div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button id="codeSubmit" class="btn" style="background:linear-gradient(90deg,#10b981,#06b6a4);border:0;padding:10px 14px">Valider</button>
+        <button id="codeRequest" class="btn" style="background:#fff;color:#0b1726;border:0;padding:10px 14px">Demander le code</button>
+      </div>
+      <input type="hidden" id="codeCertId" />
+      <input type="hidden" id="codeCertSrc" />
+      <input type="hidden" id="codeCertCap" />
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
@@ -492,6 +512,96 @@
     const lbClose = document.getElementById('lb-close');
     let lastFocused = null;
 
+    // Code gate elements
+    const codeModal = document.getElementById('codeModal');
+    const codeInput = document.getElementById('codeInput');
+    const codeMsg = document.getElementById('codeMsg');
+    const codeCertId = document.getElementById('codeCertId');
+    const codeCertSrc = document.getElementById('codeCertSrc');
+    const codeCertCap = document.getElementById('codeCertCap');
+    const codeSubmit = document.getElementById('codeSubmit');
+    const codeClose = document.getElementById('codeClose');
+    const codeRequest = document.getElementById('codeRequest');
+
+    // helper: generate stable certificate id from src (djb2)
+    function genCertId(s){
+      let h = 5381; for(let i=0;i<s.length;i++) h = ((h<<5)+h) + s.charCodeAt(i); return 'cert_' + (h>>>0).toString(36);
+    }
+
+    function loadCertCodes(){ try { return JSON.parse(localStorage.getItem('cert_codes')||'{}'); } catch(e){ return {}; } }
+    function saveCertCodes(o){ localStorage.setItem('cert_codes', JSON.stringify(o)); }
+
+    function openCodeModal(certId, src, cap){
+      codeMsg.textContent = '';
+      codeInput.value = '';
+      codeCertId.value = certId;
+      codeCertSrc.value = src;
+      codeCertCap.value = cap || '';
+      codeModal.style.display = 'flex';
+      codeModal.classList.add('active');
+      codeInput.focus();
+    }
+
+    function closeCodeModal(){ codeModal.style.display='none'; codeModal.classList.remove('active'); codeMsg.textContent=''; }
+
+    // when user requests the code, POST to Formspree endpoint
+    codeRequest.addEventListener('click', async ()=>{
+      const certIdVal = codeCertId.value || '';
+      const viewerNameVal = (document.getElementById('viewerName')?.value || '').trim();
+      const viewerEmailVal = (document.getElementById('viewerEmail')?.value || '').trim();
+      const payload = {
+        'Certificat ID': certIdVal,
+        'Titre': codeCertCap.value || '',
+        'Demandeur': viewerNameVal || 'Visiteur',
+        'Email': viewerEmailVal || '',
+        'Message': 'Demande de code pour le certificat ' + (codeCertCap.value || certIdVal)
+      };
+
+      try{
+        codeRequest.disabled = true;
+        codeRequest.textContent = 'Envoi...';
+        const res = await fetch('https://formspree.io/f/mvgenpkp', {
+          method: 'POST',
+          headers: { 'Accept':'application/json','Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if(res.ok){
+          codeMsg.style.color = '#86efac';
+          codeMsg.textContent = 'Demande envoyée — Koltiz vous répondra par email avec le code.';
+        } else {
+          const j = await res.json().catch(()=>null);
+          codeMsg.style.color = '#ffcccb';
+          codeMsg.textContent = 'Erreur envoi demande. Essayez mailto si nécessaire.';
+          console.warn('Formspree error', j);
+        }
+      }catch(e){
+        codeMsg.style.color = '#ffcccb';
+        codeMsg.textContent = 'Impossible d’envoyer la demande (connexion).';
+      }finally{
+        codeRequest.disabled = false;
+        codeRequest.textContent = 'Demander le code';
+      }
+    });
+
+    codeClose.addEventListener('click', closeCodeModal);
+    codeModal.addEventListener('click', e=>{ if(e.target===codeModal) closeCodeModal(); });
+
+    codeSubmit.addEventListener('click', ()=>{
+      const val = (codeInput.value||'').trim();
+      const id = codeCertId.value;
+      if(!val){ codeMsg.textContent = 'Entrez le code.'; return; }
+      const map = loadCertCodes();
+      if(map[id] && map[id] === val){
+        // store in session to avoid retyping during this visit
+        const sess = JSON.parse(sessionStorage.getItem('cert_ok')||'{}'); sess[id]=true; sessionStorage.setItem('cert_ok', JSON.stringify(sess));
+        closeCodeModal();
+        openLB(codeCertSrc.value, codeCertCap.value);
+        return;
+      }
+      codeMsg.textContent = 'Code incorrect. Demandez le code à KOLTIZ.';
+    });
+
+
     function openLB(src, cap){
       lastFocused = document.activeElement;
       lbImg.src = src;
@@ -509,10 +619,25 @@
     lbClose.addEventListener('click', closeLB);
     lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); });
 
+    // wire certificate clicks to code-gated flow
     document.querySelectorAll('figure img').forEach(img=>{
+      // ensure each image has a stable cert-id
+      try{
+        const src = img.getAttribute('src') || img.getAttribute('data-src') || '';
+        const id = genCertId(src);
+        img.closest('figure')?.setAttribute('data-cert-id', id);
+      }catch(e){}
+
       img.addEventListener('click', ()=>{
-        const cap = img.closest('figure')?.querySelector('figcaption')?.textContent?.trim();
-        openLB(img.src, cap);
+        const fig = img.closest('figure');
+        const cap = fig?.querySelector('figcaption')?.textContent?.trim();
+        const src = img.getAttribute('src') || img.getAttribute('data-src') || img.src || '';
+        const id = fig?.getAttribute('data-cert-id') || genCertId(src);
+        // if session stored ok, open directly
+        const sess = JSON.parse(sessionStorage.getItem('cert_ok')||'{}');
+        if(sess[id]){ openLB(src, cap); return; }
+        // otherwise ask for code
+        openCodeModal(id, src, cap);
       });
     });
 
@@ -521,10 +646,13 @@
 
     // Appliquer filtre par défaut (“Toutes”)
     applyFilter('all');
+
+    
   </script>
+
+  
 </body>
 </html>
-
 
 
 
