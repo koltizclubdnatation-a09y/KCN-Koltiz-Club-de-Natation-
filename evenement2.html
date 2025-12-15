@@ -16,48 +16,77 @@
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Montserrat',sans-serif;color:var(--text);background:var(--bg);line-height:1.7}
 
-    header{background:linear-gradient(90deg,var(--primary),var(--primary-2));box-shadow:0 4px 16px rgba(0,0,0,.1);position:sticky;top:0;z-index:10}
-    .nav{max-width:1160px;margin:auto;display:flex;justify-content:space-between;align-items:center;padding:14px 20px}
-    .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
-    .brand img{width:52px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-    .brand h1{font-size:1.1rem;font-weight:700}
-    .nav a.link{color:#fff;text-decoration:none;font-weight:600;padding:6px 12px;border-radius:8px;transition:.3s}
-    .nav a.link:hover{background:rgba(255,255,255,.2)}
+    /* ================= HEADER & DRAWER (RESPONSIVE) ================= */
+    header{
+      position:sticky; top:0; z-index:100;
+      background:#fff; border-bottom:3px solid var(--primary);
+    }
+    .navbar{
+      max-width:1160px;
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 18px;
+    }
+    .logo{height:56px; object-fit:contain;}
+    .nav-links{display:flex; gap:14px;}
+    .nav-links a{
+      color:var(--primary); font-weight:700; text-decoration:none; padding:8px 14px; border-radius:10px;
+      transition:.3s;
+    }
+    .nav-links a:hover{background:rgba(0,102,204,.08);}
+    .hamburger{display:none; font-size:26px; background:none; border:none; cursor:pointer; color:var(--primary);}
+    .drawer{
+      position:fixed; top:0; left:0; width:260px; height:100%; background:#fff;
+      box-shadow:2px 0 16px rgba(0,0,0,.2); transform:translateX(-100%);
+      transition:.3s ease; z-index:200; padding-top:60px;
+    }
+    .drawer.open{transform:translateX(0);}
+    .drawer a{display:block; padding:14px 18px; font-weight:700; color:var(--primary); text-decoration:none; border-bottom:1px solid #eee;}
+    .drawer a:hover{background:rgba(0,102,204,.08);}
+    .drawer-close{position:absolute; top:12px; right:12px; font-size:26px; background:none; border:none; cursor:pointer;}
 
-    /* HERO */
+    @media (max-width: 1023px){
+      .nav-links{display:none;}
+      .hamburger{display:block;}
+    }
+    @media (min-width:1024px){
+      .drawer{display:none;}
+    }
+
+    /* ===== HERO ===== */
     .hero{
-      position:relative;display:grid;place-items:center;min-height:48vh;
-      background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
-      overflow:hidden;
+      position:relative; display:grid; place-items:center; min-height:48vh;
+      background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat; overflow:hidden;
     }
-    .hero::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
+    .hero::before{content:""; position:absolute; inset:0; background:rgba(0,0,0,.35);}
     .hero-content{
-      position:relative;z-index:2;color:#fff;text-align:center;max-width:720px;
-      background:rgba(0,0,0,.35);padding:28px 24px;border-radius:var(--radius)
+      position:relative; z-index:2; color:#fff; text-align:center; max-width:720px;
+      background:rgba(0,0,0,.35); padding:28px 24px; border-radius:var(--radius);
     }
-    .hero-content h2{font-size:2rem;margin-bottom:6px}
-    .hero-content p{font-weight:600}
+    .hero-content h2{font-size:2rem; margin-bottom:6px;}
+    .hero-content p{font-weight:600;}
 
-    /* ===== Layout 2 colonnes : Texte à gauche, Photos à droite ===== */
-    .page{max-width:1180px;margin:36px auto;padding:0 16px}
+    /* ===== PAGE 2 COLONNES ===== */
+    .page{max-width:1180px; margin:36px auto; padding:0 16px}
     .shell{display:grid; gap:26px; grid-template-columns:minmax(0,1fr) 360px; align-items:start}
     .content{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:32px}
     .content h3{color:var(--primary); margin:20px 0 10px}
     .content p,.content li{margin-bottom:12px}
     .content ul{padding-left:20px}
     blockquote{border-left:4px solid var(--primary); padding-left:12px; font-style:italic; color:#333; margin:15px 0}
-
     .side{position:sticky; top:90px; display:flex; flex-direction:column; gap:14px; height:max-content}
     .photo{background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.06)}
-    .photo img{display:block; width:100%; aspect-ratio:4/3; object-fit:cover; cursor:pointer; transition:transform .35s ease}
+    .photo img, .photo video{display:block; width:100%; aspect-ratio:4/3; object-fit:cover; cursor:pointer; transition:transform .35s ease}
     .photo:hover img{transform:scale(1.04)}
     .caption{padding:10px 12px; font-size:.92rem; color:#334}
 
-    .callout-outline{border:2px solid var(--primary);border-radius:var(--radius);padding:24px;margin:28px 0;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05)}
+    .callout-outline{border:2px solid var(--primary); border-radius:var(--radius); padding:24px; margin:28px 0; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.05)}
     .btn{background:var(--primary-2);color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:700;display:inline-block;transition:.3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
     .btn:hover{transform:translateY(-3px); box-shadow:0 6px 18px rgba(0,0,0,.2)}
 
-    /* ======= FOLDERS (catégories) ======= */
+    /* ===== FOLDERS / GALERIE ===== */
     .folders{margin-top:34px}
     .folders h3{text-align:center;color:var(--primary);font-size:1.6rem;margin-bottom:14px}
     .folder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
@@ -67,16 +96,13 @@
       transition:transform .2s ease, box-shadow .2s ease;
     }
     .folder-card:hover{transform:translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.08)}
-    .folder-icon{
-      width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,#ffd54f,#ffb300);
-      display:grid; place-items:center; font-size:26px; color:#5d3d00; flex:none;
-    }
+    .folder-icon{width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,#ffd54f,#ffb300); display:grid; place-items:center; font-size:26px; color:#5d3d00; flex:none;}
     .folder-meta h4{margin:0; color:#0b4573}
     .folder-meta p{margin:4px 0 0; color:#566}
     .folder-thumb{width:64px; height:48px; border-radius:10px; object-fit:cover; margin-left:auto; display:none}
     @media(min-width:880px){ .folder-thumb{display:block} }
 
-    /* ======= MODAL : Contenu du dossier ======= */
+    /* ===== MODAL & LIGHTBOX ===== */
     .folder-modal{position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; align-items:center; justify-content:center; z-index:120}
     .folder-modal.show{display:flex}
     .folder-box{
@@ -86,428 +112,236 @@
     .folder-head{display:flex; align-items:center; gap:10px; justify-content:space-between; position:sticky; top:0; background:#fff; padding:8px 0 12px; border-bottom:1px solid var(--border)}
     .folder-head h3{margin:0; color:#0b4573}
     .folder-close{background:#fff; border:2px solid #e2e8f0; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:700}
-
     .folder-grid-inner{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:14px}
-    .folder-grid-inner img{
-      width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); cursor:pointer; transition:transform .2s ease
-    }
+    .folder-grid-inner img{width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); cursor:pointer; transition:transform .2s ease}
     .folder-grid-inner img:hover{transform:scale(1.03)}
 
-    /* Lightbox */
     .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; justify-content:center; align-items:center; z-index:130}
     .lightbox.active{display:flex}
     .lightbox img{max-width:90%; max-height:85%; border-radius:12px; box-shadow:0 4px 20px rgba(255,255,255,.4)}
     .lightbox span{position:absolute; top:20px; right:30px; font-size:2rem; color:#fff; cursor:pointer}
 
-    footer{background:linear-gradient(90deg,#00b4db,#0093e9); color:#fff; text-align:center; padding:20px; margin:40px 0 0; border-top:3px solid rgba(255,255,255,.3)}
-    footer img{width:60px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-    .footer-links{margin-top:10px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-    .footer-links a{color:#fff;text-decoration:none;transition:.3s;font-size:.9rem}
-    .footer-links a:hover{color:#004c91;text-decoration:underline}
+    /* Footer (copied from descriptioncours.html) */
+    .site-footer{background:linear-gradient(90deg,#00b4db,#0093e9);color:#fff;border-top:3px solid rgba(255,255,255,.3);padding:18px 16px;box-sizing:border-box}
+    .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-copy{margin:0;font-size:.95rem;color:#fff}
+    .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .footer-legal{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .footer-legal a{color:#fff;text-decoration:none;font-weight:600;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:8px}
+    .footer-social{display:flex;gap:12px;align-items:center}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;display:block}
+    @media(max-width:768px){ .footer-inner{flex-direction:column;align-items:center;text-align:center;gap:12px} .footer-right{align-items:center} .footer-legal{justify-content:center} }
 
     @media (max-width:960px){ .shell{grid-template-columns:1fr} .side{position:static} }
     @media (max-width:768px){ .content{padding:22px} .hero-content h2{font-size:1.6rem} }
-
-    /* === FOOTER KCN UNIFIÉ (préfixé pour éviter les conflits) === */
-.kcn-footer{
-  background: linear-gradient(90deg, #00b4db, #0093e9);
-  color:#fff;
-  border-top:3px solid rgba(255,255,255,0.3);
-  padding:20px 0;
-  font-family:'Montserrat',sans-serif;
-}
-.kcn-footer__inner{
-  max-width:1100px;
-  margin:auto;
-  padding:0 24px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;/* === FOOTER KCN UNIFIÉ (préfixé pour éviter les conflits) === */
-.kcn-footer{
-  background: linear-gradient(90deg, #00b4db, #0093e9);
-  color:#fff;
-  border-top:3px solid rgba(255,255,255,0.3);
-  padding:20px 0;
-  font-family:'Montserrat',sans-serif;
-}
-.kcn-footer__inner{
-  max-width:1100px;
-  margin:auto;
-  padding:0 24px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  text-align:center;
-}
-.kcn-footer__brand{
-  display:flex; align-items:center; gap:12px; flex-direction:column;
-}
-.kcn-footer__logo{
-  width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-.kcn-footer__copy{margin:0; font-size:.9rem; color:#f1f9ff;}
-.kcn-footer__social{display:flex; flex-direction:column; align-items:center; gap:6px;}
-.kcn-footer__follow{font-weight:600; font-size:.95rem; color:#ffe082;}
-.kcn-footer__icons{display:flex; gap:14px;}
-.kcn-footer__icons img{
-  width:34px; height:34px; border-radius:50%; background:#fff; padding:5px;
-  transition:transform .3s, box-shadow .3s;
-}
-.kcn-footer__icons img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4);}
-.kcn-footer__legal{
-  display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:6px;
-}
-.kcn-footer__legal a{
-  color:#fff; text-decoration:none; font-size:.9rem; transition:color .3s, text-decoration-color .3s;
-}
-.kcn-footer__legal a:hover{color:#004c91; text-decoration:underline;}
-@media (min-width:768px){
-  .kcn-footer__inner{flex-direction:row; justify-content:space-between; text-align:left;}
-  .kcn-footer__brand{flex-direction:row;}
-  .kcn-footer__social{flex-direction:row; gap:10px;}
-  .kcn-footer__legal{margin-top:0;}
-}
-/* === FOOTER KCN UNIFIÉ (préfixé pour éviter les conflits) === */
-.kcn-footer{
-  background: linear-gradient(90deg, #00b4db, #0093e9);
-  color:#fff;
-  border-top:3px solid rgba(255,255,255,0.3);
-  padding:20px 0;
-  font-family:'Montserrat',sans-serif;
-}
-.kcn-footer__inner{
-  max-width:1100px;
-  margin:auto;
-  padding:0 24px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  text-align:center;
-}
-.kcn-footer__brand{
-  display:flex; align-items:center; gap:12px; flex-direction:column;
-}
-.kcn-footer__logo{
-  width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-.kcn-footer__copy{margin:0; font-size:.9rem; color:#f1f9ff;}
-.kcn-footer__social{display:flex; flex-direction:column; align-items:center; gap:6px;}
-.kcn-footer__follow{font-weight:600; font-size:.95rem; color:#ffe082;}
-.kcn-footer__icons{display:flex; gap:14px;}
-.kcn-footer__icons img{
-  width:34px; height:34px; border-radius:50%; background:#fff; padding:5px;
-  transition:transform .3s, box-shadow .3s;
-}
-.kcn-footer__icons img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4);}
-.kcn-footer__legal{
-  display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:6px;
-}
-.kcn-footer__legal a{
-  color:#fff; text-decoration:none; font-size:.9rem; transition:color .3s, text-decoration-color .3s;
-}
-.kcn-footer__legal a:hover{color:#004c91; text-decoration:underline;}
-@media (min-width:768px){
-  .kcn-footer__inner{flex-direction:row; justify-content:space-between; text-align:left;}
-  .kcn-footer__brand{flex-direction:row;}
-  .kcn-footer__social{flex-direction:row; gap:10px;}
-  .kcn-footer__legal{margin-top:0;}
-}
-
-  text-align:center;
-}
-.kcn-footer__brand{
-  display:flex; align-items:center; gap:12px; flex-direction:column;
-}
-.kcn-footer__logo{
-  width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-.kcn-footer__copy{margin:0; font-size:.9rem; color:#f1f9ff;}
-.kcn-footer__social{display:flex; flex-direction:column; align-items:center; gap:6px;}
-.kcn-footer__follow{font-weight:600; font-size:.95rem; color:#ffe082;}
-.kcn-footer__icons{display:flex; gap:14px;}
-.kcn-footer__icons img{
-  width:34px; height:34px; border-radius:50%; background:#fff; padding:5px;
-  transition:transform .3s, box-shadow .3s;
-}
-.kcn-footer__icons img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4);}
-.kcn-footer__legal{
-  display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:6px;
-}
-.kcn-footer__legal a{
-  color:#fff; text-decoration:none; font-size:.9rem; transition:color .3s, text-decoration-color .3s;
-}
-.kcn-footer__legal a:hover{color:#004c91; text-decoration:underline;}
-@media (min-width:768px){
-  .kcn-footer__inner{flex-direction:row; justify-content:space-between; text-align:left;}
-  .kcn-footer__brand{flex-direction:row;}
-  .kcn-footer__social{flex-direction:row; gap:10px;}
-  .kcn-footer__legal{margin-top:0;}
-}
-
   </style>
 </head>
+
 <body>
-  <!-- (Optionnel) Mini-nav / logo -->
-    <!-- HERO -->
-  <section class="hero" role="banner" aria-labelledby="titre-hero">
-    <div class="hero-content">
-      <h2 id="titre-hero">Mini-Compétition & Portes Ouvertes</h2>
-      <p>Samedi 30 août 2025 – Hôtel House of Dream</p>
-    </div>
-  </section>
 
-  <!-- ===== Texte à gauche / Photos à droite ===== -->
-  <div class="page">
-    <div class="shell">
-      <!-- Colonne gauche : TEXTE -->
-      <main class="content" role="main" aria-labelledby="intro-evenement">
-        <h3 id="intro-evenement">Entre éclats de rire, médailles et nouveaux défis</h3>
-        <p>Le 30 août 2025 restera une date spéciale pour la grande famille du <strong>KOLTIZ Club de Natation (KCN)</strong>. Sous un ciel ensoleillé et une ambiance chaleureuse, le club a accueilli parents, enfants et visiteurs venus vivre une matinée placée sous le signe du sport, de la discipline et du partage.</p>
-        <p>Plus de 50 jeunes nageurs ont participé à la mini-compétition et au test d’évaluation, un temps fort où les efforts, la progression et la confiance de nos élèves ont été célébrés.</p>
-        <br>
-        <p>Dès 8h30, l’équipe du KCN a accueilli les participants avec sourire et professionnalisme. Sous la supervision des coachs Alvins et Asdad, les enfants ont montré leurs progrès, portés par les applaudissements du public.</p>
-        <blockquote>“Chaque sourire, chaque médaille, chaque geste d’encouragement a rappelé que la natation, au KOLTIZ, c’est plus qu’un sport : c’est une école de confiance et de vie.”</blockquote>
-        <ul>
-          <li>Des médailles pour reconnaître leurs efforts,</li>
-          <li>Des sacs à dos et fournitures scolaires pour encourager la réussite,</li>
-          <li>Des lunettes et brassards pour plus de sécurité et de confort.</li>
-        </ul>
-        <p>Grâce au soutien généreux de <strong>Haïti Dreamers LLC</strong> et de la <strong>Fondation Shebert</strong>, cette journée s’est terminée dans la joie et la fierté de chaque participant.</p>
-        <p>Tout au long de la journée, visiteurs et parents ont découvert la méthode KOLTIZ : une approche inclusive, sécuritaire et personnalisée qui place la confiance et la progression au cœur de l’apprentissage.</p>
-
-        <h3>Nos partenaires</h3>
-        <p>Merci à <strong>Haïti Dreamers LLC</strong>, la <strong>Fondation Shebert</strong> et <strong>House of Dream</strong> pour leur soutien et leur accueil. Leur engagement a donné à cette activité une portée sportive, éducative et sociale.</p>
-        <p>Cette journée a été une véritable réussite, renforçant les liens entre familles, enfants, coachs et partenaires. Elle incarne l’esprit du KOLTIZ : <em>“Nagez vers la sécurité et avec plaisir.”</em></p>
-
-        <!-- appel à l'inscription déplacé après la galerie (sera ajouté plus bas) -->
-
-        <!-- ======= FOLDERS (4 catégories) ======= -->
-        <section class="folders" aria-labelledby="gfoldersTitle">
-          <h3 id="gfoldersTitle">📁 Galerie par dossiers</h3>
-          <div class="folder-grid">
-            <button class="folder-card" data-folder="competition" aria-label="Ouvrir le dossier Compétition">
-              <div class="folder-icon">🏊‍♂️</div>
-              <div class="folder-meta">
-                <h4>Compétition</h4>
-                <p>Courses, podiums, actions</p>
-              </div>
-              <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/c4.jpeg" alt="">
-            </button>
-
-            <button class="folder-card" data-folder="participants" aria-label="Ouvrir le dossier Participants">
-              <div class="folder-icon">👨‍👩‍👧‍👦</div>
-              <div class="folder-meta">
-                <h4>Participants</h4>
-                <p>Parents, enfants, visiteurs</p>
-              </div>
-              <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/3.jpeg" alt="">
-            </button>
-
-            <button class="folder-card" data-folder="recompenses" aria-label="Ouvrir le dossier Récompenses">
-              <div class="folder-icon">🏅</div>
-              <div class="folder-meta">
-                <h4>Récompenses</h4>
-                <p>Médailles & cadeaux</p>
-              </div>
-              <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/m5.jpeg" alt="">
-            </button>
-
-            <button class="folder-card" data-folder="staff" aria-label="Ouvrir le dossier Staff & Ambiance">
-              <div class="folder-icon">🤝</div>
-              <div class="folder-meta">
-                <h4>Staff & Ambiance</h4>
-                <p>Équipe, enfants, ambiance</p>
-              </div>
-              <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/s1.jpeg" alt="">
-            </button>
-          </div>
-        </section>
-
-        <!-- Appel à l'inscription placé après la galerie -->
-        <div class="callout-outline" role="region" aria-label="Inscription KCN">
-          <p>Rejoignez la famille KOLTIZ ! Chaque élève apprend avec confiance et plaisir.</p>
-          <a href="./inscription1eretapes.html" class="btn" aria-label="S’inscrire ou découvrir les cours">S’inscrire / Découvrir les cours</a>
-        </div>
-
-        <div style="text-align:center; margin-top:10px;">
-          <a href="./evenement.html" class="btn" aria-label="Retour aux événements">← Retour aux événements</a>
-        </div>
-      </main>
-      
-      <!-- Colonne droite : PHOTOS STICKY -->
-      <aside class="side" aria-label="Photos de l’événement">
-        <div class="photo">
-          <!-- Remplacement de l'img par une balise video pour afficher la vidéo -->
-          <video loading="lazy" decoding="async" controls playsinline muted preload="metadata" aria-label="Vidéo - Remerciements" style="width:100%; height:auto; border-radius:0; display:block">
-            <source src="./folder7/aktivite-club/v.therez.mp4" type="video/mp4">
-            Votre navigateur ne supporte pas la balise vidéo.
-          </video>
-          <div class="caption">Remerciements</div>
-        </div>
-        <div class="photo">
-          <img loading="lazy" decoding="async" src="./folder7/imaj-eveneman-30-8-2025/s1.jpeg" alt="Podium & certificats">
-          <div class="caption">Podium & Certificats</div>
-        </div>
-        <div class="photo">
-          <img loading="lazy" decoding="async" src="./folder7/imaj-eveneman-30-8-2025/s3.jpeg" alt="Cérémonie de remise de certificats">
-          <div class="caption">Certificats</div>
-        </div>
-        <div class="photo">
-          <img loading="lazy" decoding="async" src="./folder7/imaj-eveneman-30-8-2025/m3.jpeg" alt="Récompenses distribuées">
-          <div class="caption">Récompenses</div>
-        </div>
-        <div class="photo">
-          <img loading="lazy" decoding="async" src="./folder7/imaj-eveneman-30-8-2025/c7.jpeg" alt="Ambiance à House of Dream">
-          <div class="caption">Ambiance</div>
-        </div>
-      </aside>
-
-    </div>
-  </div>
-
-  <!-- ===== MODAL : Contenu d’un dossier ===== -->
-  <div class="folder-modal" id="folderModal" role="dialog" aria-modal="true" aria-label="Contenu du dossier">
-    <div class="folder-box">
-      <div class="folder-head">
-        <h3 id="folderTitle">Dossier</h3>
-        <button class="folder-close" id="closeFolder" aria-label="Fermer la fenêtre">Fermer</button>
-      </div>
-      <div class="folder-grid-inner" id="folderGrid"></div>
-    </div>
-  </div>
-
-  <!-- LIGHTBOX -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement photo">
-    <span id="close" aria-label="Fermer">&times;</span>
-    <img id="lightbox-img" src="" alt="">
-  </div>
-
-  <script>
-    /* ====== Cartographie des dossiers -> images ====== */
-    const base = "./folder7/imaj-eveneman-30-8-2025/";
-    const GALLERY_MAP = {
-      competition: {
-        title: "Dossier : Compétition",
-        images: ["c1.jpeg","c2.jpeg","c3.jpeg","c4.jpeg","c5.jpeg","c6.jpeg","c7.jpeg","c8.jpeg"]
-      },
-      participants: {
-        title: "Dossier : Participants",
-        images: ["1.jpeg","2.jpeg","3.jpeg","4.jpeg","5.jpeg","6.jpeg","8.jpeg"]
-      },
-      recompenses: {
-        title: "Dossier : Récompenses",
-        images: ["m2.jpeg","m3.jpeg","m4.jpeg","m5.jpeg","m6.jpeg","m7.jpeg","m8.jpeg"]
-      },
-      staff: {
-        title: "Dossier : Staff & Ambiance",
-        images: ["s1.jpeg","s3.jpeg","s4.jpeg","c7.jpeg"]
-      }
-    };
-
-    /* ====== Ouvrir un dossier ====== */
-    const folderModal = document.getElementById('folderModal');
-    const folderTitle = document.getElementById('folderTitle');
-    const folderGrid  = document.getElementById('folderGrid');
-    const closeFolder = document.getElementById('closeFolder');
-
-    document.querySelectorAll('.folder-card').forEach(card=>{
-      card.addEventListener('click', ()=>{
-        const key = card.getAttribute('data-folder');
-        const cfg = GALLERY_MAP[key];
-        if(!cfg){ return; }
-
-        folderTitle.textContent = cfg.title;
-        folderGrid.innerHTML = ""; // reset
-
-        cfg.images.forEach((name, idx)=>{
-          const img = document.createElement('img');
-          img.loading = "lazy";
-          img.decoding = "async";
-          // Encodage des chemins avec espaces
-          img.src = encodeURI(base + name);
-          img.alt = `${cfg.title} – Photo ${idx+1}`;
-          img.addEventListener('click', ()=>openLightbox(img.src, img.alt));
-          folderGrid.appendChild(img);
-        });
-
-        folderModal.classList.add('show');
-        closeFolder.focus();
-      });
-    });
-
-    function closeFolderModal(){
-      folderModal.classList.remove('show');
-    }
-    closeFolder.addEventListener('click', closeFolderModal);
-    folderModal.addEventListener('click', (e)=>{
-      const box = e.target.closest('.folder-box');
-      if(!box) closeFolderModal();
-    });
-    window.addEventListener('keydown',e=>{
-      if(e.key==='Escape') closeFolderModal();
-    });
-
-    /* ====== Lightbox (plein écran) ====== */
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const closeBtn = document.getElementById('close');
-
-    function openLightbox(src, alt){
-      lightbox.classList.add('active');
-      lightboxImg.src = src;
-      lightboxImg.alt = alt || '';
-      closeBtn.focus();
-    }
-
-    function closeLightbox(){
-      lightbox.classList.remove('active');
-      lightboxImg.src = "";
-    }
-
-    closeBtn.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click',e=>{
-      if(e.target!==lightboxImg) closeLightbox();
-    });
-    window.addEventListener('keydown',e=>{
-      if(e.key==='Escape') closeLightbox();
-    });
-  </script>
-
- <!-- FOOTER KCN (UNIFIÉ) -->
-<footer class="kcn-footer" role="contentinfo" aria-label="Pied de page KCN">
-  <div class="kcn-footer__inner">
-    <div class="kcn-footer__brand">
-      <img src="./folder3/imaj10.png" alt="Logo KCN" class="kcn-footer__logo">
-      <p class="kcn-footer__copy">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
-    </div>
-
-    <div class="kcn-footer__social">
-      <span class="kcn-footer__follow">Suivez-nous :</span>
-      <nav aria-label="Réseaux sociaux KCN" class="kcn-footer__icons">
-        <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" aria-label="Facebook KCN">
-          <img src="./folder0/facebook.png" alt="Facebook KCN">
-        </a>
-        <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" aria-label="Instagram KCN">
-          <img src="./folder0/instagram.png" alt="Instagram KCN">
-        </a>
-        <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" aria-label="WhatsApp KCN">
-          <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN">
-        </a>
-      </nav>
-    </div>
-
-    <nav class="kcn-footer__legal" aria-label="Liens légaux">
-      <a href="./confidentialités.html">Confidentialité</a>
-      <a href="./conditions.html">Conditions</a>
-      <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+<!-- HEADER & DRAWER -->
+<header>
+  <div class="navbar">
+    <a href="./index.html"><img src="./folder3/imaj12.png" class="logo" alt="Logo KOLTIZ Club de Natation"></a>
+    <nav class="nav-links">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
     </nav>
+    <button class="hamburger" aria-label="Ouvrir le menu">☰</button>
+  </div>
+</header>
+<aside class="drawer" id="drawer" aria-label="Menu mobile">
+  <button class="drawer-close" aria-label="Fermer le menu">×</button>
+  <a href="./index.html">Accueil</a>
+  <a href="./Apropos.html">À propos</a>
+  <a href="./evenement.html">Événements</a>
+  <a href="./temoignages.html">Témoignages</a>
+  <a href="./contactez-nous.html">Contact</a>
+</aside>
+
+<!-- HERO -->
+<section class="hero" role="banner" aria-labelledby="titre-hero">
+  <div class="hero-content">
+    <h2 id="titre-hero">Mini-Compétition & Portes Ouvertes</h2>
+    <p>Samedi 30 août 2025 – Hôtel House of Dream</p>
+  </div>
+</section>
+
+<!-- PAGE 2 COLONNES -->
+<div class="page">
+  <div class="shell">
+    <main class="content" role="main" aria-labelledby="intro-evenement">
+      <h3 id="intro-evenement">Entre éclats de rire, médailles et nouveaux défis</h3>
+      <p>Le 30 août 2025 restera une date spéciale pour la grande famille du <strong>KOLTIZ Club de Natation (KCN)</strong>. Sous un ciel ensoleillé et une ambiance chaleureuse, le club a accueilli parents, enfants et visiteurs venus vivre une matinée placée sous le signe du sport, de la discipline et du partage.</p>
+      <p>Plus de 50 jeunes nageurs ont participé à la mini-compétition et au test d’évaluation, un temps fort où les efforts, la progression et la confiance de nos élèves ont été célébrés.</p>
+      <blockquote>“Chaque sourire, chaque médaille, chaque geste d’encouragement a rappelé que la natation, au KOLTIZ, c’est plus qu’un sport : c’est une école de confiance et de vie.”</blockquote>
+      <ul>
+        <li>Des médailles pour reconnaître leurs efforts,</li>
+        <li>Des sacs à dos et fournitures scolaires pour encourager la réussite,</li>
+        <li>Des lunettes et brassards pour plus de sécurité et de confort.</li>
+      </ul>
+      <p>Grâce au soutien généreux de <strong>Haïti Dreamers LLC</strong> et de la <strong>Fondation Shebert</strong>, cette journée s’est terminée dans la joie et la fierté de chaque participant.</p>
+      <p>Tout au long de la journée, visiteurs et parents ont découvert la méthode KOLTIZ : une approche inclusive, sécuritaire et personnalisée qui place la confiance et la progression au cœur de l’apprentissage.</p>
+
+      <!-- Folders / Galerie -->
+      <section class="folders" aria-labelledby="gfoldersTitle">
+        <h3 id="gfoldersTitle">📁 Galerie par dossiers</h3>
+        <div class="folder-grid">
+          <button class="folder-card" data-folder="competition" aria-label="Ouvrir le dossier Compétition">
+            <div class="folder-icon">🏊‍♂️</div>
+            <div class="folder-meta"><h4>Compétition</h4><p>Courses, podiums, actions</p></div>
+            <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/c4.jpeg" alt="">
+          </button>
+          <button class="folder-card" data-folder="participants" aria-label="Ouvrir le dossier Participants">
+            <div class="folder-icon">👨‍👩‍👧‍👦</div>
+            <div class="folder-meta"><h4>Participants</h4><p>Parents, enfants, visiteurs</p></div>
+            <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/3.jpeg" alt="">
+          </button>
+          <button class="folder-card" data-folder="recompenses" aria-label="Ouvrir le dossier Récompenses">
+            <div class="folder-icon">🏅</div>
+            <div class="folder-meta"><h4>Récompenses</h4><p>Médailles & cadeaux</p></div>
+            <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/m5.jpeg" alt="">
+          </button>
+          <button class="folder-card" data-folder="staff" aria-label="Ouvrir le dossier Staff & Ambiance">
+            <div class="folder-icon">🤝</div>
+            <div class="folder-meta"><h4>Staff & Ambiance</h4><p>Équipe, enfants, ambiance</p></div>
+            <img class="folder-thumb" src="./folder7/imaj-eveneman-30-8-2025/s1.jpeg" alt="">
+          </button>
+        </div>
+      </section>
+
+      <!-- Callout inscription -->
+      <div class="callout-outline" role="region" aria-label="Inscription KCN">
+        <p>Rejoignez la famille KOLTIZ ! Chaque élève apprend avec confiance et plaisir.</p>
+        <a href="./inscription1eretapes.html" class="btn" aria-label="S’inscrire ou découvrir les cours">S’inscrire / Découvrir les cours</a>
+      </div>
+
+      <div style="text-align:center; margin-top:10px;">
+        <a href="./evenement.html" class="btn" aria-label="Retour aux événements">← Retour aux événements</a>
+      </div>
+    </main>
+
+    <!-- Colonne droite -->
+    <aside class="side" aria-label="Photos de l’événement">
+      <div class="photo">
+        <video loading="lazy" decoding="async" controls playsinline muted preload="metadata" aria-label="Vidéo - Remerciements" style="width:100%; height:auto; border-radius:0; display:block">
+          <source src="./folder7/aktivite-club/v.therez.mp4" type="video/mp4">
+          Votre navigateur ne supporte pas la balise vidéo.
+        </video>
+        <div class="caption">Remerciements</div>
+      </div>
+      <div class="photo">
+        <img loading="lazy" decoding="async" src="./folder7/imaj-eveneman-30-8-2025/s1.jpeg" alt="Podium & certificats">
+        <div class="caption">Podium & certificats</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- MODAL FOLDER -->
+<div class="folder-modal" id="folderModal" role="dialog" aria-modal="true">
+  <div class="folder-box">
+    <div class="folder-head">
+      <h3 id="folderTitle">Dossier</h3>
+      <button class="folder-close" aria-label="Fermer le dossier">×</button>
+    </div>
+    <div class="folder-grid-inner" id="folderGrid"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <span id="lightboxClose" aria-label="Fermer l’image">×</span>
+  <img src="" alt="">
+</div>
+
+<!-- FOOTER (copied from descriptioncours.html) -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+      </a>
+      <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
+    </div>
+    <div class="footer-right">
+      <nav class="footer-legal" aria-label="Liens légaux">
+        <a href="./confidentialités.html">Confidentialité</a>
+        <a href="./conditions.html">Conditions</a>
+        <a href="./contactez-nous.html">Contact</a>
+      </nav>
+      <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+        <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+        <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+        <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+      </div>
+    </div>
   </div>
 </footer>
 
+<script>
+  // ===== HEADER DRAWER =====
+  const hamburger = document.querySelector('.hamburger');
+  const drawer = document.getElementById('drawer');
+  const closeBtn = document.querySelector('.drawer-close');
+
+  hamburger.addEventListener('click', () => { drawer.classList.add('open'); });
+  closeBtn.addEventListener('click', () => { drawer.classList.remove('open'); });
+  document.addEventListener('click', (e) => {
+    if(drawer.classList.contains('open') && !drawer.contains(e.target) && !hamburger.contains(e.target)){
+      drawer.classList.remove('open');
+    }
+  });
+
+  // ===== MODAL FOLDER =====
+  const folderCards = document.querySelectorAll('.folder-card');
+  const folderModal = document.getElementById('folderModal');
+  const folderClose = folderModal.querySelector('.folder-close');
+  const folderGrid = document.getElementById('folderGrid');
+  const folderTitle = document.getElementById('folderTitle');
+
+  const folderData = {
+    competition:['c1.jpeg','c2.jpeg','c3.jpeg','c4.jpeg'],
+    participants:['1.jpeg','2.jpeg','3.jpeg'],
+    recompenses:['m1.jpeg','m2.jpeg','m3.jpeg','m4.jpeg','m5.jpeg'],
+    staff:['s1.jpeg','s2.jpeg','s3.jpeg']
+  };
+
+  folderCards.forEach(card=>{
+    card.addEventListener('click',()=>{
+      const folder = card.dataset.folder;
+      folderTitle.textContent = card.querySelector('h4').textContent;
+      folderGrid.innerHTML = '';
+      folderData[folder].forEach(img=>{
+        const image = document.createElement('img');
+        image.src = `./folder7/imaj-eveneman-30-8-2025/${img}`;
+        image.alt = card.querySelector('h4').textContent;
+        folderGrid.appendChild(image);
+      });
+      folderModal.classList.add('show');
+    });
+  });
+
+  folderClose.addEventListener('click',()=>{folderModal.classList.remove('show')});
+
+  // ===== LIGHTBOX =====
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = lightbox.querySelector('img');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  folderGrid.addEventListener('click', e=>{
+    if(e.target.tagName==='IMG'){
+      lightboxImg.src = e.target.src;
+      lightbox.classList.add('active');
+    }
+  });
+  lightboxClose.addEventListener('click',()=>{lightbox.classList.remove('active')});
+</script>
+
 </body>
 </html>
-
-
