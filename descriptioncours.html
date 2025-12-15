@@ -12,19 +12,50 @@
       --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
       --ink:#0f172a; --muted:#475569; --page:#f7f9fc; --card:#ffffff; --line:#e5eaf2;
       --radius:16px; --shadow:0 20px 50px rgba(2,6,23,.12);
+      --max-width:1200px;
     }
     *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
     body{margin:0;font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
-    img{display:block;max-width:100%;height:auto}
-
-    /* A11y */
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{position:static;width:auto;height:auto;margin:8px 16px;display:inline-block;background:#111;color:#fff;padding:8px 10px;border-radius:8px;text-decoration:none}
+    img{display:block;max-width:100%;height:auto;vertical-align:middle}
+    a{color:var(--brand)}
     a:focus-visible, button:focus-visible{outline:3px solid #111; outline-offset:2px}
 
-    /* HERO */
-    .hero-cours{
-      position:relative; min-height:64vh; display:grid; place-items:center; padding:48px 16px;
+    .container{max-width:var(--max-width);margin:0 auto;padding:0 16px}
+    .stack{display:grid;gap:clamp(12px,2vw,20px)}
+
+    /* Header & Drawer */
+    header.kcn-header{
+      position:sticky; top:0; z-index:1000;
+      background: #fff; border-bottom:3px solid var(--brand);
+      box-shadow:0 2px 6px rgba(2,6,23,.04);
+    }
+    .kcn-container{
+      max-width:var(--max-width); margin:0 auto; padding:10px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .nav-left{display:flex;align-items:center;gap:12px}
+    .nav-brand .logo, .logo{height:56px; width:auto; object-fit:contain; display:block;}
+    .nav-right{display:flex;gap:14px;align-items:center}
+    .nav-right a{color:var(--brand);text-decoration:none;font-weight:700;padding:8px 12px;border-radius:10px;transition:background .12s}
+    .nav-right a:hover{background:rgba(0,102,204,.06)}
+    .hamburger{display:none;background:none;border:0;font-size:24px;cursor:pointer;color:var(--brand)}
+    @media(max-width:1024px){ .nav-right{display:none} .hamburger{display:inline-block} }
+    .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:none}
+    .drawer-backdrop.show{display:block}
+    .drawer{position:fixed;top:0;left:0;width:260px;height:100%;background:#fff;box-shadow:2px 0 18px rgba(0,0,0,.12);transform:translateX(-100%);transition:transform .28s ease;z-index:1000;overflow:auto}
+    .drawer.open{transform:translateX(0)}
+    .drawer-header{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);gap:8px}
+    .drawer-header .drawer-close{order:1;margin-right:auto;background:none;border:0;font-size:22px;cursor:pointer;color:var(--brand);}
+    .drawer-header img{order:2;height:44px;width:auto;object-fit:contain;border-radius:6px;display:block}
+    .drawer-nav{display:flex;flex-direction:column;padding:10px 8px;gap:4px}
+    .drawer-nav a{display:block;padding:12px 16px;color:var(--brand);text-decoration:none;border-bottom:1px solid var(--line);background:transparent}
+    .drawer-nav a:hover{background:rgba(0,102,204,.04)}
+    .drawer-footer{position:absolute;bottom:12px;left:16px;font-size:13px;color:#444}
+    @media(min-width:1025px){ .drawer{display:none !important} .drawer-backdrop{display:none !important} }
+
+    /* Hero */
+    .hero-cours{position:relative; min-height:64vh; display:grid; place-items:center; padding:48px 16px;
       background:
         linear-gradient(180deg,rgba(0,102,204,.20),rgba(0,188,212,.18)),
         url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;
@@ -40,175 +71,149 @@
       opacity:.55; animation:wave 10s linear infinite;
     }
     @keyframes wave{to{background-position:-240px 100%,-120px 100%}}
-
-    .hero-card{
-      position:relative; z-index:1; max-width:780px; width:min(92%,780px);
+    .hero-card{position:relative; z-index:1; max-width:780px; width:min(92%,780px);
       background:rgba(255,255,255,.88); backdrop-filter: blur(6px);
       border-radius:20px; padding:30px 26px; text-align:center;
-      box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.6);
-      animation:floatIn .7s ease both;
-    }
-    @keyframes floatIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)}}
+      box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.6);}
     .hero-card h1{color:var(--brand); font-size:clamp(1.6rem,1.2rem + 1.5vw,2.2rem); letter-spacing:.2px; margin:0 0 10px}
     .hero-card p{color:#1f2937; font-size:1.05rem; margin:0}
+    .btn-wrap{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap}
+    .btn{background:linear-gradient(90deg,var(--sun),#ffc107); color:#fff; padding:12px 22px; border-radius:14px; text-decoration:none; font-weight:800; letter-spacing:.2px; display:inline-block; box-shadow:0 12px 30px rgba(255,152,0,.28); transition:transform .2s ease; border:2px solid transparent}
+    .btn:hover{transform:translateY(-2px)}
 
-    .wrap{max-width:1200px; margin:56px auto; padding:0 16px}
+    /* Content Section */
+    .wrap{max-width:var(--max-width); margin:56px auto; padding:0 16px}
     .section-title{display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:20px}
-    .pill{
-      background:linear-gradient(90deg,rgba(0,102,204,.12),rgba(0,188,212,.12));
-      border:1px solid rgba(0,102,204,.25);
-      color:#0b4573; font-weight:700; padding:8px 14px; border-radius:999px; font-size:.9rem; letter-spacing:.3px;
-    }
-
-    /* CARTES COURS */
+    .pill{background:linear-gradient(90deg,rgba(0,102,204,.12),rgba(0,188,212,.12)); border:1px solid rgba(0,102,204,.25); color:#0b4573; font-weight:700; padding:8px 14px; border-radius:999px; font-size:.9rem; letter-spacing:.3px;}
     .grid{display:grid; gap:22px; grid-template-columns:repeat(12,1fr)}
     .col{grid-column:span 12}
     @media(min-width:720px){ .col{grid-column:span 6} }
     @media(min-width:1024px){ .col{grid-column:span 3} }
-
     .card{position:relative; background:var(--card); border-radius:var(--radius); padding:22px 18px 20px; box-shadow:var(--shadow); isolation:isolate; border:1px solid var(--line)}
     .card:hover{transform:translateY(-6px); transition:.25s ease; box-shadow:0 30px 60px rgba(2,6,23,.14)}
-    .icon{
-      width:54px; height:54px; border-radius:14px; display:grid; place-items:center; margin:-8px 0 10px;
-      background:linear-gradient(180deg, rgba(0,102,204,.12), rgba(0,188,212,.12));
-      border:1px solid rgba(0,102,204,.25);
-    }
+    .icon{width:54px; height:54px; border-radius:14px; display:grid; place-items:center; margin:-8px 0 10px;
+      background:linear-gradient(180deg, rgba(0,102,204,.12), rgba(0,188,212,.12)); border:1px solid rgba(0,102,204,.25)}
     .card h3{color:var(--brand); font-size:1.25rem; margin:6px 0 10px}
     .card p{color:#1f2937; font-size:1.02rem; margin:0}
-
-    /* HORAIRES spotlight */
-    .spotlight{
-      background:
+    .spotlight{background:
         radial-gradient(60% 120% at 0% 0%, rgba(0,102,204,.08), transparent 60%),
         radial-gradient(60% 120% at 100% 100%, rgba(0,188,212,.08), transparent 60%),
-        #ffffff;
-      border:1px solid var(--line);
-    }
+        #ffffff; border:1px solid var(--line)}
     .hours{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:8px}
     .chip{border:1px solid rgba(0,102,204,.25); color:#0b4573; background:rgba(0,102,204,.06); padding:8px 12px; border-radius:12px; font-weight:700; letter-spacing:.2px}
 
-    /* GALLERY */
+    /* Gallery */
     .gallery{display:grid; gap:18px; grid-template-columns:repeat(12,1fr); margin-top:34px}
     .gcol-3{grid-column:span 12}
     @media(min-width:720px){ .gcol-3{grid-column:span 6} }
     @media(min-width:1024px){ .gcol-3{grid-column:span 3} }
     .gimg{border-radius:16px; height:360px; object-fit:cover; width:100%; box-shadow:0 18px 40px rgba(2,6,23,.10); cursor:zoom-in; transition:transform .35s ease, box-shadow .35s ease}
     .gimg:hover{ transform:scale(1.02); box-shadow:0 28px 70px rgba(2,6,23,.16) }
-
-    /* Lightbox */
     .lightbox{position:fixed; inset:0; display:none; place-items:center; background:rgba(2,6,23,.75); z-index:50; padding:20px}
     .lightbox.open{display:grid; animation:fadeIn .18s ease}
-    @keyframes fadeIn{from{opacity:0} to{opacity:1}}
     .lightbox img{max-width:min(95vw,1200px); max-height:85vh; border-radius:16px; box-shadow:0 40px 100px rgba(0,0,0,.45)}
     .lightbox button{position:absolute; top:18px; right:18px; background:#ffffff; color:#0f172a; border:0; font-weight:800; border-radius:12px; padding:10px 14px; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,.25)}
 
-    /* BUTTONS */
-    .btn{
-      background:linear-gradient(90deg,var(--sun),#ffc107);
-      color:#fff; padding:12px 22px; border-radius:14px; text-decoration:none; font-weight:800; letter-spacing:.2px;
-      display:inline-block; box-shadow:0 12px 30px rgba(255,152,0,.28); transition:transform .2s ease; border:2px solid transparent;
-    }
-    .btn:hover{transform:translateY(-2px)}
-    .btn:focus-visible{outline:none; border-color:#111}
-    .btn-wrap{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap}
-
-    /* FOOTER */
-    footer{background: linear-gradient(90deg, #00b4db, #0093e9); color:#fff; padding:20px 0; border-top:3px solid rgba(255,255,255,0.3); margin-top:56px}
-    .footer-inner{max-width:1100px; margin:auto; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
-    .footer-top{display:flex; align-items:center; flex-direction:column; gap:8px}
-    .footer-logo{width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-    .copyright{font-size:.9rem; color:#f1f9ff; margin:0}
-    .footer-social-block{display:flex; flex-direction:column; align-items:center; gap:6px}
-    .follow-text{font-weight:600; font-size:.95rem; color:#ffe082}
-    .footer-social{display:flex; justify-content:center; gap:14px}
-    .footer-social img{width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; transition:transform .3s, box-shadow .3s}
-    .footer-social img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4)}
-    .footer-legal{display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:6px}
-    .footer-legal a{color:#fff; text-decoration:none; font-size:.9rem}
-    .footer-legal a:hover{color:#004c91; text-decoration:underline}
-    @media (min-width:768px){
-      .footer-inner{flex-direction:row; justify-content:space-between; text-align:left}
-      .footer-top{flex-direction:row; gap:14px}
-      .footer-social-block{flex-direction:row; gap:10px}
-      .footer-legal{margin-top:0}
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
-    }
+    /* Footer */
+    .site-footer{background:linear-gradient(90deg,#00b4db,#0093e9);color:#fff;border-top:3px solid rgba(255,255,255,.3);padding:18px 16px;box-sizing:border-box}
+    .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-copy{margin:0;font-size:.95rem;color:#fff}
+    .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .footer-legal{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .footer-legal a{color:#fff;text-decoration:none;font-weight:600;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:8px}
+    .footer-social{display:flex;gap:12px;align-items:center}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;display:block}
+    @media(max-width:768px){ .footer-inner{flex-direction:column;align-items:center;text-align:center;gap:12px} .footer-right{align-items:center} .footer-legal{justify-content:center} }
   </style>
 </head>
+
+</head>
 <body>
-  <a href="#main" class="skip-link">Aller au contenu</a>
 
-  <!-- HERO -->
-  <section class="hero-cours" role="banner" aria-label="Présentation des cours KCN">
-    <div class="hero-card">
-      <h1>Nos Cours de Natation – Pour Tous et en Toute Sécurité</h1>
-      <p>
-        Au <strong>KOLTIZ Club de Natation</strong>, nous offrons des cours adaptés à tous les âges et niveaux.
-        Débutant ou confirmé, nos coachs certifiés vous accompagnent pour progresser, vous amuser et dépasser vos limites.
-      </p>
-      <div class="btn-wrap" style="margin-top:16px">
-        <a href="./plancours.html" class="btn" aria-label="Voir le plan des cours">Plan des cours</a>
+  <!-- HEADER : UNIFIÉ -->
+  <header class="kcn-header" role="banner">
+    <div class="kcn-container">
+      <div class="nav-left">
+        <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj12.png" alt="Logo KCN" class="logo">
+        </a>
       </div>
-    </div>
-  </section>
 
-  <main id="main">
-    <!-- BADGE -->
-    <div class="wrap">
+      <nav class="nav-right" aria-label="Navigation principale">
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./evenement.html">Événements</a>
+        <a href="./temoignages.html">Témoignages</a>
+        <a href="./contactez-nous.html">Contact</a>
+      </nav>
+
+      <button class="hamburger" id="kcnHamburger" aria-label="Ouvrir le menu">☰</button>
+    </div>
+  </header>
+
+  <!-- BACKDROP + DRAWER -->
+  <div id="kcnBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+  <aside id="kcnDrawer" class="drawer" aria-hidden="true" aria-label="Menu mobile">
+    <div class="drawer-header">
+      <button class="drawer-close" id="kcnDrawerClose" aria-label="Fermer">×</button>
+      <img src="./folder3/imaj12.png" alt="Logo KCN" />
+    </div>
+    <nav class="drawer-nav" aria-label="Navigation mobile">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+    </nav>
+    <div class="drawer-footer">© 2025 KCN</div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main" class="stack">
+
+    <!-- HERO -->
+    <section class="hero-cours" role="banner" aria-label="Présentation des cours KCN">
+      <div class="hero-card">
+        <h1>Nos Cours de Natation – Pour Tous et en Toute Sécurité</h1>
+        <p>
+          Au <strong>KOLTIZ Club de Natation</strong>, nous offrons des cours adaptés à tous les âges et niveaux.
+          Débutant ou confirmé, nos coachs certifiés vous accompagnent pour progresser, vous amuser et dépasser vos limites.
+        </p>
+        <div class="btn-wrap" style="margin-top:16px">
+          <a href="./plancours.html" class="btn" aria-label="Voir le plan des cours">Plan des cours</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <section class="wrap" aria-label="Descriptions des cours">
       <div class="section-title">
         <span class="pill" aria-hidden="true">Programmes • Sécurité • Progression</span>
       </div>
-    </div>
 
-    <!-- DESCRIPTIONS -->
-    <section class="wrap" aria-label="Descriptions des cours">
       <div class="grid">
         <article class="card col" aria-labelledby="t-enfants">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 8v-1a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v1" stroke="url(#g1)" stroke-width="1.6" stroke-linecap="round"/>
-              <defs><linearGradient id="g1" x1="0" x2="24" y1="0" y2="24"><stop stop-color="#0066cc"/><stop offset="1" stop-color="#00bcd4"/></linearGradient></defs>
-            </svg>
-          </div>
+          <div class="icon" aria-hidden="true"></div>
           <h3 id="t-enfants">Cours pour enfants</h3>
           <p>Initiation, perfectionnement et préparation aux compétitions. Chaque enfant progresse en toute sécurité.</p>
         </article>
 
         <article class="card col" aria-labelledby="t-adultes">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M16 7a4 4 0 1 1-4-4 4 4 0 0 1 4 4Z" stroke="url(#g2)" stroke-width="1.6"/>
-              <path d="M4 20a8 8 0 0 1 16 0" stroke="url(#g2)" stroke-width="1.6" stroke-linecap="round"/>
-              <defs><linearGradient id="g2" x1="0" x2="24" y1="0" y2="24"><stop stop-color="#0066cc"/><stop offset="1" stop-color="#00bcd4"/></linearGradient></defs>
-            </svg>
-          </div>
+          <div class="icon" aria-hidden="true"></div>
           <h3 id="t-adultes">Cours pour adultes</h3>
           <p>Apprentissage, remise en forme et techniques avancées. Des sessions personnalisées pour atteindre vos objectifs.</p>
         </article>
 
         <article class="card col" aria-labelledby="t-inclusifs">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="7" r="3.5" stroke="url(#g3)" stroke-width="1.6"/>
-              <path d="M3 20a9 9 0 0 1 18 0" stroke="url(#g3)" stroke-width="1.6" stroke-linecap="round"/>
-              <defs><linearGradient id="g3" x1="0" x2="24" y1="0" y2="24"><stop stop-color="#0066cc"/><stop offset="1" stop-color="#00bcd4"/></linearGradient></defs>
-            </svg>
-          </div>
+          <div class="icon" aria-hidden="true"></div>
           <h3 id="t-inclusifs">Cours inclusifs</h3>
           <p>Spécialement conçus pour les personnes à mobilité réduite, avec suivi personnalisé et environnement sécurisé.</p>
         </article>
 
         <article class="card col spotlight" aria-labelledby="t-horaires">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="8" stroke="url(#g4)" stroke-width="1.6"/>
-              <path d="M12 7v5l3 2" stroke="url(#g4)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <defs><linearGradient id="g4" x1="0" x2="24" y1="0" y2="24"><stop stop-color="#0066cc"/><stop offset="1" stop-color="#00bcd4"/></linearGradient></defs>
-            </svg>
-          </div>
+          <div class="icon" aria-hidden="true"></div>
           <h3 id="t-horaires">Horaires des cours</h3>
           <p>Samedi : 8h – 12h<br>Dimanche : 8h – 12h</p>
           <div class="hours" aria-hidden="true">
@@ -227,7 +232,6 @@
         <div class="gcol-3"><img class="gimg" src="./folder3/imaj3.jpeg" alt="Enfant joyeux équipé pour la nage" loading="lazy"></div>
       </div>
 
-      <!-- CTAs -->
       <div class="btn-wrap">
         <a href="./certificat.html" class="btn" aria-label="Voir nos certifications">Voir nos certifications</a>
         <a href="./Apropos.html" class="btn" aria-label="Retour à la page À propos">Retour</a>
@@ -237,64 +241,84 @@
 
   <!-- LIGHTBOX -->
   <div class="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement d'image" id="lightbox">
-    <button type="button" aria-label="Fermer">Fermer ✕</button>
-    <img src="" alt="" />
+    <button type="button" aria-label="Fermer" id="lb-close">Fermer ✕</button>
+    <img src="" alt="" id="lb-img" />
   </div>
 
   <!-- FOOTER -->
-  <footer class="footer">
+  <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
-      <div class="footer-top">
-        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
-        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      <div class="footer-left">
+        <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        </a>
+        <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
       </div>
-
-      <div class="footer-social-block">
-        <span class="follow-text">Suivez-nous :</span>
-        <div class="footer-social" aria-label="Réseaux sociaux KCN">
-          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
-            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
-          </a>
-          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener" aria-label="Instagram KCN">
-            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
-          </a>
-          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener" aria-label="WhatsApp KCN">
-            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
-          </a>
+      <div class="footer-right">
+        <nav class="footer-legal" aria-label="Liens légaux">
+          <a href="./confidentialités.html">Confidentialité</a>
+          <a href="./conditions.html">Conditions</a>
+          <a href="./contactez-nous.html">Contact</a>
+        </nav>
+        <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+          <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
         </div>
       </div>
-
-      <nav class="footer-legal" aria-label="Liens légaux">
-        <a href="./confidentialités.html">Confidentialité</a>
-        <a href="./conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
-      </nav>
     </div>
   </footer>
 
+  <!-- SCRIPTS -->
   <script>
+    // Drawer toggle
+    (function(){
+      const btn = document.getElementById('kcnHamburger');
+      const drawer = document.getElementById('kcnDrawer');
+      const backdrop = document.getElementById('kcnBackdrop');
+      const closeBtn = document.getElementById('kcnDrawerClose');
+
+      function openDrawer(){
+        drawer.classList.add('open');
+        backdrop.classList.add('show');
+        drawer.setAttribute('aria-hidden','false');
+        backdrop.setAttribute('aria-hidden','false');
+        if(btn) btn.setAttribute('aria-expanded','true');
+        document.body.style.overflow='hidden';
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('show');
+        drawer.setAttribute('aria-hidden','true');
+        backdrop.setAttribute('aria-hidden','true');
+        if(btn) btn.setAttribute('aria-expanded','false');
+        document.body.style.overflow='';
+      }
+      if(btn) btn.addEventListener('click', openDrawer);
+      if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if(backdrop) backdrop.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', e => { if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+      document.querySelectorAll('.drawer-nav a').forEach(a => a.addEventListener('click', closeDrawer));
+    })();
+
     // Lightbox
     (function(){
       const lb = document.getElementById('lightbox');
-      const lbImg = lb.querySelector('img');
-      const lbClose = lb.querySelector('button');
-      const imgs = document.querySelectorAll('.gimg');
-
-      function openLB(src, alt){
-        lbImg.src = src; lbImg.alt = alt || 'Image agrandie';
-        lb.classList.add('open'); lbClose.focus();
-      }
-      function closeLB(){
-        lb.classList.remove('open'); lbImg.src = ''; lbImg.alt = '';
-      }
-
-      imgs.forEach(img=>{
-        img.addEventListener('click', ()=> openLB(img.currentSrc || img.src, img.alt));
+      const lbImg = document.getElementById('lb-img');
+      const lbClose = document.getElementById('lb-close');
+      document.querySelectorAll('.gimg').forEach(img => {
+        img.addEventListener('click', () => {
+          lbImg.src = img.currentSrc || img.src;
+          lbImg.alt = img.alt || 'Image agrandie';
+          lb.classList.add('open');
+          lbClose.focus();
+        });
       });
-      lbClose.addEventListener('click', closeLB);
-      lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
-      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+      lbClose.addEventListener('click', ()=> lb.classList.remove('open'));
+      lb.addEventListener('click', (e)=> { if(e.target === lb) lb.classList.remove('open'); });
+      window.addEventListener('keydown', (e)=> { if(e.key === 'Escape' && lb.classList.contains('open')) lb.classList.remove('open'); });
     })();
   </script>
+
 </body>
 </html>
