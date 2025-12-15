@@ -53,23 +53,67 @@
 
   /* Flottants */
   .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+
+  /* Setup helper */
+  .setup-note{background:#fff7ed;border-left:6px solid #f59e0b;padding:10px;border-radius:8px;margin-top:8px;color:#92400e}
+  .small{font-size:.9rem;color:#64748b;margin-top:6px}
+  /* Proof viewer modal */
+  .proof-modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.7);z-index:100000}
+  .proof-modal.open{display:grid}
+  .proof-modal .inner{background:#fff;width:min(92vw,1000px);height:min(92vh,900px);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+  .proof-modal .head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f8fafc;border-bottom:1px solid #e5e7eb}
+  .proof-modal .body{flex:1;display:flex;align-items:center;justify-content:center;background:#000}
+  .proof-modal img{max-width:100%;max-height:100%;object-fit:contain}
+  .proof-modal iframe{width:100%;height:100%;border:0}
+  .proof-modal .close{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:6px 10px;cursor:pointer}
 </style>
 </head>
 <body>
 
 <!-- === Porte discrète === -->
 <div id="gate" aria-modal="true" role="dialog">
-  <div class="box">
+  <div class="box" id="gateBox">
     <h2>Accès administration</h2>
     <div class="mini">Zone réservée. Entrez le code pour continuer.</div>
-    <label for="gateCode" class="muted" style="display:block;margin-bottom:6px">Code</label>
-    <input id="gateCode" type="password" placeholder="••••••" autocomplete="off" style="width:100%;margin-bottom:10px">
-    <div class="row">
-      <button class="btn alt" id="gateCancel">Annuler</button>
-      <button class="btn" id="gateOk">Entrer</button>
+
+    <!-- If an admin code is not yet configured, a setup panel will be shown -->
+    <div id="setupWrap" style="margin-bottom:10px;display:none">
+      <div class="muted">Aucun code admin configuré. Créez un code pour sécuriser l'accès sur cet appareil.</div>
+      <label for="newAdminCode" style="display:block;margin-top:8px">Nouveau code</label>
+      <input id="newAdminCode" type="password" placeholder="Nouveau code" autocomplete="new-password" style="width:100%;margin-bottom:6px">
+      <label for="confirmAdminCode" style="display:block">Confirmer</label>
+      <input id="confirmAdminCode" type="password" placeholder="Confirmez le code" autocomplete="new-password" style="width:100%;margin-bottom:10px">
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn alt" id="setupCancel">Annuler</button>
+        <button class="btn" id="setupApply">Enregistrer le code</button>
+      </div>
+      <div class="setup-note" id="setupNote" style="display:none">Code enregistré. Utilisez-le pour entrer dans l'administration.</div>
     </div>
-    <div class="err" id="gateErr">Code incorrect.</div>
-    <div class="hint">Astuce : <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> rouvre la porte.</div>
+
+    <!-- Normal unlock UI -->
+    <div id="unlockWrap">
+      <label for="gateCode" class="muted" style="display:block;margin-bottom:6px">Code</label>
+      <input id="gateCode" type="password" placeholder="••••••" autocomplete="off" style="width:100%;margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input type="checkbox" id="rememberMe"> Se souvenir de moi sur cet appareil</label>
+      <div class="row">
+        <button class="btn alt" id="gateCancel">Annuler</button>
+        <button class="btn" id="gateOk">Entrer</button>
+      </div>
+      <div class="err" id="gateErr">Code incorrect.</div>
+      <div class="hint">Astuce : <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> rouvre la porte.</div>
+    </div>
+
+    <div style="margin-top:12px">
+      <button id="forgotBtn" class="btn alt" style="background:#fff;color:#9a3412;border:1px solid #fed7aa">Mot de passe oublié / Réinitialiser</button>
+    </div>
+  </div>
+</div>
+
+<!-- Proof viewer modal -->
+<div id="proofModal" class="proof-modal" aria-hidden="true">
+  <div class="inner" role="dialog" aria-modal="true">
+    <div class="head"><div class="proof-title">Preuve</div><button class="close">Fermer ✕</button></div>
+    <div class="body proof-body"></div>
   </div>
 </div>
 
@@ -80,6 +124,7 @@
       <h1>Admin KCN — Commandes & Stock (localStorage)</h1>
       <div style="display:flex;gap:8px">
         <button class="btn ghost" id="btnLogout" title="Verrouiller l'admin">Verrouiller</button>
+        <button id="resetAdminCode" class="btn alt" title="Réinitialiser le code admin (supprime la configuration)">Réinitialiser code</button>
         <a class="btn alt" href="./boutique-kcn.html">← Retour boutique</a>
       </div>
     </div>
@@ -92,12 +137,18 @@
 
     <!-- ===== Panel Commandes ===== -->
     <section id="panel-orders" class="panel active" aria-labelledby="tab-orders">
-      <div class="tools">
-        <button id="refresh">Actualiser</button>
-        <button id="export" class="btn alt">Exporter CSV</button>
-        <button id="applySales" class="btn">Appliquer ventes → stock</button>
-        <button id="clear" class="btn alt">Vider toutes les commandes</button>
-      </div>
+    <div class="tools">
+  <button id="refresh">Actualiser</button>
+  <button id="export" class="btn alt">Exporter CSV</button>
+  <button id="applySales" class="btn">Appliquer ventes → stock</button>
+  <button id="clear" class="btn alt">Vider toutes les commandes</button>
+
+  <!-- 🔐 Sauvegarde / Restauration complète (100% local) -->
+  <button id="backupAll" class="btn alt">Exporter données boutique</button>
+  <button id="restoreAll" class="btn alt">Importer données boutique</button>
+  <input id="restoreAllFile" type="file" accept="application/json" style="display:none">
+</div>
+
       <div id="count" class="muted"></div>
       <div id="list" class="list"></div>
     </section>
@@ -178,9 +229,78 @@
   function view(htg,currency){ return currency==='USD' ? NaN : htg; }
   function qtySafe(n){ return Math.max(0, parseInt(n||'0',10)||0); }
 
+  /* ===== IndexedDB helpers to read proofs saved by the shop page ===== */
+  function openProofsDB(){
+    return new Promise((resolve,reject)=>{
+      const req = indexedDB.open('kcn_proofs_db', 1);
+      req.onupgradeneeded = (e)=>{
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains('proofs')) db.createObjectStore('proofs', { keyPath: 'id', autoIncrement: true });
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror = ()=> reject(req.error || new Error('IndexedDB open failed'));
+    });
+  }
+
+  async function getProof(id){
+    const db = await openProofsDB();
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction('proofs','readonly');
+      const store = tx.objectStore('proofs');
+      const req = store.get(Number(id));
+      req.onsuccess = ()=>{ resolve(req.result || null); db.close(); };
+      req.onerror = ()=>{ reject(req.error || new Error('IndexedDB get failed')); db.close(); };
+    });
+  }
+
+  // Proof viewer: open modal to preview images or documents (PDF/other)
+  function openProofViewer(url, type, name){
+    let modal = document.getElementById('proofModal');
+    if(!modal) return;
+    const body = modal.querySelector('.proof-body');
+    const title = modal.querySelector('.proof-title');
+    body.innerHTML = '';
+    title.textContent = name || 'Preuve';
+    if(type && type.startsWith('image/')){
+      const img = document.createElement('img'); img.src = url; img.alt = name || 'preuve';
+      body.appendChild(img);
+    } else {
+      // use iframe for PDF or other viewable types
+      const frame = document.createElement('iframe'); frame.src = url; frame.setAttribute('aria-label','Preuve');
+      body.appendChild(frame);
+    }
+    modal.classList.add('open');
+  }
+
+  function closeProofViewer(){ const modal = document.getElementById('proofModal'); if(!modal) return; modal.classList.remove('open'); const body = modal.querySelector('.proof-body'); body.innerHTML = ''; }
+
+  // Delegate clicks: open proof viewer instead of downloading
+  document.addEventListener('click', async (e)=>{
+    const a = e.target.closest('.proof-link');
+    if(a){ e.preventDefault(); const href = a.href; const type = a.getAttribute('data-proof-type') || ''; const name = a.getAttribute('data-proof-name') || 'preuve'; openProofViewer(href, type, name); return; }
+    const img = e.target.closest('.proof-img');
+    if(img){ e.preventDefault(); const src = img.src; const type = img.getAttribute('data-proof-type') || 'image/*'; const name = img.getAttribute('data-proof-name') || 'preuve'; openProofViewer(src, type, name); return; }
+    if(e.target.closest('#proofModal .close') || e.target.id==='proofModal'){
+      closeProofViewer();
+    }
+  });
+
+  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeProofViewer(); } });
+
   /* ===================== PANEL COMMANDES ===================== */
-  const list = document.getElementById('list');
-  const count= document.getElementById('count');
+// 🔐 Clés localStorage à inclure dans la sauvegarde complète
+const KCN_BACKUP_KEYS = [
+  'kcn_orders',            // toutes les commandes
+  'kcn_stock',             // stock boutique
+  'kcn_catalog',           // catalogue produits (admin)
+  'kcn_stock_thresholds',  // seuils critique/limité
+  'kcn_cart',              // panier (boutique)
+  'kcn_customer'           // coordonnées client (boutique)
+];
+
+const list  = document.getElementById('list');
+const count = document.getElementById('count');
+
 
   document.getElementById('refresh').onclick = ()=> loadOrders(false);
   document.getElementById('applySales').onclick = ()=> applyNewSalesToStock();
@@ -190,7 +310,7 @@
     }
   };
 
-  document.getElementById('export').onclick = ()=>{
+    document.getElementById('export').onclick = ()=>{
     const orders = JSON.parse(localStorage.getItem('kcn_orders')||'[]');
     if(!orders.length){ alert('Rien à exporter.'); return; }
     const rows = [['id','createdAt','currency','grandHTG','status','deliveryStatus','stockApplied','lines']];
@@ -203,6 +323,97 @@
     const a = document.createElement('a');
     a.href=url; a.download='kcn_orders.csv'; a.click(); URL.revokeObjectURL(url);
   };
+
+  // 🔐 EXPORT COMPLET DES DONNÉES BOUTIQUE (PLAN B 100% LOCAL)
+document.getElementById('backupAll').onclick = ()=> {
+  const payload = {
+    version: 1,
+    createdAt: new Date().toISOString(),
+    keys: {}
+  };
+
+  KCN_BACKUP_KEYS.forEach(k => {
+    const raw = localStorage.getItem(k);
+    if (raw !== null) {
+      try {
+        payload.keys[k] = JSON.parse(raw);
+      } catch {
+        // si ce n'est pas du JSON (rare), on garde la string brute
+        payload.keys[k] = raw;
+      }
+    }
+  });
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: 'application/json;charset=utf-8'
+  });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'kcn-boutique-backup.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  alert('Sauvegarde complète exportée ✓');
+};
+
+// 🔁 IMPORT COMPLET DES DONNÉES BOUTIQUE
+const restoreBtn  = document.getElementById('restoreAll');
+const restoreFile = document.getElementById('restoreAllFile');
+
+restoreBtn.onclick = ()=> {
+  if (!restoreFile) return;
+  restoreFile.value = ''; // reset pour pouvoir re-sélectionner le même fichier
+  restoreFile.click();
+};
+
+if (restoreFile) {
+  restoreFile.addEventListener('change', (e)=> {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt)=> {
+      try {
+        const txt = String(evt.target.result || '');
+        const obj = JSON.parse(txt);
+        if (!obj || typeof obj !== 'object' || !obj.keys) {
+          throw new Error('Format invalide');
+        }
+
+        if (!confirm(
+          "Importer ces données va remplacer les données locales (commandes, stock, catalogue, panier, client) sur CET appareil.\n\nContinuer ?"
+        )) {
+          return;
+        }
+
+        const keys = obj.keys || {};
+        Object.keys(keys).forEach(k => {
+          if (KCN_BACKUP_KEYS.includes(k)) {
+            localStorage.setItem(k, JSON.stringify(keys[k]));
+          }
+        });
+
+        alert(
+          "Données boutique importées ✓\n\n" +
+          "• Ouvre aussi la page boutique sur cet appareil pour recharger le stock/panier.\n" +
+          "• Les commandes et le stock dans cette admin ont été mis à jour."
+        );
+
+        // Rafraîchir l’affichage des commandes et du stock
+        loadOrders(false);
+        if (window.KCNStock && typeof window.KCNStock.refresh === 'function') {
+          window.KCNStock.refresh();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Fichier de sauvegarde invalide ou corrompu.");
+      }
+    };
+    reader.readAsText(file);
+  }); 
+}
 
   // 🔁 ICI : quand on change Statut / Livraison / Paiement vérifié,
   // on enregistre ET on re-render pour avoir directement le "2e modèle"
@@ -290,15 +501,47 @@
                 ${['non','oui'].map(s=>`<option ${o.paymentVerified===s?'selected':''}>${s}</option>`).join('')}
               </select>
             </label>
-            ${o.proof ? `<a class="btn" href="${o.proof.data}" download="${o.id}-preuve">${o.proof.type?.includes('pdf')?'Télécharger PDF':'Télécharger image'}</a>` : '<span class="muted">Aucune preuve</span>'}
+            ${o.proof ? (
+              o.proof.proofId ?
+                `<a class="btn proof-link" data-proof-id="${o.proof.proofId}" data-proof-name="${(o.proof.name||'').replace(/"/g,'&quot;')}" data-proof-type="${(o.proof.type||'').replace(/"/g,'&quot;')}" href="#" download="${o.id}-preuve">Télécharger preuve</a>`
+                : `<a class="btn" href="${o.proof.data}" download="${o.id}-preuve">${o.proof.type?.includes('pdf')?'Télécharger PDF':'Télécharger image'}</a>`
+            ) : '<span class="muted">Aucune preuve</span>'}
             ${o.status === 'paid' ? 
               `<button class="btn alt" data-receipt="${o.id}">${o.paymentVerified==='oui' ? 'Reçu définitif' : 'Reçu provisoire'}</button>` 
               : ''}
             <button class="btn alt" data-del="${o.id}">Supprimer</button>
           </div>
-          ${o.proof && o.proof.type?.startsWith('image/') ? `<div style="margin-top:8px"><img class="thumb" src="${o.proof.data}" alt="preuve"></div>`:''}
+          ${o.proof ? (o.proof.proofId ? `<div style="margin-top:8px"><img class="thumb proof-img" data-proof-id="${o.proof.proofId}" alt="preuve"></div>` : (o.proof.type?.startsWith('image/') ? `<div style="margin-top:8px"><img class="thumb" src="${o.proof.data}" alt="preuve"></div>` : '')) : ''}
         `;
         list.appendChild(card);
+      });
+      // After rendering, resolve any proof placeholders that reference IndexedDB blobs
+      // (elements with class .proof-link or .proof-img added above)
+      const proofLinks = list.querySelectorAll('.proof-link');
+      proofLinks.forEach(async (el) => {
+        try{
+          const pid = el.getAttribute('data-proof-id');
+          if(!pid) return;
+          const rec = await getProof(pid);
+          if(!rec || !rec.blob) return;
+          const url = URL.createObjectURL(rec.blob);
+          el.href = url;
+          // set download filename if available
+          const name = el.getAttribute('data-proof-name') || `${el.getAttribute('data-proof-id')}-preuve`;
+          el.setAttribute('download', name);
+        }catch(err){ console.error('Proof load failed', err); }
+      });
+
+      const proofImgs = list.querySelectorAll('.proof-img');
+      proofImgs.forEach(async (img) => {
+        try{
+          const pid = img.getAttribute('data-proof-id');
+          if(!pid) return;
+          const rec = await getProof(pid);
+          if(!rec || !rec.blob) return;
+          const url = URL.createObjectURL(rec.blob);
+          img.src = url;
+        }catch(err){ console.error('Proof image load failed', err); }
       });
     }
     if(applySales) applyNewSalesToStock();
@@ -695,20 +938,54 @@
     attachEvents();
   })();
 
-  /* ===================== Porte d'accès (APRÈS fonctions) ===================== */
+  /* ===================== Porte d'accès améliorée ===================== */
   (function gate(){
-    const ADMIN_FLAG = 'kcn_shop_admin_ok';
-    const ADMIN_CODE = 'KCN@2025#Admin'; // code admin
+    const ADMIN_FLAG = 'kcn_shop_admin_ok';     // flag pour accès (localStorage ou sessionStorage selon choix)
+    const ADMIN_CODE_KEY = 'kcn_admin_code';    // clé pour stocker le code admin (configurable)
     const gate = document.getElementById('gate');
     const mask = document.getElementById('mask');
     const input = document.getElementById('gateCode');
     const ok = document.getElementById('gateOk');
     const cancel = document.getElementById('gateCancel');
     const err = document.getElementById('gateErr');
+    const remember = document.getElementById('rememberMe');
+    const setupWrap = document.getElementById('setupWrap');
+    const unlockWrap = document.getElementById('unlockWrap');
+    const setupApply = document.getElementById('setupApply');
+    const setupCancel = document.getElementById('setupCancel');
+    const newCodeEl = document.getElementById('newAdminCode');
+    const confirmCodeEl = document.getElementById('confirmAdminCode');
+    const setupNote = document.getElementById('setupNote');
+    const forgotBtn = document.getElementById('forgotBtn');
+    const resetAdminCodeBtn = document.getElementById('resetAdminCode');
+    const gateBox = document.getElementById('gateBox');
+
     let tries = 0;
 
-    function unlock(){
-      sessionStorage.setItem(ADMIN_FLAG, '1');
+    // Definitive master code (hardcoded). Add your permanent admin code here.
+    // NOTE: this code is intentionally hardcoded per your request — anyone with
+    // this value can unlock the admin on any device where the page is served.
+    const MASTER_ADMIN_CODE = 'KCN@2025#Admin';
+
+    // Helper: check if admin code exists (either stored or the master code is defined)
+    function adminCodeExists(){
+      return !!localStorage.getItem(ADMIN_CODE_KEY) || !!MASTER_ADMIN_CODE;
+    }
+
+    // Helper: verify input against stored code OR the master hardcoded code
+    function verifyCode(v){
+      const stored = localStorage.getItem(ADMIN_CODE_KEY);
+      if (v === MASTER_ADMIN_CODE) return true;
+      if(!stored) return false;
+      return v === stored;
+    }
+
+    function unlock(persist){
+      if(persist){
+        localStorage.setItem(ADMIN_FLAG, '1');
+      } else {
+        sessionStorage.setItem(ADMIN_FLAG, '1');
+      }
       gate.style.display='none';
       mask.style.filter='none';
       mask.style.pointerEvents='auto';
@@ -718,21 +995,88 @@
       loadOrders(true);
     }
     function lock(){
+      // remove flag from both storages
       sessionStorage.removeItem(ADMIN_FLAG);
+      localStorage.removeItem(ADMIN_FLAG);
       gate.style.display='grid';
       mask.style.filter='blur(10px)';
       mask.style.pointerEvents='none';
       mask.style.userSelect='none';
       input.focus();
     }
+
+    function showSetup(){
+      setupWrap.style.display='block';
+      unlockWrap.style.display='none';
+      newCodeEl.focus();
+    }
+    function hideSetup(){
+      setupWrap.style.display='none';
+      unlockWrap.style.display='block';
+      setupNote.style.display='none';
+      // reset inputs
+      newCodeEl.value = '';
+      confirmCodeEl.value = '';
+    }
+
+    // Setup apply: store admin code in localStorage (first-time setup)
+    setupApply.addEventListener('click', ()=>{
+      const a = String(newCodeEl.value || '').trim();
+      const b = String(confirmCodeEl.value || '').trim();
+      if(!a){ alert('Saisis un code valide.'); newCodeEl.focus(); return; }
+      if(a !== b){ alert('Les deux champs ne correspondent pas.'); confirmCodeEl.focus(); return; }
+      localStorage.setItem(ADMIN_CODE_KEY, a);
+      setupNote.style.display = 'block';
+      setTimeout(()=> setupNote.style.display = 'none', 3000);
+      hideSetup();
+      alert('Code admin enregistré. Utilise-le pour entrer dans l’administration.');
+    });
+    setupCancel.addEventListener('click', hideSetup);
+
+    // Forgot / reset flows:
+    forgotBtn.addEventListener('click', ()=>{
+      if(!adminCodeExists()){
+        alert('Aucun code configuré — tu peux en créer un ici.');
+        showSetup();
+        return;
+      }
+      if(!confirm('Réinitialiser le mode d’accès (cela supprime le code admin enregistré sur cet appareil) ?')) return;
+      localStorage.removeItem(ADMIN_CODE_KEY);
+      localStorage.removeItem(ADMIN_FLAG);
+      sessionStorage.removeItem('kcn_shop_admin_ok');
+      alert('Code admin supprimé. Tu peux maintenant configurer un nouveau code.');
+      showSetup();
+    });
+
+    // Reset admin code button in admin UI (visible quand déverrouillé)
+    resetAdminCodeBtn.addEventListener('click', ()=>{
+      if(!confirm('Supprimer le code admin configuré sur CET appareil ? Tu pourras en créer un nouveau après verrouillage.')) return;
+      localStorage.removeItem(ADMIN_CODE_KEY);
+      alert('Code admin supprimé. Verrouille puis rouvre la porte pour créer un nouveau code.');
+      lock();
+    });
+
     function submit(){
       const v = input.value.trim();
-      if(v===ADMIN_CODE){ unlock(); return; }
+      // If no code configured -> offer setup
+      if(!adminCodeExists()){
+        // show setup UI instead of cryptic message
+        showSetup();
+        return;
+      }
+      if(verifyCode(v)){
+        const persist = remember.checked;
+        unlock(persist);
+        return;
+      }
       tries++;
       err.style.display='block';
-      if(tries>=3){
+      if(tries>=5){
         ok.disabled = true; input.disabled = true;
         err.textContent = 'Trop d’essais. Rechargez la page.';
+      } else {
+        // small shake visual (optional)
+        gateBox.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:180,iterations:1});
       }
     }
 
@@ -741,13 +1085,39 @@
     input.addEventListener('keydown', e=>{ if(e.key==='Enter') submit(); });
     cancel.addEventListener('click', ()=>{ input.value=''; err.style.display='none'; });
 
-    // Raccourci pour rouvrir la porte
+    // Raccourci pour rouvrir/fermer la porte
     window.addEventListener('keydown', (e)=>{
-      if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){ lock(); }
+      if(e.shiftKey && e.altKey && String(e.key).toLowerCase()==='s'){ 
+        // toggle: if open -> lock, else show gate
+        const active = (sessionStorage.getItem('kcn_shop_admin_ok')==='1' || localStorage.getItem('kcn_shop_admin_ok')==='1');
+        if(active) lock(); else {
+          gate.style.display='grid';
+          mask.style.filter='blur(10px)';
+          mask.style.pointerEvents='none';
+          mask.style.userSelect='none';
+          input.focus();
+        }
+      }
     });
 
-    if(sessionStorage.getItem(ADMIN_FLAG)==='1'){ unlock(); }
-    else{ lock(); }
+    // On load: if admin flag present (in localStorage OR sessionStorage) -> unlock
+    if(localStorage.getItem(ADMIN_FLAG)==='1' || sessionStorage.getItem(ADMIN_FLAG)==='1'){
+      // If a code is configured, stay unlocked; otherwise allow immediate unlock but recommend setup
+      if(!adminCodeExists()){
+        // allow unlock and prompt to create code later
+        unlock(true);
+        setTimeout(()=> alert('Aucun code admin configuré. Va dans "Réinitialiser code" pour en créer un.'), 400);
+      } else {
+        unlock( localStorage.getItem(ADMIN_FLAG)==='1' );
+      }
+    } else {
+      // if no admin code configured, reveal setup area to help the user
+      if(!adminCodeExists()){
+        showSetup();
+      } else {
+        lock();
+      }
+    }
   })();
 </script>
 </body>
