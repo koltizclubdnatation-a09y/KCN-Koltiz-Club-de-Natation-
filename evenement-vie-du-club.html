@@ -21,22 +21,53 @@
       --brand:#0066cc; --accent:#00bcd4; --sun:#ff9800;
       --ink:#0f172a; --muted:#475569; --page:#f7f9fc; --card:#ffffff; --line:#e5e7eb;
       --radius:16px; --shadow:0 20px 50px rgba(2,6,23,.12);
+      --max-width:1200px;
     }
     *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
     body{margin:0;font-family:'Montserrat',sans-serif;background:var(--page);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
-    img{display:block;max-width:100%;height:auto}
+    img{display:block;max-width:100%;height:auto;vertical-align:middle}
     a{color:var(--brand);text-decoration:none}
     a:focus-visible,button:focus-visible{outline:3px solid #111; outline-offset:2px}
 
-    /* HEADER compact (optionnel) */
-    header{background:linear-gradient(90deg,var(--brand),var(--accent)); color:#fff; box-shadow:0 6px 20px rgba(0,0,0,.1)}
-    .nav{max-width:1160px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
-    .brand img{width:52px;height:52px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-    .nav a{color:#fff;text-decoration:none;font-weight:700;padding:8px 10px;border-radius:10px}
-    .nav a:hover{background:rgba(255,255,255,.18)}
+    /* unified header/drawer */
+    header.kcn-header{
+      position:sticky; top:0; z-index:1000;
+      background:#fff; border-bottom:3px solid var(--brand);
+      box-shadow:0 2px 6px rgba(2,6,23,.04);
+    }
+    .kcn-container{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .nav-left{display:flex;align-items:center;gap:12px}
+    .nav-brand .logo, .logo { height:56px; width:auto; object-fit:contain; display:block; }
+    .nav-right{display:flex;gap:14px;align-items:center}
+    .nav-right a{color:var(--brand);text-decoration:none;font-weight:700;padding:8px 12px;border-radius:10px;transition:background .12s}
+    .nav-right a:hover{background:rgba(0,102,204,.06)}
+    .hamburger{display:none;background:none;border:0;font-size:24px;cursor:pointer;color:var(--brand)}
+    @media(max-width:1024px){ .nav-right{display:none} .hamburger{display:inline-block} }
 
-    /* HERO */
+    .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:none}
+    .drawer-backdrop.show{display:block}
+    .drawer{position:fixed;top:0;left:0;width:260px;height:100%;background:#fff;box-shadow:2px 0 18px rgba(0,0,0,.12);transform:translateX(-100%);transition:transform .28s ease;z-index:1000;overflow:auto}
+    .drawer.open{transform:translateX(0)}
+    /* drawer header: close left, logo right */
+    .drawer-header{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);gap:8px}
+    .drawer-header .drawer-close{ order:1; margin-right:auto; background:none;border:0;font-size:22px;cursor:pointer;color:var(--brand); }
+    .drawer-header img{ order:2; height:44px; width:auto; object-fit:contain; border-radius:6px; display:block; }
+    .drawer-nav{display:flex;flex-direction:column;padding:10px 8px;gap:4px}
+    .drawer-nav a{display:block;padding:12px 16px;color:var(--brand);text-decoration:none;border-bottom:1px solid var(--line)}
+    .drawer-nav a:hover{background:rgba(0,102,204,.04)}
+    .drawer-footer{position:absolute;bottom:12px;left:16px;font-size:13px;color:#444}
+    @media(min-width:1025px){ .drawer{display:none !important} .drawer-backdrop{display:none !important} }
+
+    /* hero */
     .hero{position:relative;min-height:58vh;display:grid;place-items:center;overflow:hidden;padding:40px 16px}
     .hero::before{content:"";position:absolute;inset:0;background:url('./assets/images/imajpiscinekcn.png') center/cover no-repeat;filter:saturate(1.04) contrast(1.05)}
     .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,26,60,.35),rgba(0,0,0,.45))}
@@ -46,11 +77,10 @@
     .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;border:2px solid transparent;font-weight:800;cursor:pointer;transition:.18s;box-shadow:0 10px 28px rgba(255,152,0,.22)}
     .btn.primary{background:linear-gradient(90deg,var(--sun),#ffc107);color:#fff}
-    .btn.primary:hover{transform:translateY(-2px)}
     .btn.ghost{background:#ffffff;color:var(--brand);border-color:var(--brand)}
-    .wrap{max-width:1160px;margin:40px auto 70px;padding:0 16px}
+    .wrap{max-width:var(--max-width);margin:40px auto 70px;padding:0 16px}
 
-    /* INFO CARDS */
+    /* cards/grid */
     .grid{display:grid;gap:20px}
     @media(min-width:980px){.grid{grid-template-columns:1.2fr .8fr}}
     .card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:20px}
@@ -60,153 +90,181 @@
     .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
     .chip{border:1px solid rgba(0,102,204,.25);background:rgba(0,102,204,.06);color:#0b4573;border-radius:999px;padding:7px 10px;font-weight:700}
 
-    /* TIMELINE */
     .timeline{display:grid;gap:12px;margin-top:6px}
     .step{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
     .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,var(--brand),var(--accent));margin-top:7px;box-shadow:0 0 0 4px rgba(0,102,204,.15)}
     .step h4{margin:0;color:#0b4573}
     .step p{margin:4px 0 0}
 
-    /* GALLERY */
     .gallery{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
     .tile{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);cursor:zoom-in}
     .tile img{width:100%;height:260px;object-fit:cover;display:block;transition:transform .35s ease}
     .tile:hover img{transform:scale(1.04)}
     .cap{position:absolute;left:10px;bottom:10px;background:rgba(15,23,42,.6);color:#fff;font-weight:700;padding:6px 10px;border-radius:999px;font-size:.85rem}
 
-    /* Lightbox */
     .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:80;padding:16px}
     .lb.open{display:grid}
     .lb img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 4px 24px rgba(255,255,255,.4)}
     .lb .x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:0;color:#fff;width:46px;height:46px;border-radius:50%;font-size:22px;cursor:pointer}
     .lb .x:hover{background:rgba(255,255,255,.24)}
 
-    /* FOOTER */
-    footer{background: linear-gradient(90deg, #00b4db, #0093e9); color:#fff; padding:20px 0; border-top:3px solid rgba(255,255,255,0.3)}
-    .footer-inner{max-width:1100px; margin:auto; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
-    .footer-top{display:flex; align-items:center; flex-direction:column; gap:8px}
-    .footer-logo{width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-    .copyright{font-size:.9rem; color:#f1f9ff; margin:0}
-    .footer-social-block{display:flex; flex-direction:column; align-items:center; gap:6px}
-    .follow-text{font-weight:600; font-size:.95rem; color:#ffe082}
-    .footer-social{display:flex; justify-content:center; gap:14px}
-    .footer-social img{width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; transition:transform .3s, box-shadow .3s}
-    .footer-social img:hover{transform:translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,.4)}
-    .footer-legal{display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:6px}
-    .footer-legal a{color:#fff; text-decoration:none; font-size:.9rem}
-    .footer-legal a:hover{color:#004c91; text-decoration:underline}
-    @media (min-width:768px){
-      .footer-inner{flex-direction:row; justify-content:space-between; text-align:left}
-      .footer-top{flex-direction:row; gap:14px}
-      .footer-social-block{flex-direction:row; gap:10px}
-      .footer-legal{margin-top:0}
-    }
+    /* footer */
+    .site-footer{background:linear-gradient(90deg,#00b4db,#0093e9);color:#fff;border-top:3px solid rgba(255,255,255,.3);padding:18px 16px;box-sizing:border-box}
+    .footer-inner{max-width:var(--max-width);margin:0 auto;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .footer-left{display:flex;align-items:center;gap:12px}
+    .footer-logo{width:70px;height:auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .footer-copy{margin:0;font-size:.95rem;color:#fff}
+    .footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    .footer-legal{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .footer-legal a{color:#fff;text-decoration:none;font-weight:600;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:8px}
+    .footer-social{display:flex;gap:12px;align-items:center}
+    .footer-social img{width:34px;height:34px;border-radius:50%;background:#fff;padding:5px;display:block}
+    @media(max-width:768px){ .footer-inner{flex-direction:column;align-items:center;text-align:center;gap:12px} .footer-right{align-items:center} .footer-legal{justify-content:center} }
+
+    @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important; scroll-behavior:auto !important} }
+
   </style>
 </head>
 <body>
 
-   <!-- HERO -->
-  <section class="hero" aria-label="Bannière de l'événement">
-    <div class="hero-inner">
-      <h1>Journée Découverte & Portes Ouvertes</h1>
-      <p>Venez découvrir <strong>la vie du club</strong> : nos valeurs, nos coachs, nos méthodes et nos programmes pour tous les âges. Démonstrations, mini-ateliers et échanges avec l’équipe.</p>
-      <div class="cta">
-        <a class="btn primary" href="./reservation.html">Je réserve ma place</a>
-        <a class="btn ghost" href="#infos">Voir le programme</a>
+  <!-- HEADER (unifié) -->
+  <header class="kcn-header" role="banner">
+    <div class="kcn-container">
+      <div class="nav-left">
+        <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj12.png" alt="Logo KCN" class="logo">
+        </a>
       </div>
+
+      <nav class="nav-right" aria-label="Navigation principale">
+        <a href="./index.html">Accueil</a>
+        <a href="./Apropos.html">À propos</a>
+        <a href="./evenement.html">Événements</a>
+        <a href="./temoignages.html">Témoignages</a>
+        <a href="./contactez-nous.html">Contact</a>
+      </nav>
+
+      <button class="hamburger" id="kcnHamburger" aria-label="Ouvrir le menu">☰</button>
     </div>
-  </section>
+  </header>
 
-  <main class="wrap" id="infos">
-    <div class="grid">
-      <!-- Colonne Programme & Objectifs -->
-      <article class="card">
-        <h2>Programme & Objectifs</h2>
-        <p class="muted">Une matinée rythmée pour découvrir KCN et poser toutes vos questions.</p>
-        <div class="timeline" role="list">
-          <div class="step" role="listitem">
-            <span class="dot" aria-hidden="true"></span>
-            <div>
-              <h4>Accueil & Présentation du club</h4>
-              <p>Nos valeurs : <strong>Sécurité</strong>, <strong>Inclusion</strong>, <strong>Progression</strong>. Parcours des niveaux et des objectifs.</p>
-            </div>
-          </div>
-          <div class="step" role="listitem">
-            <span class="dot" aria-hidden="true"></span>
-            <div>
-              <h4>Démonstrations & Mini-ateliers</h4>
-              <p>Respiration, battements, posture. Sessions adaptées enfants/adultes (débutants → avancés).</p>
-            </div>
-          </div>
-          <div class="step" role="listitem">
-            <span class="dot" aria-hidden="true"></span>
-            <div>
-              <h4>Questions/Réponses & Inscription</h4>
-              <p>Échanges avec les coachs, inscription sur place, informations matériels et créneaux.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="chips" aria-hidden="true" style="margin-top:12px">
-          <span class="chip">Enfants & adultes</span>
-          <span class="chip">Coachs certifiés</span>
-          <span class="chip">Sécurité d’abord</span>
-          <span class="chip">Delmas 75</span>
-        </div>
-      </article>
-
-      <!-- Colonne Infos pratiques -->
-      <aside class="card">
-        <h2>Infos pratiques</h2>
-        <ul class="list">
-          <li><strong>Date/Heure :</strong> <em>À définir</em> (samedi matin recommandé)</li>
-          <li><strong>Lieu :</strong> Delmas 75 – House of Dream</li>
-          <li><strong>Tenue :</strong> maillot, bonnet, lunettes (si disponible)</li>
-          <li><strong>Contact :</strong> <a href="tel:+50936956939">(+509) 36 95 6939</a> – <a href="mailto:koltizclubdnatation@gmail.com">koltizclubdnatation@gmail.com</a></li>
-        </ul>
-        <div class="chips" style="margin-top:10px">
-          <a class="btn ghost" href="./inscription1eretapes.html">S’inscrire au club</a>
-          <a class="btn ghost" href="./reservation.html">Réserver un essai</a>
-        </div>
-      </aside>
+  <!-- Drawer + Backdrop (logo à droite, close à gauche) -->
+  <div id="kcnBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+  <aside id="kcnDrawer" class="drawer" aria-hidden="true" aria-label="Menu mobile">
+    <div class="drawer-header">
+      <button class="drawer-close" id="kcnDrawerClose" aria-label="Fermer">×</button>
+      <img src="./folder3/imaj12.png" alt="Logo KCN" />
     </div>
+    <nav class="drawer-nav" aria-label="Navigation mobile">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+    </nav>
+    <div class="drawer-footer">© 2025 KCN</div>
+  </aside>
 
-    <!-- Galerie photos (placeholders à remplacer) -->
-    <section class="card" style="margin-top:20px">
-      <h2>Galerie de l’événement</h2>
-      <p class="muted">Ajoute ici quelques photos pour illustrer la journée : accueil, ateliers, ambiance, équipe.</p>
-      <div class="gallery" id="gal">
-        <!-- Remplace les src par tes vraies images -->
-        <figure class="tile">
-          <img src="./folder7/aktivite-club/2vie.jpeg" alt="Accueil des participants" loading="lazy">
-          <figcaption class="cap">Accueil</figcaption>
-        </figure>
-        <figure class="tile">
-          <img src="./folder7/aktivite-kcn/2.jpeg" alt="Atelier technique avec coach" loading="lazy">
-          <figcaption class="cap">Atelier</figcaption>
-        </figure>
-        <figure class="tile">
-          <video controls preload="metadata" width="100%" style="height:260px;object-fit:cover;display:block;border-radius:0;" poster="./folder7/aktivite club/video-poster.jpg">
-            <source src="./folder7/aktivite-club/video-comp2.mp4" type="video/mp4">
-            Votre navigateur ne prend pas en charge la lecture vidéo. Vous pouvez <a href="./folder7/aktivite club/video comp 2.mp4">télécharger la vidéo</a>.
-          </video>
-          <figcaption class="cap">Démonstration</figcaption>
-        </figure>
-        <figure class="tile">
-          <img src="./folder7/aktivite-club/7vie.jpeg" alt="Ambiance familles et enfants autour de la piscine" loading="lazy">
-          <figcaption class="cap">Ambiance</figcaption>
-        </figure>
+  <!-- MAIN -->
+  <main id="main" class="stack">
+   <!-- HERO -->
+    <section class="hero" aria-label="Bannière de l'événement">
+      <div class="hero-inner">
+        <h1>Journée Découverte & Portes Ouvertes</h1>
+        <p>Venez découvrir <strong>la vie du club</strong> : nos valeurs, nos coachs, nos méthodes et nos programmes pour tous les âges. Démonstrations, mini-ateliers et échanges avec l’équipe.</p>
+        <div class="cta">
+          <a class="btn primary" href="./reservation.html">Je réserve ma place</a>
+          <a class="btn ghost" href="#infos">Voir le programme</a>
+        </div>
       </div>
     </section>
 
-    <!-- Appels à l’action -->
-    <section class="card" style="margin-top:20px;text-align:center">
-      <h2>Prêt·e à plonger avec nous ?</h2>
-      <p class="muted">Choisissez un créneau d’essai ou passez directement à l’inscription.</p>
-      <div class="cta" style="justify-content:center">
-        <a class="btn primary" href="./reservation.html">Réserver un essai gratuit</a>
-        <a class="btn ghost" href="./inscription1eretapes.html">S’inscrire maintenant</a>
+    <section class="wrap" id="infos">
+      <div class="grid">
+        <article class="card">
+          <h2>Programme & Objectifs</h2>
+          <p class="muted">Une matinée rythmée pour découvrir KCN et poser toutes vos questions.</p>
+          <div class="timeline" role="list">
+            <div class="step" role="listitem">
+              <span class="dot" aria-hidden="true"></span>
+              <div>
+                <h4>Accueil & Présentation du club</h4>
+                <p>Nos valeurs : <strong>Sécurité</strong>, <strong>Inclusion</strong>, <strong>Progression</strong>. Parcours des niveaux et des objectifs.</p>
+              </div>
+            </div>
+            <div class="step" role="listitem">
+              <span class="dot" aria-hidden="true"></span>
+              <div>
+                <h4>Démonstrations & Mini-ateliers</h4>
+                <p>Respiration, battements, posture. Sessions adaptées enfants/adultes (débutants → avancés).</p>
+              </div>
+            </div>
+            <div class="step" role="listitem">
+              <span class="dot" aria-hidden="true"></span>
+              <div>
+                <h4>Questions/Réponses & Inscription</h4>
+                <p>Échanges avec les coachs, inscription sur place, informations matériels et créneaux.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chips" aria-hidden="true" style="margin-top:12px">
+            <span class="chip">Enfants & adultes</span>
+            <span class="chip">Coachs certifiés</span>
+            <span class="chip">Sécurité d’abord</span>
+            <span class="chip">Delmas 75</span>
+          </div>
+        </article>
+
+        <aside class="card">
+          <h2>Infos pratiques</h2>
+          <ul class="list">
+            <li><strong>Date/Heure :</strong> <em>À définir</em> (samedi matin recommandé)</li>
+            <li><strong>Lieu :</strong> Delmas 75 – House of Dream</li>
+            <li><strong>Tenue :</strong> maillot, bonnet, lunettes (si disponible)</li>
+            <li><strong>Contact :</strong> <a href="tel:+50936956939">(+509) 36 95 6939</a> – <a href="mailto:koltizclubdnatation@gmail.com">koltizclubdnatation@gmail.com</a></li>
+          </ul>
+          <div class="chips" style="margin-top:10px">
+            <a class="btn ghost" href="./inscription1eretapes.html">S’inscrire au club</a>
+            <a class="btn ghost" href="./reservation.html">Réserver un essai</a>
+          </div>
+        </aside>
       </div>
+
+      <section class="card" style="margin-top:20px">
+        <h2>Galerie de l’événement</h2>
+        <p class="muted">Ajoute ici quelques photos pour illustrer la journée : accueil, ateliers, ambiance, équipe.</p>
+        <div class="gallery" id="gal">
+          <figure class="tile">
+            <img src="./folder7/aktivite-club/2vie.jpeg" alt="Accueil des participants" loading="lazy">
+            <figcaption class="cap">Accueil</figcaption>
+          </figure>
+          <figure class="tile">
+            <img src="./folder7/aktivite-kcn/2.jpeg" alt="Atelier technique avec coach" loading="lazy">
+            <figcaption class="cap">Atelier</figcaption>
+          </figure>
+          <figure class="tile">
+            <video controls preload="metadata" width="100%" style="height:260px;object-fit:cover;display:block;border-radius:0;" poster="./folder7/aktivite club/video-poster.jpg">
+              <source src="./folder7/aktivite-club/video-comp2.mp4" type="video/mp4">
+              Votre navigateur ne prend pas en charge la lecture vidéo. Vous pouvez <a href="./folder7/aktivite club/video comp 2.mp4">télécharger la vidéo</a>.
+            </video>
+            <figcaption class="cap">Démonstration</figcaption>
+          </figure>
+          <figure class="tile">
+            <img src="./folder7/aktivite-club/7vie.jpeg" alt="Ambiance familles et enfants autour de la piscine" loading="lazy">
+            <figcaption class="cap">Ambiance</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:20px;text-align:center">
+        <h2>Prêt·e à plonger avec nous ?</h2>
+        <p class="muted">Choisissez un créneau d’essai ou passez directement à l’inscription.</p>
+        <div class="cta" style="justify-content:center">
+          <a class="btn primary" href="./reservation.html">Réserver un essai gratuit</a>
+          <a class="btn ghost" href="./inscription1eretapes.html">S’inscrire maintenant</a>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -220,50 +278,72 @@
   </div>
 
   <!-- FOOTER -->
-  <footer>
+  <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
-      <div class="footer-top">
-        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
-        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
+      <div class="footer-left">
+        <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+          <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+        </a>
+        <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
       </div>
-
-      <div class="footer-social-block">
-        <span class="follow-text">Suivez-nous :</span>
-        <div class="footer-social" aria-label="Réseaux sociaux KCN">
-          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
-            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
-          </a>
-          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener" aria-label="Instagram KCN">
-            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
-          </a>
-          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener" aria-label="WhatsApp KCN">
-            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
-          </a>
+      <div class="footer-right">
+        <nav class="footer-legal" aria-label="Liens légaux">
+          <a href="./confidentialités.html">Confidentialité</a>
+          <a href="./conditions.html">Conditions</a>
+          <a href="./contactez-nous.html">Contact</a>
+        </nav>
+        <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+          <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+          <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+          <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
         </div>
       </div>
-
-      <nav class="footer-legal" aria-label="Liens légaux">
-        <a href="./confidentialités.html">Confidentialité</a>
-        <a href="./conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
-      </nav>
     </div>
   </footer>
 
   <script>
-    /* Lightbox */
+    /* Drawer toggle (unifié) */
+    (function(){
+      const btn = document.getElementById('kcnHamburger');
+      const drawer = document.getElementById('kcnDrawer');
+      const backdrop = document.getElementById('kcnBackdrop');
+      const closeBtn = document.getElementById('kcnDrawerClose');
+
+      function openDrawer(){
+        drawer.classList.add('open');
+        backdrop.classList.add('show');
+        drawer.setAttribute('aria-hidden','false');
+        backdrop.setAttribute('aria-hidden','false');
+        if(btn) btn.setAttribute('aria-expanded','true');
+        document.body.style.overflow='hidden';
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('show');
+        drawer.setAttribute('aria-hidden','true');
+        backdrop.setAttribute('aria-hidden','true');
+        if(btn) btn.setAttribute('aria-expanded','false');
+        document.body.style.overflow='';
+      }
+      if(btn) btn.addEventListener('click', openDrawer);
+      if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if(backdrop) backdrop.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', e => { if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+      document.querySelectorAll('.drawer-nav a').forEach(a => a.addEventListener('click', closeDrawer));
+    })();
+
+    /* Lightbox (images & vidéos) */
     (function(){
       const lb = document.getElementById('lb');
       const lbImg = document.getElementById('lbImg');
       const lbVid = document.getElementById('lbVid');
       const close = document.getElementById('lbX');
 
-      // gère images et vidéos dans la galerie
       document.querySelectorAll('#gal .tile img, #gal .tile video').forEach(el=>{
         el.addEventListener('click', ()=>{
           const tag = el.tagName.toLowerCase();
           if(tag === 'img'){
-            if(lbVid){ lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load && lbVid.load(); }
+            if(lbVid){ lbVid.pause(); lbVid.removeAttribute('src'); lbVid.style.display='none'; }
             lbImg.style.display = '';
             lbVid.style.display = 'none';
             lbImg.src = el.currentSrc || el.src;
@@ -281,7 +361,7 @@
         });
       });
 
-      const closeLb = () => {
+      const closeLb = ()=> {
         lb.classList.remove('open');
         lb.setAttribute('aria-hidden','true');
         lbImg.src = '';
