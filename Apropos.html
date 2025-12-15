@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>À propos – KOLTIZ Club de Natation (KCN)</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
+
   <style>
     /* ====== Base ====== */
     *, *::before, *::after { box-sizing: border-box; }
@@ -100,45 +102,259 @@
       * { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
     }
 
-    /* ====== FOOTER (compact turquoise) ====== */
-    .footer {
-      background: linear-gradient(90deg, #00b4db, #0093e9);
-      color: #fff;
-      padding: 20px 0;
-      font-family: 'Montserrat', sans-serif;
-      text-align: center;
-      border-top: 3px solid rgba(255,255,255,0.3);
-    }
-    .footer-inner {
-      max-width: 1100px; margin: auto;
-      display:flex; flex-direction:column; align-items:center; gap:10px;
-      padding: 0 16px;
-    }
-    .footer-top { display:flex; align-items:center; flex-direction:column; gap:8px; }
-    .footer-logo { width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-    .copyright { font-size: .9rem; color: #f1f9ff; margin:0; }
-    .footer-social-block { display:flex; flex-direction:column; align-items:center; gap:6px; }
-    .follow-text { font-weight:600; font-size:.95rem; color:#ffe082; }
-    .footer-social { display:flex; justify-content:center; gap:14px; }
-    .footer-social img {
-      width:34px; height:34px; border-radius:50%; background:#fff; padding:5px;
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .footer-social img:hover { transform: translateY(-2px); box-shadow:0 3px 8px rgba(255,255,255,0.4); }
-    .footer-legal { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:6px; }
-    .footer-legal a { color:#fff; text-decoration:none; font-size:.9rem; transition: color .2s ease; }
-    .footer-legal a:hover { color:#004c91; text-decoration:underline; }
+   /* Footer simplifié - plus clair, sans mailto doublon */
+.site-footer {
+  background: linear-gradient(90deg,#00b4db,#0093e9);
+  color: #fff;
+  border-top: 3px solid rgba(255,255,255,.3);
+  padding: 18px 16px;
+  box-sizing: border-box;
+}
 
-    @media (min-width: 768px) {
-      .footer-inner { flex-direction: row; justify-content: space-between; text-align: left; }
-      .footer-top { flex-direction: row; gap: 14px; }
-      .footer-social-block { flex-direction: row; gap: 10px; }
-      .footer-legal { margin-top: 0; }
-    }
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.footer-logo { width:70px; height:auto; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.1) }
+.footer-copy { margin:0; font-size:0.95rem; color:#fff }
+
+.footer-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+
+/* Liens légaux */
+.footer-legal {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.footer-legal a {
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  background: rgba(255,255,255,0.06);
+  padding:6px 10px;
+  border-radius:8px;
+}
+
+.footer-legal a:hover {
+  background: rgba(255,255,255,0.12);
+  text-decoration:underline;
+}
+
+/* Social icons */
+.footer-social { display:flex; gap:12px; align-items:center; }
+.footer-social img { width:34px; height:34px; border-radius:50%; background:#fff; padding:5px; display:block }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-inner { flex-direction:column; align-items:center; text-align:center; gap:12px; }
+  .footer-right { align-items:center; }
+  .footer-legal { justify-content:center; }
+}
+
+:root{
+  --brand: #0066cc;
+  --accent: #ff9800;
+  --page: #f7f9fc;
+  --line: #e6edf6;
+  --ink: #0f172a;
+  --radius: 12px;
+  --shadow: 0 12px 36px rgba(2,6,23,.10);
+}
+/* ===== Variables ===== */
+:root{
+  --brand: #0066cc;
+  --accent: #ff9800;
+  --line: #e6edf6;
+  --shadow: 0 12px 36px rgba(2,6,23,.10);
+}
+
+/* ===== Header ===== */
+header{
+  position: sticky;
+  top:0;
+  z-index:60;
+  background:#fff;
+  border-bottom:3px solid var(--brand);
+  box-shadow:0 2px 6px rgba(2,6,23,.04);
+}
+
+.nav{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.nav-left{ display:flex; align-items:center; gap:10px; }
+.nav-brand .logo,
+.logo { height:56px; width:auto; object-fit:contain; }
+
+.nav-right{ display:flex; gap:16px; align-items:center; }
+.nav-right a{
+  color: var(--brand);
+  text-decoration:none;
+  font-weight:700;
+  padding:8px 12px;
+  border-radius:10px;
+}
+.nav-right a:hover{ background: rgba(0,102,204,.06); }
+
+/* Hamburger */
+.hamburger{
+  display:none;
+  background:none;
+  border:none;
+  font-size:24px;
+  cursor:pointer;
+  color: var(--brand);
+}
+
+/* ===== Drawer ===== */
+.drawer-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 58;
+  display: none;
+}
+.drawer{
+  position: fixed;
+  top:0;
+  left:0;
+  width:260px;
+  height:100%;
+  background:#fff;
+  box-shadow: 2px 0 18px rgba(0,0,0,.12);
+  transform: translateX(-100%);
+  transition: transform .28s ease;
+  z-index:59;
+  overflow-y:auto;
+}
+.drawer.open{ transform: translateX(0); }
+
+.drawer-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+}
+.drawer-header img{ height:44px; width:auto; }
+.drawer-close{ background:none; border:0; font-size:22px; cursor:pointer; color:var(--brand); }
+
+.drawer-nav{ display:flex; flex-direction:column; padding:10px 8px; gap:4px; }
+.drawer-nav a{
+  display:block;
+  padding:12px 16px;
+  color:var(--brand);
+  text-decoration:none;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+}
+.drawer-nav a:hover{ background:rgba(0,102,204,.04); }
+
+.drawer-footer{ position:absolute; bottom:12px; left:16px; font-size:13px; color:#444; }
+
+/* ===== Hero ===== */
+.hero{
+  position: relative;
+  z-index:1;
+  border-radius:20px;
+  overflow:hidden;
+  background: linear-gradient(180deg,rgba(0,102,204,.16),rgba(0,188,212,.12)),
+              url('./folder3/imajHero.png') center/cover no-repeat;
+  min-height:220px;
+  display:grid;
+  place-items:center;
+  margin-bottom:18px;
+}
+.hero-card{
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(6px);
+  padding:22px;
+  border-radius:18px;
+  box-shadow: var(--shadow);
+  text-align:center;
+  border:1px solid rgba(255,255,255,.65);
+  width:min(92%,860px);
+}
+.hero h1{ color:var(--brand); font-size:1.9rem; margin-bottom:6px }
+.hero p{ color:#111827 }
+
+/* ===== Responsive ===== */
+@media (max-width:1024px){
+  .nav-right{ display:none; }
+  .hamburger{ display:inline-block; }
+  .drawer-backdrop.show{ display:block; }
+}
+@media (min-width:1025px){
+  .hamburger,
+  #drawer,
+  .drawer-backdrop{ display:none !important; }
+  .nav-right{ display:flex; }
+}
+
   </style>
 </head>
 <body>
 
+<!-- HEADER + DRAWER (remplacer l'ancien header & drawer par ceci) -->
+<header>
+  <nav class="nav" aria-label="Navigation principale">
+    <div class="nav-left">
+      <button class="hamburger" type="button" aria-label="Ouvrir le menu" aria-controls="drawer" aria-expanded="false">☰</button>
+      <a href="./index.html" class="nav-brand" aria-label="Accueil KCN">
+        <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" class="logo">
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <a href="./index.html">Accueil</a>
+      <a href="./Apropos.html">À propos</a>
+      <a href="./evenement.html">Événements</a>
+      <a href="./temoignages.html">Témoignages</a>
+      <a href="./contactez-nous.html">Contact</a>
+      <a href="./boutique-kcn.html">Boutique KCN</a>
+    </div>
+  </nav>
+</header>
+
+<!-- DRAWER & BACKDROP -->
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside id="drawer" class="drawer" aria-hidden="true" aria-label="Menu">
+  <div class="drawer-header">
+    <img src="./folder3/imaj12.png" alt="Logo KOLTIZ Club de Natation" />
+    <button class="drawer-close" type="button" aria-label="Fermer">×</button>
+  </div>
+  <nav class="drawer-nav" aria-label="Navigation latérale">
+    <a href="./index.html">Accueil</a>
+    <a href="./Apropos.html">À propos</a>
+    <a href="./evenement.html">Événements</a>
+    <a href="./temoignages.html">Témoignages</a>
+    <a href="./contactez-nous.html">Contact</a>
+    <a href="./boutique-kcn.html">Boutique KCN</a>
+  </nav>
+  <div class="drawer-footer">© 2025 KCN</div>
+</aside>
+
+  
   <!-- HERO -->
   <section class="hero-apropos" role="banner" aria-label="Présentation du club">
     <div class="hero-text">
@@ -226,38 +442,85 @@
     </section>
   </main>
 
+  <script>
+  // Toggle drawer open/close - très simple
+  (function(){
+    const hamburger = document.querySelector('.hamburger');
+    const drawer = document.getElementById('drawer');
+    const closeBtn = document.querySelector('.drawer-close');
+    const backdrop = document.getElementById('drawerBackdrop');
+
+    function openDrawer(){
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden','false');
+      if(backdrop) backdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer(){
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden','true');
+      if(backdrop) backdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    if(hamburger) hamburger.addEventListener('click', openDrawer);
+    if(closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if(backdrop) backdrop.addEventListener('click', closeDrawer);
+
+    // close on escape
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
+  })();
+</script>
+
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const drawer = document.querySelector('.drawer');
+  const drawerClose = document.querySelector('.drawer-close');
+
+  hamburger.addEventListener('click', () => {
+    drawer.classList.add('open');
+  });
+
+  drawerClose.addEventListener('click', () => {
+    drawer.classList.remove('open');
+  });
+
+  // Fermer le drawer si on clique en dehors
+  window.addEventListener('click', (e) => {
+    if (!drawer.contains(e.target) && !hamburger.contains(e.target)) {
+      drawer.classList.remove('open');
+    }
+  });
+</script>
+
+
+
   <!-- ====== FOOTER KCN — Version compacte turquoise ====== -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <!-- Logo + Copyright -->
-      <div class="footer-top">
-        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo" loading="lazy">
-        <p class="copyright">© 2025 <strong>KOLTIZ Club de Natation</strong> – Tous droits réservés</p>
-      </div>
+  
+ <footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <a href="./index.html" class="footer-brand" aria-label="Accueil KCN">
+        <img src="./folder3/imaj10.png" alt="Logo KCN" class="footer-logo">
+      </a>
+      <p class="footer-copy">© 2025 <strong>KOLTIZ Club de Natation</strong> — Tous droits réservés</p>
+    </div>
 
-      <!-- Réseaux sociaux -->
-      <div class="footer-social-block">
-        <span class="follow-text">Suivez-nous :</span>
-        <div class="footer-social" aria-label="Réseaux sociaux KCN">
-          <a href="https://www.facebook.com/share/1DBTbmFWmq/" target="_blank" rel="noopener" aria-label="Facebook KCN">
-            <img src="./folder0/facebook.png" alt="Facebook KCN" loading="lazy">
-          </a>
-          <a href="https://www.instagram.com/koltiz_club_haiti?igsh=MXBxdTk1MmM4dWZ6ZA==" target="_blank" rel="noopener" aria-label="Instagram KCN">
-            <img src="./folder0/instagram.png" alt="Instagram KCN" loading="lazy">
-          </a>
-          <a href="https://whatsapp.com/channel/0029Vb5v6fZFcow7mVe78c02" target="_blank" rel="noopener" aria-label="WhatsApp KCN">
-            <img src="./folder0/whatsapp.jpg" alt="WhatsApp KCN" loading="lazy">
-          </a>
-        </div>
-      </div>
-
-      <!-- Liens légaux -->
-      <nav class="footer-legal" aria-label="Liens légaux">
+    <div class="footer-right">
+      <nav aria-label="Liens légaux" class="footer-legal">
         <a href="./confidentialités.html">Confidentialité</a>
         <a href="./conditions.html">Conditions</a>
-        <a href="mailto:koltizclubdnatation@gmail.com">Contact email</a>
+        <a href="./contactez-nous.html">Contact</a>
       </nav>
+
+      <div class="footer-social" aria-hidden="false" style="margin-top:10px">
+        <a href="#" aria-label="Facebook"><img src="./folder0/facebook.png" alt="Facebook"></a>
+        <a href="#" aria-label="Instagram"><img src="./folder0/instagram.png" alt="Instagram"></a>
+        <a href="#" aria-label="WhatsApp"><img src="./folder0/whatsapp.jpg" alt="WhatsApp"></a>
+      </div>
     </div>
-  </footer>
+  </div>
+</footer>
+
 </body>
 </html>
